@@ -40,7 +40,29 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+if "symbol" in st.query_params:
+    st.session_state.selected_symbol = st.query_params["symbol"]
 
+symbol = st.sidebar.selectbox(
+    "Symbol",
+    watchlist_symbols,
+    index=watchlist_symbols.index(st.session_state.selected_symbol),
+    key="selected_symbol"
+)
+
+st.query_params["symbol"] = symbol
+
+if "timeframe" in st.query_params:
+    st.session_state.selected_timeframe = st.query_params["timeframe"]
+
+    timeframe = st.sidebar.selectbox(
+    "Timeframe",
+    list(TIMEFRAMES),
+    index=list(TIMEFRAMES).index(st.session_state.selected_timeframe),
+    key="selected_timeframe"
+)
+
+st.query_params["timeframe"] = timeframe
 # ── theme CSS ────────────────────────────────────────────────────────────────
 
 st.markdown("""
@@ -146,7 +168,7 @@ def load_orderbook(symbol: str):
 # ── sidebar ───────────────────────────────────────────────────────────────────
 
 def render_sidebar(watchlist_symbols: list):
-    st.sidebar.title("⚙️ SuperSignal Config")
+    st.sidebar.title("⚙️ SuperSignal")
 
     st.sidebar.subheader("Market")
 
@@ -1320,7 +1342,7 @@ def main():
         count = 0
 
     st.markdown(
-        f"<h2 style='margin-bottom:0'>📈 CryptoAI Terminal</h2>"
+        f"<h2 style='margin-bottom:0'>📈 SuperSignal</h2>"
         f"<div style='color:#8b949e;font-size:.85em'>"
         f"Top {len(watchlist_symbols)} coins by MCap · Binance + CoinGecko + Fear&amp;Greed · "
         f"Paper trading only 🔒 · {now_str('%H:%M:%S')} WIB"
