@@ -224,9 +224,11 @@ def format_large_number(x):
 
     return f"${x:,.0f}"
 
-display_df["Price"] = display_df["Price"].apply(
-    lambda x: f"${x:,.6f}"
-)
+if "Price" in display_df.columns:
+    display_df["Price"] = display_df["Price"].apply(
+        lambda x: f"${x:,.6f}" if x < 1 else f"${x:,.2f}"
+    )
+
 
 display_df["Market Cap"] = display_df["Market Cap"].apply(
     format_large_number
