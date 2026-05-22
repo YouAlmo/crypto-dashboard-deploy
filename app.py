@@ -179,21 +179,39 @@ def render_sidebar(watchlist_symbols: list):
 
     st.sidebar.subheader("Market")
 
-    if "selected_symbol" not in st.session_state:
-        st.session_state.selected_symbol = watchlist_symbols[0]
+    symbol_default = st.query_params.get(
+        "symbol",
+        st.session_state.get("selected_symbol", watchlist_symbols[0])
+    )
+
+    if isinstance(symbol_default, list):
+        symbol_default = symbol_default[0]
 
     symbol = st.sidebar.selectbox(
         "Symbol",
         watchlist_symbols,
-        key="selected_symbol"
+        index=watchlist_symbols.index(symbol_default),
     )
-    if "selected_timeframe" not in st.session_state:
-        st.session_state.selected_timeframe = list(TIMEFRAMES)[0]
+
+    st.session_state.selected_symbol = symbol
+    st.query_params["symbol"] = symbol
+
+    timeframe_default = st.query_params.get(
+        "timeframe",
+        st.session_state.get("selected_timeframe", list(TIMEFRAMES)[0])
+    )
+
+    if isinstance(timeframe_default, list):
+        timeframe_default = timeframe_default[0]
+
     timeframe = st.sidebar.selectbox(
         "Timeframe",
         list(TIMEFRAMES),
-        key="selected_timeframe"
+        index=list(TIMEFRAMES).index(timeframe_default),
     )
+
+    st.session_state.selected_timeframe = timeframe
+    st.query_params["timeframe"] = timeframe
     limit     = st.sidebar.slider("Candle Limit", 100, 1000, 500, 50)
 
     st.sidebar.subheader("Auto-Refresh")
