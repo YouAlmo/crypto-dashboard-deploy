@@ -35,7 +35,7 @@ from src.data.news_sentiment import get_news_sentiment
 from src.risk.risk_manager import assess_risk
 
 st.set_page_config(
-    page_title="CryptoAI Terminal",
+    page_title="SuperSignal",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -146,12 +146,27 @@ def load_orderbook(symbol: str):
 # ── sidebar ───────────────────────────────────────────────────────────────────
 
 def render_sidebar(watchlist_symbols: list):
-    st.sidebar.title("⚙️ Terminal Config")
+    st.sidebar.title("⚙️ SuperSignal Config")
 
     st.sidebar.subheader("Market")
-    symbol    = st.sidebar.selectbox("Symbol", watchlist_symbols, index=0)
-    timeframe = st.sidebar.selectbox("Timeframe", list(TIMEFRAMES.keys()),
-                                     index=list(TIMEFRAMES.keys()).index("1h"))
+
+if "selected_symbol" not in st.session_state:
+    st.session_state.selected_symbol = watchlist_symbols[0]
+
+symbol = st.sidebar.selectbox(
+    "Symbol",
+    watchlist_symbols,
+    index=watchlist_symbols.index(st.session_state.selected_symbol),
+    key="selected_symbol"
+)
+if "selected_timeframe" not in st.session_state:
+    st.session_state.selected_timeframe = list(TIMEFRAMES)[0]
+timeframe = st.sidebar.selectbox(
+    "Timeframe",
+    list(TIMEFRAMES),
+    index=list(TIMEFRAMES).index(st.session_state.selected_timeframe),
+    key="selected_timeframe"
+)
     limit     = st.sidebar.slider("Candle Limit", 100, 1000, 500, 50)
 
     st.sidebar.subheader("Auto-Refresh")
