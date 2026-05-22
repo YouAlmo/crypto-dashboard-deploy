@@ -40,29 +40,31 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-if "symbol" in st.query_params:
-    st.session_state.selected_symbol = st.query_params["symbol"]
+def render_sidebar(watchlist_symbols: list):
 
-symbol = st.sidebar.selectbox(
-    "Symbol",
-    watchlist_symbols,
-    index=watchlist_symbols.index(st.session_state.selected_symbol),
-    key="selected_symbol"
-)
+    if "symbol" in st.query_params:
+        st.session_state.selected_symbol = st.query_params["symbol"]
 
-st.query_params["symbol"] = symbol
+    symbol = st.sidebar.selectbox(
+        "Symbol",
+        watchlist_symbols,
+        index=watchlist_symbols.index(st.session_state.selected_symbol),
+        key="selected_symbol"
+    )
 
-if "timeframe" in st.query_params:
-    st.session_state.selected_timeframe = st.query_params["timeframe"]
+    st.query_params["symbol"] = symbol
+
+    if "timeframe" in st.query_params:
+        st.session_state.selected_timeframe = st.query_params["timeframe"]
 
     timeframe = st.sidebar.selectbox(
-    "Timeframe",
-    list(TIMEFRAMES),
-    index=list(TIMEFRAMES).index(st.session_state.selected_timeframe),
-    key="selected_timeframe"
-)
+        "Timeframe",
+        list(TIMEFRAMES),
+        index=list(TIMEFRAMES).index(st.session_state.selected_timeframe),
+        key="selected_timeframe"
+    )
 
-st.query_params["timeframe"] = timeframe
+    st.query_params["timeframe"] = timeframe
 # ── theme CSS ────────────────────────────────────────────────────────────────
 
 st.markdown("""
@@ -172,23 +174,23 @@ def render_sidebar(watchlist_symbols: list):
 
     st.sidebar.subheader("Market")
 
-if "selected_symbol" not in st.session_state:
-    st.session_state.selected_symbol = watchlist_symbols[0]
+    if "selected_symbol" not in st.session_state:
+        st.session_state.selected_symbol = watchlist_symbols[0]
 
-symbol = st.sidebar.selectbox(
-    "Symbol",
-    watchlist_symbols,
-    index=watchlist_symbols.index(st.session_state.selected_symbol),
-    key="selected_symbol"
-)
-if "selected_timeframe" not in st.session_state:
-    st.session_state.selected_timeframe = list(TIMEFRAMES)[0]
-timeframe = st.sidebar.selectbox(
-    "Timeframe",
-    list(TIMEFRAMES),
-    index=list(TIMEFRAMES).index(st.session_state.selected_timeframe),
-    key="selected_timeframe"
-)
+    symbol = st.sidebar.selectbox(
+        "Symbol",
+        watchlist_symbols,
+        index=watchlist_symbols.index(st.session_state.selected_symbol),
+        key="selected_symbol"
+    )
+    if "selected_timeframe" not in st.session_state:
+        st.session_state.selected_timeframe = list(TIMEFRAMES)[0]
+    timeframe = st.sidebar.selectbox(
+        "Timeframe",
+        list(TIMEFRAMES),
+        index=list(TIMEFRAMES).index(st.session_state.selected_timeframe),
+        key="selected_timeframe"
+    )
     limit     = st.sidebar.slider("Candle Limit", 100, 1000, 500, 50)
 
     st.sidebar.subheader("Auto-Refresh")
