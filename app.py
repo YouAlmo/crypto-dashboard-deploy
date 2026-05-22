@@ -42,26 +42,31 @@ st.set_page_config(
 )
 def render_sidebar(watchlist_symbols: list):
 
-    if "symbol" in st.query_params:
-        st.session_state.selected_symbol = st.query_params["symbol"]
+    symbol_default = st.query_params.get("symbol", watchlist_symbols[0])
+
+    if isinstance(symbol_default, list):
+        symbol_default = symbol_default[0]
 
     symbol = st.sidebar.selectbox(
         "Symbol",
         watchlist_symbols,
-        index=watchlist_symbols.index(st.session_state.selected_symbol),
-        key="selected_symbol"
+        index=watchlist_symbols.index(symbol_default)
     )
 
     st.query_params["symbol"] = symbol
 
-    if "timeframe" in st.query_params:
-        st.session_state.selected_timeframe = st.query_params["timeframe"]
+    timeframe_default = st.query_params.get(
+        "timeframe",
+        list(TIMEFRAMES)[0]
+    )
+
+    if isinstance(timeframe_default, list):
+        timeframe_default = timeframe_default[0]
 
     timeframe = st.sidebar.selectbox(
         "Timeframe",
         list(TIMEFRAMES),
-        index=list(TIMEFRAMES).index(st.session_state.selected_timeframe),
-        key="selected_timeframe"
+        index=list(TIMEFRAMES).index(timeframe_default)
     )
 
     st.query_params["timeframe"] = timeframe
@@ -180,7 +185,6 @@ def render_sidebar(watchlist_symbols: list):
     symbol = st.sidebar.selectbox(
         "Symbol",
         watchlist_symbols,
-        index=watchlist_symbols.index(st.session_state.selected_symbol),
         key="selected_symbol"
     )
     if "selected_timeframe" not in st.session_state:
@@ -188,7 +192,6 @@ def render_sidebar(watchlist_symbols: list):
     timeframe = st.sidebar.selectbox(
         "Timeframe",
         list(TIMEFRAMES),
-        index=list(TIMEFRAMES).index(st.session_state.selected_timeframe),
         key="selected_timeframe"
     )
     limit     = st.sidebar.slider("Candle Limit", 100, 1000, 500, 50)
