@@ -270,10 +270,10 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-gainers = df.sort_values(
-    by="24h %",
-    ascending=False
-).head(5)
+if "24h %" in df.columns:
+    gainers = df.sort_values(by="24h %", ascending=False).head(5)
+else:
+    gainers = df.head(5)
 
 st.dataframe(
     gainers,
@@ -290,10 +290,10 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-losers = df.sort_values(
-    by="24h %",
-    ascending=True
-).head(5)
+if "24h %" in df.columns:
+    losers = df.sort_values(by="24h %", ascending=True).head(5)
+else:
+    losers = df.head(5)
 
 st.dataframe(
     losers,
