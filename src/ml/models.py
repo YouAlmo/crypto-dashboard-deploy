@@ -87,7 +87,7 @@ def cross_validate_model(model_type: str, X: np.ndarray, y: np.ndarray, n_splits
     }
 
 
-@st.cache_data(show_spinner=False, ttl=3600)
+@st.cache_data(show_spinner=False, ttl=5)
 def train_and_predict(_df_hash: str, df_serialized: str, symbol: str) -> Dict:
     import json
     from io import StringIO

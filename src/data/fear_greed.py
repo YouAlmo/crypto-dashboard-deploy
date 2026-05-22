@@ -6,7 +6,7 @@ from typing import Dict
 FEAR_GREED_URL = "https://api.alternative.me/fng/?limit=7"
 
 
-@st.cache_data(ttl=300, show_spinner=False)
+@st.cache_data(ttl=10, show_spinner=False)
 def fetch_fear_greed_index() -> Dict:
     try:
         resp = requests.get(FEAR_GREED_URL, timeout=6)

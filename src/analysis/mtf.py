@@ -94,7 +94,7 @@ def _classify_timeframe(ind: dict) -> dict:
     return {"score": score, "verdict": verdict, "color": color, "details": details}
 
 
-@st.cache_data(ttl=60, show_spinner=False)
+@st.cache_data(ttl=2, show_spinner=False)
 def fetch_mtf_analysis(symbol: str) -> Dict:
     """
     Fetch OHLCV on all MTF timeframes, compute indicators,
