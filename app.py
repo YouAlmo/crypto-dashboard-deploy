@@ -241,9 +241,10 @@ if "Volume 24h" in display_df.columns:
     )
 
 
-display_df["24h %"] = display_df["24h %"].apply(
-    lambda x: f"{x}%"
-)
+if "24h %" in display_df.columns:
+    display_df["24h %"] = display_df["24h %"].apply(
+        lambda x: f"{x}%"
+    )
 
 # =========================================
 # MARKET SCANNER
