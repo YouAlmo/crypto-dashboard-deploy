@@ -54,8 +54,9 @@ def fetch_ohlcv(
         df = df.astype(float)
         df.sort_index(inplace=True)
         return df
-    except Exception:
-        return _generate_synthetic_data(symbol, timeframe, limit)
+    except Exception as e:
+        print(f"OHLCV Error: {e}")
+        raise
 
 
 def fetch_ticker(symbol: str, exchange: Optional[ccxt.Exchange] = None) -> dict:
@@ -76,8 +77,22 @@ def fetch_ticker(symbol: str, exchange: Optional[ccxt.Exchange] = None) -> dict:
             "quoteVolume": ticker.get("quoteVolume", 0),
             "timestamp": datetime.now(),
         }
-    except Exception:
-        return _synthetic_ticker(symbol)
+    except Exception as e:
+        print(f"Ticker Error: {e}")
+
+        return {
+            "symbol": symbol,
+            "last": None,
+            "bid": None,
+            "ask": None,
+            "change": None,
+            "percentage": None,
+            "high": None,
+            "low": None,
+            "volume": None,
+            "quoteVolume": None,
+            "timestamp": datetime.now(),
+        }
 
 
 def fetch_all_tickers(exchange: Optional[ccxt.Exchange] = None) -> dict:
