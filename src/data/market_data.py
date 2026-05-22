@@ -31,11 +31,29 @@ TIMEFRAMES = {
 }
 
 
-def get_exchange() -> ccxt.binance:
-    return ccxt.binance({
-        "enableRateLimit": True,
-        "options": {"defaultType": "spot"},
-    })
+def get_exchange():
+    exchanges = [
+        ccxt.binance({
+            "enableRateLimit": True,
+            "options": {"defaultType": "spot"},
+        }),
+        ccxt.bybit({
+            "enableRateLimit": True,
+        }),
+        ccxt.okx({
+            "enableRateLimit": True,
+        }),
+    ]
+
+    for ex in exchanges:
+        try:
+            ex.load_markets()
+            print(f"Connected to {ex.id}")
+            return ex
+        except Exception as e:
+            print(f"{ex.id} failed: {e}")
+
+    raise Exception("No exchange available")
 
 
 def fetch_ohlcv(
