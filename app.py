@@ -111,42 +111,30 @@ def get_market_data():
     )
 
     try:
-
         response = requests.get(url, timeout=20)
 
         data = response.json()
 
+        if not isinstance(data, list):
+            return []
+
         rows = []
 
         for coin in data:
-
             rows.append({
-
-                "Pair": f"{coin['symbol'].upper()}/USDT",
-
-                "Name": coin["name"],
-
-                "Price": coin["current_price"],
-
-                "24h %": round(
-                    coin["price_change_percentage_24h"] or 0,
-                    2
-                ),
-
-                "Market Cap": coin["market_cap"],
-
-                "Volume 24h": coin["total_volume"]
-
+                "Pair": coin.get("symbol", ""),
+                "Name": coin.get("name", ""),
+                "Price": coin.get("current_price", 0),
+                "24h %": coin.get("price_change_percentage_24h", 0),
+                "Market Cap": coin.get("market_cap", 0),
+                "Volume 24h": coin.get("total_volume", 0),
             })
 
         return pd.DataFrame(rows)
 
     except Exception as e:
-
         st.error(f"API Error: {e}")
-
         return pd.DataFrame()
-
 # =========================================
 # LOAD DATA
 # =========================================
