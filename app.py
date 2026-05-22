@@ -230,12 +230,15 @@ if "Price" in display_df.columns:
     )
 
 
-display_df["Market Cap"] = display_df["Market Cap"].apply(
-    format_large_number
-)
+if "Market Cap" in display_df.columns:
+    display_df["Market Cap"] = display_df["Market Cap"].apply(
+        format_large_number
+    )
 
-display_df["Volume 24h"] = display_df["Volume 24h"].apply(
-    format_large_number
+if "Volume 24h" in display_df.columns:
+    display_df["Volume 24h"] = display_df["Volume 24h"].apply(
+        format_large_number
+    )
 )
 
 display_df["24h %"] = display_df["24h %"].apply(
