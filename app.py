@@ -70,7 +70,7 @@ st.markdown(
 # FEAR & GREED INDEX
 # =========================================
 
-@st.cache_data(ttl=2)
+@st.cache_data(ttl=5)
 def get_fear_greed():
 
     try:
@@ -98,7 +98,7 @@ fear_value, fear_label = get_fear_greed()
 # GET MARKET DATA
 # =========================================
 
-@st.cache_data(ttl=2)
+@st.cache_data(ttl=5)
 def get_market_data():
 
     url = (
