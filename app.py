@@ -111,18 +111,20 @@ def get_market_data():
     )
 
     try:
+
         response = requests.get(url, timeout=20)
 
         data = response.json()
 
         if not isinstance(data, list):
-            return []
+            return pd.DataFrame()
 
         rows = []
 
         for coin in data:
+
             rows.append({
-                "Pair": coin.get("symbol", ""),
+                "Pair": coin.get("symbol", "").upper(),
                 "Name": coin.get("name", ""),
                 "Price": coin.get("current_price", 0),
                 "24h %": coin.get("price_change_percentage_24h", 0),
@@ -133,11 +135,11 @@ def get_market_data():
         return pd.DataFrame(rows)
 
     except Exception as e:
+
         st.error(f"API Error: {e}")
+
         return pd.DataFrame()
-# =========================================
-# LOAD DATA
-# =========================================
+
 
 df = get_market_data()
 
