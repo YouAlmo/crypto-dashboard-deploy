@@ -992,6 +992,9 @@ def render_mtf(mtf: dict, symbol: str):
 
     st.markdown("#### Timeframe Breakdown")
     tfs = [tf for tf in MTF_TIMEFRAMES if tf in mtf]
+    if not tfs:
+        st.warning("No MTF data available")
+        return
     cols = st.columns(len(tfs))
 
     for col, tf in zip(cols, tfs):
