@@ -1393,7 +1393,7 @@ def main():
 
     # ── Watchlist scanner (basic indicators only) ───────────────────────────
 def scan_symbol(sym):
-    from concurrent.futures import ThreadPoolExecutor
+
     try:
         dft = load_watchlist_data(sym, "1h")
 
@@ -1422,6 +1422,7 @@ def scan_symbol(sym):
         )
 
 ind_map = {}
+
 signal_map = {}
 
 with st.spinner("Quick market scan..."):
@@ -1432,7 +1433,8 @@ with st.spinner("Quick market scan..."):
 
         for sym, indicators, signal in results:
             ind_map[sym] = indicators
-            signal_map[sym] = signal        
+            signal_map[sym] = signal
+
 
     # ── Load heavier per-selected-coin data in parallel ─────────────────────
     smc = load_smc(symbol, timeframe, cfg["limit"])
