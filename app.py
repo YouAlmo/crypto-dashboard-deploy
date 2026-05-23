@@ -1392,51 +1392,52 @@ def main():
     sr  = find_support_resistance(df)
 
     # ── Watchlist scanner (basic indicators only) ───────────────────────────
-def scan_symbol(sym):
+    def scan_symbol(sym):
 
-    try:
-        dft = load_watchlist_data(sym, "1h")
+        try:
+            dft = load_watchlist_data(sym, "1h")
 
-        i = get_current_indicator_values(dft)
+            i = get_current_indicator_values(dft)
 
-        i["bb_width"] = (
-            float(dft["bb_width"].iloc[-1])
-            if "bb_width" in dft.columns else 0.0
-        )
+            i["bb_width"] = (
+                float(dft["bb_width"].iloc[-1])
+                if "bb_width" in dft.columns else 0.0
+            )
 
-        return (
-            sym,
-            i,
-            generate_signal(i, 0.0)
-        )
+            return (
+                sym,
+                i,
+                generate_signal(i, 0.0)
+            )
 
-    except Exception:
-        return (
-            sym,
-            {},
-            {
-                "signal": "HOLD",
-                "confidence": 0.5,
-                "reasons": []
-            }
-        )
+        except Exception:
+            return (
+                sym,
+                {},
+                {
+                    "signal": "HOLD",
+                    "confidence": 0.5,
+                    "reasons": []
+                }
+            )
 
-ind_map = {}
+    ind_map = {}
 
-signal_map = {}
+    signal_map = {}
 
-with st.spinner("Quick market scan..."):
+    with st.spinner("Quick market scan..."):
 
-    with ThreadPoolExecutor(max_workers=5) as executor:
+        with ThreadPoolExecutor(max_workers=5) as executor:
 
-        results = executor.map(scan_symbol, watchlist_symbols)
+            results = executor.map(scan_symbol, watchlist_symbols)
 
         for sym, indicators, signal in results:
             ind_map[sym] = indicators
-            signal_map[sym] = signal
+            signal_map[sym] = signal        
 
 
     # ── Load heavier per-selected-coin data in parallel ─────────────────────
+   
     smc = load_smc(symbol, timeframe, cfg["limit"])
     ob  = load_orderbook(symbol)
     mtf = {}
