@@ -154,7 +154,7 @@ def load_full_data(symbol: str, timeframe: str, limit: int = 500):
 
 @st.cache_data(ttl=60, show_spinner=False)
 def load_watchlist_data(symbol: str, timeframe: str):
-    df = fetch_ohlcv(symbol, timeframe=timeframe, limit=200)
+    df = fetch_ohlcv(symbol, timeframe=timeframe, limit=80)
     df = add_all_indicators(df)
     return df
 
@@ -1355,7 +1355,7 @@ def render_fear_greed_gauge(fg: dict):
 def main():
     watchlist_symbols, cg_data = load_watchlist()
     if not watchlist_symbols:
-        watchlist_symbols = FALLBACK_SYMBOLS[:]
+        watchlist_symbols = FALLBACK_SYMBOLS[:10]
 
     cfg = render_sidebar(watchlist_symbols)
 
@@ -1392,7 +1392,7 @@ def main():
     # ── Watchlist scanner (basic indicators only) ───────────────────────────
     ind_map    = {}
     signal_map = {}
-    with st.spinner("Scanning market..."):
+    with st.spinner("Quick market scan..."):
         for sym in watchlist_symbols:
             try:
                 dft  = load_watchlist_data(sym, "1h")
