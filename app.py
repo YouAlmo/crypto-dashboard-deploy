@@ -216,7 +216,7 @@ def render_sidebar(watchlist_symbols: list):
 
     st.sidebar.subheader("Auto-Refresh")
     refresh_option = st.sidebar.select_slider(
-        "Interval", options=["Off", "30s", "1m", "5m"], value="30s"
+        "Interval", options=["Off", "30s", "1m", "5m"], value="60s"
     )
     ms_map    = {"Off": None, "30s": 30_000, "1m": 60_000, "5m": 300_000}
     refresh_ms = ms_map[refresh_option]
@@ -1392,7 +1392,7 @@ def main():
     # ── Watchlist scanner (basic indicators only) ───────────────────────────
     ind_map    = {}
     signal_map = {}
-    with st.spinner(f"Scanning {len(watchlist_symbols)} coins…"):
+    with st.spinner("Scanning market..."):
         for sym in watchlist_symbols:
             try:
                 dft  = load_watchlist_data(sym, "1h")
