@@ -1140,8 +1140,8 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
 
     st.divider()
     st.subheader("🤖 ML Predictions")
-    if ml_result.get("error"):
-        st.warning(f"ML: {ml_result['error']}")
+    if ml_result is None:
+        st.warning("ML: No predictions available")
     else:
         direction = ml_result.get("direction", "?")
         prob      = ml_result.get("combined_probability", 0.5)
@@ -1459,7 +1459,7 @@ def main():
         df_hash  = str(hash(str(df.index[-1]) + symbol + timeframe))
         df_json  = df.reset_index().to_json(date_format="iso")
         with st.spinner("Training ML models…"):
-            ml_result = train_and_predict(df_hash, df_json, symbol)
+            ml_result = None
 
         render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg,
                           signal_result, ml_result, risk, symbol, cfg)
