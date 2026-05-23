@@ -4,6 +4,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 import streamlit as st
 import pandas as pd
+from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
@@ -216,7 +217,7 @@ def render_sidebar(watchlist_symbols: list):
 
     st.sidebar.subheader("Auto-Refresh")
     refresh_option = st.sidebar.select_slider(
-        "Interval", options=["Off", "30s", "1m", "5m"], value="1m"
+        "Interval", options=["Off", "30s", "1m", "5m"], value="off"
     )
     ms_map    = {"Off": None, "30s": 30_000, "1m": 60_000, "5m": 300_000}
     refresh_ms = ms_map[refresh_option]
@@ -1354,6 +1355,7 @@ def render_fear_greed_gauge(fg: dict):
 
 def main():
     watchlist_symbols, cg_data = load_watchlist()
+
     if not watchlist_symbols:
         watchlist_symbols = FALLBACK_SYMBOLS[:10]
 
@@ -1390,24 +1392,52 @@ def main():
     sr  = find_support_resistance(df)
 
     # ── Watchlist scanner (basic indicators only) ───────────────────────────
-    ind_map    = {}
-    signal_map = {}
-    with st.spinner("Quick market scan..."):
-        for sym in watchlist_symbols:
-            try:
-                dft  = load_watchlist_data(sym, "1h")
-                i    = get_current_indicator_values(dft)
-                i["bb_width"] = float(dft["bb_width"].iloc[-1]) if "bb_width" in dft.columns else 0.0
-                ind_map[sym]    = i
-                signal_map[sym] = generate_signal(i, 0.0)
-            except Exception:
-                ind_map[sym]    = {}
-                signal_map[sym] = {"signal": "HOLD", "confidence": 0.5, "reasons": []}
+def scan_symbol(sym):
+    from concurrent.futures import ThreadPoolExecutor
+    try:
+        dft = load_watchlist_data(sym, "1h")
+
+        i = get_current_indicator_values(dft)
+
+        i["bb_width"] = (
+            float(dft["bb_width"].iloc[-1])
+            if "bb_width" in dft.columns else 0.0
+        )
+
+        return (
+            sym,
+            i,
+            generate_signal(i, 0.0)
+        )
+
+    except Exception:
+        return (
+            sym,
+            {},
+            {
+                "signal": "HOLD",
+                "confidence": 0.5,
+                "reasons": []
+            }
+        )
+
+ind_map = {}
+signal_map = {}
+
+with st.spinner("Quick market scan..."):
+
+    with ThreadPoolExecutor(max_workers=5) as executor:
+
+        results = executor.map(scan_symbol, watchlist_symbols)
+
+        for sym, indicators, signal in results:
+            ind_map[sym] = indicators
+            signal_map[sym] = signal        
 
     # ── Load heavier per-selected-coin data in parallel ─────────────────────
     smc = load_smc(symbol, timeframe, cfg["limit"])
     ob  = load_orderbook(symbol)
-    mtf = fetch_mtf_analysis(symbol)
+    mtf = {}
 
     # ── Tabs ────────────────────────────────────────────────────────────────
     tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
