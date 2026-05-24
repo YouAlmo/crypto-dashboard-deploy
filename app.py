@@ -148,7 +148,6 @@ def verdict_color(v: str) -> str:
 
 # ── cache layer ───────────────────────────────────────────────────────────────
 
-# @st.cache_data(ttl=300, show_spinner=False)
 def load_watchlist():
     return fetch_top20_markets()
 
@@ -176,7 +175,6 @@ def load_watchlist_data(symbol: str, timeframe: str):
     df = add_all_indicators(df)
     return df
 
-# @st.cache_data(ttl=300, show_spinner=False)
 def load_fear_greed():
     return fetch_fear_greed_index()
 
