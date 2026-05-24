@@ -90,6 +90,10 @@ def add_volume_sma(df: pd.DataFrame, period: int = 20) -> pd.DataFrame:
 
 
 def get_current_indicator_values(df: pd.DataFrame) -> dict:
+    if df is None or df.empty:
+        return {}
+    if len(df) == 0:
+        return {}
     last = df.iloc[-1]
     prev = df.iloc[-2] if len(df) > 1 else last
 
