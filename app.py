@@ -46,10 +46,11 @@ def render_sidebar(watchlist_symbols: list):
     symbol_default = st.query_params.get("symbol", watchlist_symbols[0])
 
     if isinstance(symbol_default, str):
-        symbol_default = symbol_default.replace("/", "")
+        symbol_default = st.query_params.get("symbol", watchlist_symbols[0])
 
     if isinstance(symbol_default, list):
         symbol_default = symbol_default[0]
+    st.query_params["symbol"] = symbol
 
     symbol = st.sidebar.selectbox(
         "Symbol",
