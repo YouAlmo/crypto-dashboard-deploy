@@ -34,15 +34,19 @@ FALLBACK_SYMBOLS = [
 def _parse_coin(coin: dict) -> dict:
     return {
         "name": coin.get("name", ""),
-        "market_cap": coin.get("market_cap") or 0,
-        "total_volume": coin.get("total_volume") or 0,
-        "current_price": coin.get("current_price") or 0,
-        "circulating_supply": coin.get("circulating_supply") or 0,
-        "max_supply": coin.get("max_supply") or 0,
-        "price_change_percentage_24h": coin.get("price_change_percentage_24h") or 0,
-        "ath": coin.get("ath") or 0,
-        "ath_change_percentage": coin.get("ath_change_percentage") or 0,
-        "market_cap_rank": coin.get("market_cap_rank") or 9999,
+        "market_cap": float(coin.get("market_cap") or 0),
+        "total_volume": float(coin.get("total_volume") or 0),
+        "current_price": float(coin.get("current_price") or 0),
+        "circulating_supply": float(coin.get("circulating_supply") or 0),
+        "max_supply": float(coin.get("max_supply") or 0),
+        "price_change_percentage_24h": float(
+            coin.get("price_change_percentage_24h") or 0
+        ),
+        "ath": float(coin.get("ath") or 0),
+        "ath_change_percentage": float(
+            coin.get("ath_change_percentage") or 0
+        ),
+        "market_cap_rank": int(coin.get("market_cap_rank") or 9999),
     }
 
 
