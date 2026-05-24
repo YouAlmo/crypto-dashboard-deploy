@@ -3,6 +3,8 @@ import numpy as np
 
 
 def add_all_indicators(df: pd.DataFrame) -> pd.DataFrame:
+    if df is None or df.empty:
+        return pd.DataFrame()
     df = df.copy()
     df = add_rsi(df)
     df = add_macd(df)
