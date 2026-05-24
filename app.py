@@ -148,7 +148,7 @@ def verdict_color(v: str) -> str:
 
 # ── cache layer ───────────────────────────────────────────────────────────────
 
-@st.cache_data(ttl=300, show_spinner=False)
+# @st.cache_data(ttl=300, show_spinner=False)
 def load_watchlist():
     return fetch_top20_markets()
 
