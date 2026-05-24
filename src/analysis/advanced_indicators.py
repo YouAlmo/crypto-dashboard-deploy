@@ -24,7 +24,7 @@ def add_sma(df: pd.DataFrame, periods=(20, 50, 200), col="close") -> pd.DataFram
         return df
     for p in periods:
         df[f"sma_{p}"] = df[col].rolling(window=p, min_periods=1).mean()
-    return df
+        return df
 
 
 def add_vwap(df: pd.DataFrame) -> pd.DataFrame:
