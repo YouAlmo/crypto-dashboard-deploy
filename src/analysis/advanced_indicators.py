@@ -17,6 +17,11 @@ except ImportError:
 # ── Trend ─────────────────────────────────────────────────────────────────────
 
 def add_sma(df: pd.DataFrame, periods=(20, 50, 200), col="close") -> pd.DataFrame:
+    if df is None or df.empty:
+        return pd.DataFrame()
+
+    if col not in df.columns:
+        return df
     for p in periods:
         df[f"sma_{p}"] = df[col].rolling(window=p, min_periods=1).mean()
     return df
@@ -313,6 +318,14 @@ def add_donchian_channel(df: pd.DataFrame, period: int = 20) -> pd.DataFrame:
 # ── Master function ───────────────────────────────────────────────────────────
 
 def add_all_advanced_indicators(df: pd.DataFrame) -> pd.DataFrame:
+    if df is None or df.empty:
+        return pd.DataFrame()
+
+    required_cols = ["open", "high", "low", "close", "volume"]
+
+    for col in required_cols:
+        if col not in df.columns:
+            return pd.DataFrame()
     df = add_sma(df)
     df = add_vwap(df)
     df = add_supertrend(df)
