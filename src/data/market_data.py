@@ -14,10 +14,8 @@ SYMBOLS = [
 
 TIMEFRAMES = {
     "1m":  "1 minute",
-    "2m":  "2 minutes",   
     "3m":  "3 minutes",
     "5m":  "5 minutes",
-    "10m":  "10 minutes",
     "15m": "15 minutes",
     "30m": "30 minutes",
     "1h":  "1 hour",
