@@ -1471,7 +1471,7 @@ def main():
 
     if df is None or df.empty:
         st.warning("No market data available for this symbol/timeframe.")
-    return
+        return
     ind = get_current_indicator_values(df)
     ind["bb_width"] = float(df["bb_width"].iloc[-1]) if "bb_width" in df.columns else 0.0
     adv = get_advanced_indicator_values(df)
