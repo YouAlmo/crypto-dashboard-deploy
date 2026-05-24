@@ -418,8 +418,10 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
             "Name":       cg.get("name", sym.split("/")[0]),
             "Price":      fmt_price(price, sym),
             "24h %":      f"{'▲' if pct>=0 else '▼'} {abs(pct):.2f}%",
-            "Market Cap": format_large_number(mcap),
-            "Volume 24h": format_large_number(vol),
+            "Market Cap": format_large_number(cg.get("market_cap", 0)),
+            "Volume 24h": format_large_number(
+                t.get("quoteVolume", 0) or cg.get("total_volume", 0)
+            ),
             "RSI":        f"{ind.get('rsi', 0):.1f}" if ind.get("rsi") else "—",
             "MACD":       f"{ind.get('macd', 0):.4f}" if ind.get("macd") is not None else "—",
             "EMA 9":      fmt_price(ema9, sym) if ema9 else "—",
