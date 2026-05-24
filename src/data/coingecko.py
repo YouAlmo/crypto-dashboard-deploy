@@ -98,7 +98,7 @@ def fetch_top20_markets() -> Tuple[List[str], Dict]:
             sym = f"{coin['symbol'].upper()}/USDT"
             if sym in allowed:
                 formatted = f"{coin['symbol'].upper()}/USDT"
-                
+                print(coin)
                 cg_data[formatted] = {
                     "name": coin.get("name", ""),
                     "market_cap": float(coin.get("market_cap") or 0),

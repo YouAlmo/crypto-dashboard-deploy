@@ -412,7 +412,7 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
             else "🔴 Bear X" if ind.get("ema_bearish_cross")
             else ("↑" if ind.get("ema9_above_ema21") else "↓")
         )
-
+        st.write(cg)
         rows.append({
             "Pair":       sym,
             "Name":       cg.get("name", sym.split("/")[0]),
