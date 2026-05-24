@@ -204,6 +204,9 @@ def render_sidebar(watchlist_symbols: list):
 
     if isinstance(symbol_default, list):
         symbol_default = symbol_default[0]
+    if "/" not in symbol_default and symbol_default.endswith("USDT"):
+        base = symbol_default.replace("USDT", "")
+        symbol_default = f"{base}/USDT"
 
     symbol = st.sidebar.selectbox(
         "Symbol",
