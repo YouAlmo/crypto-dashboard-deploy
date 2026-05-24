@@ -71,6 +71,19 @@ def render_sidebar(watchlist_symbols: list):
     )
 
     st.query_params["timeframe"] = timeframe
+# ── Persistent settings ─────────────────────────────────────
+    if "paper_capital" not in st.session_state:
+        st.session_state.paper_capital = 100.0
+
+    if "risk_tolerance" not in st.session_state:
+        st.session_state.risk_tolerance = 0.5
+
+    if "sl_pct" not in st.session_state:
+        st.session_state.sl_pct = 2.0
+
+    if "tp_pct" not in st.session_state:
+        st.session_state.tp_pct = 4.0
+
 # ── theme CSS ────────────────────────────────────────────────────────────────
 
 st.markdown("""
@@ -246,17 +259,77 @@ def render_sidebar(watchlist_symbols: list):
         show["sr_lines"] = st.checkbox("Support/Resistance", True, key="s_sr")
 
     st.sidebar.subheader("Risk Management")
-    capital        = st.sidebar.number_input("Paper Capital ($)", 5.0, 1_000_000.0, 100.0, 1.0, format="%.2f")
-    if capital < 5:
-        st.sidebar.error("⚠️ Minimum capital is $5.00")
-        capital = 5.0
-    risk_tolerance = st.sidebar.select_slider(
-        "Risk Tolerance", ["conservative", "moderate", "aggressive"], value="moderate"
+
+    # Paper Capital
+    capital_default = st.query_params.get("capital", "100")
+
+    if isinstance(capital_default, list):
+        capital_default = capital_default[0]
+
+    capital = st.sidebar.number_input(
+        "Paper Capital ($)",
+        5.0,
+        1_000_000.0,
+        value=float(capital_default),
+        step=1.0,
+        format="%.2f"
     )
-    stop_loss_pct   = st.sidebar.slider("Stop Loss %",   0.5, 10.0, 2.0, 0.5) / 100
-    take_profit_pct = st.sidebar.slider("Take Profit %", 1.0, 20.0, 4.0, 0.5) / 100
-    rr              = take_profit_pct / stop_loss_pct if stop_loss_pct else 2.0
-    st.sidebar.markdown(f"**R/R:** `1:{rr:.1f}`")
+
+    st.query_params["capital"] = str(capital)
+
+    # Risk Tolerance
+    risk_default = st.query_params.get("risk", "moderate")
+
+    if isinstance(risk_default, list):
+        risk_default = risk_default[0]
+
+    risk_tolerance = st.sidebar.select_slider(
+        "Risk Tolerance",
+        ["conservative", "moderate", "aggressive"],
+        value=risk_default
+    )
+
+    st.query_params["risk"] = risk_tolerance
+
+    # Stop Loss
+    sl_default = st.query_params.get("sl", "2.0")
+
+    if isinstance(sl_default, list):
+        sl_default = sl_default[0]
+
+    sl_pct = st.sidebar.slider(
+        "Stop Loss %",
+        0.5,
+        10.0,
+        value=float(sl_default),
+        step=0.5
+    )
+
+    st.query_params["sl"] = str(sl_pct)
+
+    stop_loss_pct = sl_pct / 100
+
+    # Take Profit
+    tp_default = st.query_params.get("tp", "4.0")
+
+    if isinstance(tp_default, list):
+        tp_default = tp_default[0]
+
+    tp_pct = st.sidebar.slider(
+        "Take Profit %",
+        1.0,
+        20.0,
+        value=float(tp_default),
+        step=0.5
+    )
+
+    st.query_params["tp"] = str(tp_pct)
+
+    take_profit_pct = tp_pct / 100
+
+    rr = take_profit_pct / stop_loss_pct if stop_loss_pct else 2.0
+
+    st.sidebar.markdown(f"**R/R:** 1:{rr:.1f}")
 
     st.sidebar.subheader("Backtesting")
     bt_pos_size = st.sidebar.slider("Position Size %", 5, 50, 10, 5) / 100

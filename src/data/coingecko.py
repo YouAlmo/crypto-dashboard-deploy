@@ -13,10 +13,23 @@ STABLECOINS = {
 ALWAYS_INCLUDE_CG_IDS = {"arweave"}
 
 FALLBACK_SYMBOLS: List[str] = [
-    "BTC/USDT", "ETH/USDT", "BNB/USDT", "SOL/USDT", "XRP/USDT",
-    "ADA/USDT", "DOGE/USDT", "TRX/USDT", "LINK/USDT", "AVAX/USDT",
-    "SUI/USDT", "XLM/USDT", "HBAR/USDT", "TON/USDT", "SHIB/USDT",
-    "DOT/USDT", "LTC/USDT", "BCH/USDT", "UNI/USDT", "APT/USDT", "AR/USDT",
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "XRPUSDT",
+    "BNBUSDT",
+    "DOGEUSDT",
+    "ADAUSDT",
+    "LINKUSDT",
+    "AVAXUSDT",
+    "SUIUSDT",
+    "ARUSDT",
+    "ZECUSDT",
+    "DCRUSDT",
+    "FILUSDT",
+    "ALGOUSDT",
+    "VETUSDT",
+    "PYTHUSDT",
 ]
 
 
