@@ -75,32 +75,25 @@ def fetch_top20_markets() -> Tuple[List[str], Dict]:
     """
     url = (
         f"{COINGECKO_BASE}/coins/markets"
-        "?vs_currency=usd&order=market_cap_desc&per_page=25page=1"
+        "?vs_currency=usd&order=market_cap_desc&per_page=25&page=1"
         "&sparkline=false&price_change_percentage=24h"
     )
-    try:
-        resp = requests.get(url, timeout=12, headers={"Accept": "application/json"})
-        if resp.status_code != 200:
-            return FALLBACK_SYMBOLS[:], _fallback_market_data()
+    resp = requests.get(url, timeout=12, headers={"Accept": "application/json"})
+    raw: list = resp.json()
 
-        raw: list = resp.json()
-
-        print("RAW API DATA:")
-        print(raw[0])
-        non_stable = [
+    non_stable = [
             c for c in raw
             if c.get("symbol", "").lower() not in STABLECOINS
         ]
 
-        cg_data: Dict[str, dict] = {}
-        symbols: List[str] = []
+    cg_data: Dict[str, dict] = {}
+    symbols: List[str] = []
 
-        allowed = set(FALLBACK_SYMBOLS)
-        for coin in non_stable:
+    allowed = set(FALLBACK_SYMBOLS)
+    for coin in non_stable:
             sym = f"{coin['symbol'].upper()}/USDT"
             if sym in allowed:
                 formatted = f"{coin['symbol'].upper()}/USDT"
-                print(coin)
                 cg_data[formatted] = {
                     "name": coin.get("name", ""),
                     "market_cap": float(coin.get("market_cap") or 0),
@@ -122,17 +115,16 @@ def fetch_top20_markets() -> Tuple[List[str], Dict]:
 
 
 
-        seen: set = set()
-        deduped: List[str] = []
-        for s in symbols:
+    seen: set = set()
+    deduped: List[str] = []
+    for s in symbols:
             if s not in seen:
                 seen.add(s)
                 deduped.append(s)
 
-        return deduped, cg_data
-
-    except Exception:
-        return FALLBACK_SYMBOLS[:], _fallback_market_data()
+    return deduped, cg_data
+    
+  
 
 
 def fetch_coingecko_markets() -> Dict:
