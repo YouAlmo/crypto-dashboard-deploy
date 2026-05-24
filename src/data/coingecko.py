@@ -94,22 +94,51 @@ def fetch_top20_markets() -> Tuple[List[str], Dict]:
     for coin in non_stable:
         formatted = f"{coin['symbol'].upper()}/USDT"
 
-        cg_data[formatted] = {
-            "name": coin.get("name", ""),
-            "market_cap": float(coin.get("market_cap") or 0),
-            "total_volume": float(coin.get("total_volume") or 0),
-            "current_price": float(coin.get("current_price") or 0),
-            "circulating_supply": float(coin.get("circulating_supply") or 0),
-            "max_supply": float(coin.get("max_supply") or 0),
-            "price_change_percentage_24h": float(
-                coin.get("price_change_percentage_24h") or 0
-            ),
-            "ath": float(coin.get("ath") or 0),
-            "ath_change_percentage": float(
-                coin.get("ath_change_percentage") or 0
-            ),
-            "market_cap_rank": int(coin.get("market_cap_rank") or 9999),
-        }
+    cg_data: Dict[str, dict] = {}
+    symbols: List[str] = []
+
+    market_lookup = {
+        f"{c['symbol'].upper()}/USDT": c
+        for c in non_stable
+    }
+
+    for formatted in FALLBACK_SYMBOLS:
+
+        coin = market_lookup.get(formatted)
+
+        if coin:
+            cg_data[formatted] = {
+                "name": coin.get("name", ""),
+                "market_cap": float(coin.get("market_cap") or 0),
+                "total_volume": float(coin.get("total_volume") or 0),
+                "current_price": float(coin.get("current_price") or 0),
+                "circulating_supply": float(coin.get("circulating_supply") or 0),
+                "max_supply": float(coin.get("max_supply") or 0),
+                "price_change_percentage_24h": float(
+                    coin.get("price_change_percentage_24h") or 0
+                ),
+                "ath": float(coin.get("ath") or 0),
+                "ath_change_percentage": float(
+                    coin.get("ath_change_percentage") or 0
+                ),
+                "market_cap_rank": int(
+                    coin.get("market_cap_rank") or 9999
+                ),
+            }
+
+        else:
+            cg_data[formatted] = {
+                "name": formatted.split("/")[0],
+                "market_cap": 0,
+                "total_volume": 0,
+                "current_price": 0,
+                "circulating_supply": 0,
+                "max_supply": 0,
+                "price_change_percentage_24h": 0,
+                "ath": 0,
+                "ath_change_percentage": 0,
+                "market_cap_rank": 9999,
+            }
 
         symbols.append(formatted)
 
