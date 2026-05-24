@@ -365,7 +365,7 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
         cg  = cg_data.get(sym, {})
         price = t.get("last", 0) or cg.get("current_price", 0)
         pct   = t.get("percentage", 0) or cg.get("price_change_percentage_24h", 0)
-        mc    = cg.get("market_cap", 0)
+        market_cap = cg.get("market_cap", 0)
         col.markdown(
             f"<div class='terminal-card'>"
             f"<div class='metric-label'>{sym.split('/')[0]}</div>"
@@ -401,7 +401,7 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
         price = t.get("last", 0) or cg.get("current_price", 0)
         pct   = t.get("percentage", 0) or cg.get("price_change_percentage_24h", 0)
         vol   = t.get("quoteVolume", 0) or cg.get("total_volume", 0)
-        mcap  = cg.get("market_cap", 0)
+        market_cap = cg.get("market_cap", 0)
         sig   = sig_res.get("signal", "—")
         conf  = sig_res.get("confidence", 0.0)
 
