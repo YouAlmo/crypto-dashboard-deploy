@@ -73,7 +73,7 @@ def fetch_top20_markets() -> Tuple[List[str], Dict]:
     """
     url = (
         f"{COINGECKO_BASE}/coins/markets"
-        "?vs_currency=usd&order=market_cap_desc&per_page=40&page=1"
+        "?vs_currency=usd&order=market_cap_desc&per_page=25page=1"
         "&sparkline=false&price_change_percentage=24h"
     )
     try:
@@ -88,49 +88,18 @@ def fetch_top20_markets() -> Tuple[List[str], Dict]:
             if c.get("symbol", "").lower() not in STABLECOINS
         ]
 
-        top20 = non_stable[:20]
-        top20_raw_ids = {c["id"] for c in top20}
-
-        ar_coin = next(
-            (c for c in raw if c["id"] == "arweave"),
-            None,
-        )
-        if ar_coin is None:
-            try:
-                ar_resp = requests.get(
-                    f"{COINGECKO_BASE}/coins/markets"
-                    "?vs_currency=usd&ids=arweave&sparkline=false&price_change_percentage=24h",
-                    timeout=8,
-                    headers={"Accept": "application/json"},
-                )
-                if ar_resp.status_code == 200:
-                    ar_list = ar_resp.json()
-                    if ar_list:
-                        ar_coin = ar_list[0]
-            except Exception:
-                ar_coin = None
-
         cg_data: Dict[str, dict] = {}
         symbols: List[str] = []
 
-        for coin in top20:
-            sym = f"{coin['symbol'].upper()}/USDT"
-            if sym not in cg_data:
-                cg_data[sym] = _parse_coin(coin)
-                symbols.append(sym)
+        allowed = set(FALLBACK_SYMBOLS)
+        for coin in non_stable:
+            sym = f"{coin['symbol'].upper()}USDT"
+            if sym in allowed:
+                formatted = f"{coin['symbol'].upper()}/USDT"
+                cg_data[formatted] = _parse_coin(coin)
+                symbols.append(formatted)
 
-        if "AR/USDT" not in cg_data:
-            if ar_coin:
-                cg_data["AR/USDT"] = _parse_coin(ar_coin)
-            else:
-                cg_data["AR/USDT"] = {
-                    "name": "Arweave",
-                    "market_cap": 0, "total_volume": 0, "current_price": 0,
-                    "circulating_supply": 0, "max_supply": 66_000_000,
-                    "price_change_percentage_24h": 0,
-                    "ath": 0, "ath_change_percentage": 0, "market_cap_rank": 9999,
-                }
-            symbols.append("AR/USDT")
+
 
         seen: set = set()
         deduped: List[str] = []

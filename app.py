@@ -148,25 +148,25 @@ def verdict_color(v: str) -> str:
 def load_watchlist():
     return fetch_top20_markets()
 
-@st.cache_data(ttl=5, show_spinner=False)
+@st.cache_data(ttl=20, show_spinner=False)
 def load_tickers_for_watchlist(symbols_key: str) -> dict:
     return fetch_tickers_for(symbols_key.split("|"))
 
-@st.cache_data(ttl=5, show_spinner=False)
-def load_market_data(symbol: str, timeframe: str, limit: int = 500):
+@st.cache_data(ttl=30, show_spinner=False)
+def load_market_data(symbol: str, timeframe: str, limit: int = 200):
     df = fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
     df = add_all_indicators(df)
     return df
 
 @st.cache_data(ttl=30, show_spinner=False)
-def load_full_data(symbol: str, timeframe: str, limit: int = 500):
+def load_full_data(symbol: str, timeframe: str, limit: int = 200):
     """Loads basic + advanced indicators for the main chart."""
     df = fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
     df = add_all_indicators(df)
     df = add_all_advanced_indicators(df)
     return df
 
-@st.cache_data(ttl=60, show_spinner=False)
+@st.cache_data(ttl=20, show_spinner=False)
 def load_watchlist_data(symbol: str, timeframe: str):
     df = fetch_ohlcv(symbol, timeframe=timeframe, limit=80)
     df = add_all_indicators(df)
@@ -176,13 +176,13 @@ def load_watchlist_data(symbol: str, timeframe: str):
 def load_fear_greed():
     return fetch_fear_greed_index()
 
-@st.cache_data(ttl=30, show_spinner=False)
-def load_smc(symbol: str, timeframe: str, limit: int = 500):
+@st.cache_data(ttl=120, show_spinner=False)
+def load_smc(symbol: str, timeframe: str, limit: int = 200):
     df = fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
     df = add_all_indicators(df)
     return analyze_smc(df)
 
-@st.cache_data(ttl=5, show_spinner=False)
+@st.cache_data(ttl=20, show_spinner=False)
 def load_orderbook(symbol: str):
     return fetch_order_book(symbol)
 
