@@ -25,10 +25,8 @@ FALLBACK_SYMBOLS = [
     "SUI/USDT",
     "AR/USDT",
     "ZEC/USDT",
-    "DCR/USDT",
     "FIL/USDT",
     "ALGO/USDT",
-    "VET/USDT",
     "PYTH/USDT",
 ]
 
