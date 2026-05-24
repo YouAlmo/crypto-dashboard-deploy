@@ -66,6 +66,13 @@ def fetch_ohlcv(
         exchange = get_exchange()
     try:
         raw = exchange.fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
+    except Exception:
+        fallback_symbol = "BTC/USDT"
+        raw = exchange.fetch_ohlcv(
+            fallback_symbol,
+            timeframe=timeframe,
+            limit=limit
+        )
         df = pd.DataFrame(raw, columns=["timestamp", "open", "high", "low", "close", "volume"])
         df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
         df.set_index("timestamp", inplace=True)
