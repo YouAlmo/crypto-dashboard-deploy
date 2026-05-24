@@ -56,34 +56,7 @@ def get_exchange():
     raise Exception("No exchange available")
 
 
-def fetch_ohlcv(
-    symbol: str,
-    timeframe: str = "1h",
-    limit: int = 500,
-    exchange: Optional[ccxt.Exchange] = None,
-) -> pd.DataFrame:
-    if exchange is None:
-        exchange = get_exchange()
-    try:
-        raw = exchange.fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
-    except Exception:
-        return pd.DataFrame()
-    except Exception:
-        fallback_symbol = "BTC/USDT"
-        raw = exchange.fetch_ohlcv(
-            fallback_symbol,
-            timeframe=timeframe,
-            limit=limit
-        )
-        df = pd.DataFrame(raw, columns=["timestamp", "open", "high", "low", "close", "volume"])
-        df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
-        df.set_index("timestamp", inplace=True)
-        df = df.astype(float)
-        df.sort_index(inplace=True)
-        return df
-    except Exception as e:
-        print(f"OHLCV Error: {e}")
-        raise
+
 
 
 def fetch_ticker(symbol: str, exchange: Optional[ccxt.Exchange] = None) -> dict:
