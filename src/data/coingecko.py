@@ -63,7 +63,7 @@ def _fallback_market_data() -> Dict:
     return out
 
 
-@st.cache_data(ttl=5, show_spinner=False)
+# @st.cache_data(ttl=5, show_spinner=False)
 def fetch_top20_markets() -> Tuple[List[str], Dict]:
     """
     Fetches top ~30 coins by market cap from CoinGecko, filters stablecoins,
