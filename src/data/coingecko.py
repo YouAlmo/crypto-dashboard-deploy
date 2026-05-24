@@ -74,7 +74,7 @@ def fetch_top20_markets() -> Tuple[List[str], Dict]:
     """
     url = (
         f"{COINGECKO_BASE}/coins/markets"
-        "?vs_currency=usd&order=market_cap_desc&per_page=100&page=1"
+        "?vs_currency=usd&order=market_cap_desc&per_page=500&page=1"
         "&sparkline=false&price_change_percentage=24h"
     )
     resp = requests.get(url, timeout=12, headers={"Accept": "application/json"})
@@ -89,7 +89,7 @@ def fetch_top20_markets() -> Tuple[List[str], Dict]:
     symbols: List[str] = []
 
     allowed = set(FALLBACK_SYMBOLS)
-    for coin in non_stable[:100]:
+    for coin in non_stable[:500]:
             sym = f"{coin['symbol'].upper()}/USDT"
             if sym in allowed:
                 formatted = f"{coin['symbol'].upper()}/USDT"
