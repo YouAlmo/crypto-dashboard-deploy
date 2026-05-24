@@ -12,24 +12,24 @@ STABLECOINS = {
 
 ALWAYS_INCLUDE_CG_IDS = {"arweave"}
 
-FALLBACK_SYMBOLS: List[str] = [
-    "BTCUSDT",
-    "ETHUSDT",
-    "SOLUSDT",
-    "XRPUSDT",
-    "BNBUSDT",
-    "DOGEUSDT",
-    "ADAUSDT",
-    "LINKUSDT",
-    "AVAXUSDT",
-    "SUIUSDT",
-    "ARUSDT",
-    "ZECUSDT",
-    "DCRUSDT",
-    "FILUSDT",
-    "ALGOUSDT",
-    "VETUSDT",
-    "PYTHUSDT",
+FALLBACK_SYMBOLS = [
+    "BTC/USDT",
+    "ETH/USDT",
+    "SOL/USDT",
+    "XRP/USDT",
+    "BNB/USDT",
+    "DOGE/USDT",
+    "ADA/USDT",
+    "LINK/USDT",
+    "AVAX/USDT",
+    "SUI/USDT",
+    "AR/USDT",
+    "ZEC/USDT",
+    "DCR/USDT",
+    "FIL/USDT",
+    "ALGO/USDT",
+    "VET/USDT",
+    "PYTH/USDT",
 ]
 
 
@@ -93,7 +93,7 @@ def fetch_top20_markets() -> Tuple[List[str], Dict]:
 
         allowed = set(FALLBACK_SYMBOLS)
         for coin in non_stable:
-            sym = f"{coin['symbol'].upper()}USDT"
+            sym = f"{coin['symbol'].upper()}/USDT"
             if sym in allowed:
                 formatted = f"{coin['symbol'].upper()}/USDT"
                 cg_data[formatted] = _parse_coin(coin)
