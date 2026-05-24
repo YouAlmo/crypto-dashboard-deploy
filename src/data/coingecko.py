@@ -84,7 +84,7 @@ def fetch_top20_markets() -> Tuple[List[str], Dict]:
             return FALLBACK_SYMBOLS[:], _fallback_market_data()
 
         raw: list = resp.json()
-
+        print(raw[0])
         non_stable = [
             c for c in raw
             if c.get("symbol", "").lower() not in STABLECOINS
