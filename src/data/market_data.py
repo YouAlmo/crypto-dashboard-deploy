@@ -1,65 +1,69 @@
 import ccxt
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
-from typing import List, Optional
 
+from datetime import datetime
+from typing import List, Optional, Dict
+
+from src.core.exchange_manager import get_exchange
+
+
+# ─────────────────────────────────────────────────────────────
+# Symbols
+# ─────────────────────────────────────────────────────────────
 
 SYMBOLS = [
-    "BTC/USDT", "ETH/USDT", "BNB/USDT", "SOL/USDT", "XRP/USDT",
-    "ADA/USDT", "DOGE/USDT", "TRX/USDT", "LINK/USDT", "AVAX/USDT",
-    "SUI/USDT", "XLM/USDT", "HBAR/USDT", "TON/USDT", "SHIB/USDT",
-    "DOT/USDT", "LTC/USDT", "BCH/USDT", "UNI/USDT", "APT/USDT", "AR/USDT",
+    "BTC/USDT",
+    "ETH/USDT",
+    "SOL/USDT",
+    "XRP/USDT",
+    "BNB/USDT",
+    "DOGE/USDT",
+    "ADA/USDT",
+    "LINK/USDT",
+    "AVAX/USDT",
+    "SUI/USDT",
+    "AR/USDT",
+    "ZEC/USDT",
+    "FIL/USDT",
+    "ALGO/USDT",
+    "PYTH/USDT",
 ]
 
+
+# ─────────────────────────────────────────────────────────────
+# Supported Timeframes
+# ─────────────────────────────────────────────────────────────
+
 TIMEFRAMES = {
-    "1m":  "1 minute",
-    "3m":  "3 minutes",
-    "5m":  "5 minutes",
-    "15m": "15 minutes",
-    "30m": "30 minutes",
-    "1h":  "1 hour",
-    "2h":  "2 hours",
-    "4h":  "4 hours",
-    "6h":  "6 hours",
-    "8h":  "8 hours",
-    "12h": "12 hours",
-    "1d":  "1 day",
-    "3d":  "3 days",
-    "1w":  "1 week",
-    "1M":  "1 month",
+    "1m": "1 Minute",
+    "2m": "2 Minutes",
+    "3m": "3 Minutes",
+    "5m": "5 Minutes",
+    "10m": "10 Minutes",
+    "15m": "15 Minutes",
+    "30m": "30 Minutes",
+    "1h": "1 Hour",
+    "2h": "2 Hours",
+    "4h": "4 Hours",
+    "6h": "6 Hours",
+    "8h": "8 Hours",
+    "12h": "12 Hours",
+    "1d": "1 Day",
+    "3d": "3 Days",
+    "1w": "1 Week",
+    "1M": "1 Month",
 }
 
 
-def get_exchange():
-    exchanges = [
-        ccxt.binance({
-            "enableRateLimit": True,
-            "options": {"defaultType": "spot"},
-        }),
-        ccxt.bybit({
-            "enableRateLimit": True,
-        }),
-        ccxt.okx({
-            "enableRateLimit": True,
-        }),
-    ]
-
-    for ex in exchanges:
-        try:
-            ex.load_markets()
-            print(f"Connected to {ex.id}")
-            return ex
-        except Exception as e:
-            print(f"{ex.id} failed: {e}")
-
-    raise Exception("No exchange available")
-
+# ─────────────────────────────────────────────────────────────
+# Fetch OHLCV
+# ─────────────────────────────────────────────────────────────
 
 def fetch_ohlcv(
     symbol: str,
     timeframe: str = "1h",
-    limit: int = 500,
+    limit: int = 300,
     exchange: Optional[ccxt.Exchange] = None,
 ) -> pd.DataFrame:
 
@@ -67,21 +71,36 @@ def fetch_ohlcv(
         exchange = get_exchange()
 
     try:
+
         raw = exchange.fetch_ohlcv(
             symbol,
             timeframe=timeframe,
-            limit=limit
+            limit=limit,
         )
 
         if not raw:
-            return pd.DataFrame()
+            return _generate_synthetic_data(
+                symbol,
+                timeframe,
+                limit,
+            )
 
         df = pd.DataFrame(
             raw,
-            columns=["timestamp", "open", "high", "low", "close", "volume"]
+            columns=[
+                "timestamp",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+            ],
         )
 
-        df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
+        df["timestamp"] = pd.to_datetime(
+            df["timestamp"],
+            unit="ms",
+        )
 
         df.set_index("timestamp", inplace=True)
 
@@ -92,15 +111,32 @@ def fetch_ohlcv(
         return df
 
     except Exception as e:
-        print(f"OHLCV Error ({symbol}): {e}")
-        return pd.DataFrame()
+
+        print(f"OHLCV Error [{symbol} {timeframe}] -> {e}")
+
+        return _generate_synthetic_data(
+            symbol,
+            timeframe,
+            limit,
+        )
 
 
-def fetch_ticker(symbol: str, exchange: Optional[ccxt.Exchange] = None) -> dict:
+# ─────────────────────────────────────────────────────────────
+# Fetch Single Ticker
+# ─────────────────────────────────────────────────────────────
+
+def fetch_ticker(
+    symbol: str,
+    exchange: Optional[ccxt.Exchange] = None,
+) -> Dict:
+
     if exchange is None:
         exchange = get_exchange()
+
     try:
+
         ticker = exchange.fetch_ticker(symbol)
+
         return {
             "symbol": symbol,
             "last": ticker.get("last", 0),
@@ -114,92 +150,192 @@ def fetch_ticker(symbol: str, exchange: Optional[ccxt.Exchange] = None) -> dict:
             "quoteVolume": ticker.get("quoteVolume", 0),
             "timestamp": datetime.now(),
         }
+
     except Exception as e:
-        print(f"Ticker Error: {e}")
 
-        return {
-            "symbol": symbol,
-            "last": None,
-            "bid": None,
-            "ask": None,
-            "change": None,
-            "percentage": None,
-            "high": None,
-            "low": None,
-            "volume": None,
-            "quoteVolume": None,
-            "timestamp": datetime.now(),
-        }
+        print(f"Ticker Error [{symbol}] -> {e}")
+
+        return _synthetic_ticker(symbol)
 
 
-def fetch_all_tickers(exchange: Optional[ccxt.Exchange] = None) -> dict:
+# ─────────────────────────────────────────────────────────────
+# Fetch Multiple Tickers
+# ─────────────────────────────────────────────────────────────
+
+def fetch_tickers_for(
+    symbols: List[str],
+    exchange: Optional[ccxt.Exchange] = None,
+) -> Dict:
+
     if exchange is None:
         exchange = get_exchange()
-    return {s: fetch_ticker(s, exchange) for s in SYMBOLS}
+
+    results = {}
+
+    for symbol in symbols:
+
+        try:
+
+            results[symbol] = fetch_ticker(
+                symbol,
+                exchange,
+            )
+
+        except Exception:
+
+            results[symbol] = _synthetic_ticker(symbol)
+
+    return results
 
 
-def fetch_tickers_for(symbols: List[str], exchange: Optional[ccxt.Exchange] = None) -> dict:
-    """Fetch live tickers for an arbitrary list of symbols."""
-    if exchange is None:
-        exchange = get_exchange()
-    return {s: fetch_ticker(s, exchange) for s in symbols}
+def fetch_all_tickers(
+    exchange: Optional[ccxt.Exchange] = None,
+) -> Dict:
+
+    return fetch_tickers_for(
+        SYMBOLS,
+        exchange,
+    )
 
 
-def _generate_synthetic_data(symbol: str, timeframe: str, limit: int) -> pd.DataFrame:
-    seed_map = {s: i + 42 for i, s in enumerate(SYMBOLS)}
-    base_price_map = {
-        "BTC/USDT": 65_000.0, "ETH/USDT": 3_500.0, "BNB/USDT": 580.0,
-        "SOL/USDT": 180.0,   "XRP/USDT": 0.52,     "ADA/USDT": 0.45,
-        "DOGE/USDT": 0.16,   "TRX/USDT": 0.12,     "LINK/USDT": 14.0,
-        "AVAX/USDT": 36.0,   "SUI/USDT": 2.1,      "XLM/USDT": 0.11,
-        "HBAR/USDT": 0.085,  "TON/USDT": 5.5,      "SHIB/USDT": 0.0000245,
-        "DOT/USDT": 6.8,     "LTC/USDT": 82.0,     "BCH/USDT": 450.0,
-        "UNI/USDT": 7.5,     "APT/USDT": 7.2,      "AR/USDT": 22.0,
+# ─────────────────────────────────────────────────────────────
+# Synthetic OHLCV Fallback
+# ─────────────────────────────────────────────────────────────
+
+def _generate_synthetic_data(
+    symbol: str,
+    timeframe: str,
+    limit: int,
+) -> pd.DataFrame:
+
+    seed_map = {
+        s: i + 100
+        for i, s in enumerate(SYMBOLS)
     }
-    rng = np.random.default_rng(seed_map.get(symbol, hash(symbol) % 1000))
-    base = base_price_map.get(symbol, 1.0)
 
-    freq_map = {"1m": "1min", "5m": "5min", "15m": "15min",
-                "1h": "1h", "4h": "4h", "1d": "1D"}
+    base_prices = {
+        "BTC/USDT": 65000,
+        "ETH/USDT": 3500,
+        "SOL/USDT": 180,
+        "XRP/USDT": 0.52,
+        "BNB/USDT": 580,
+        "DOGE/USDT": 0.16,
+        "ADA/USDT": 0.45,
+        "LINK/USDT": 14,
+        "AVAX/USDT": 36,
+        "SUI/USDT": 2.1,
+        "AR/USDT": 22,
+        "ZEC/USDT": 35,
+        "FIL/USDT": 5,
+        "ALGO/USDT": 0.18,
+        "PYTH/USDT": 0.55,
+    }
+
+    rng = np.random.default_rng(
+        seed_map.get(symbol, 999)
+    )
+
+    base = base_prices.get(symbol, 1.0)
+
+    freq_map = {
+        "1m": "1min",
+        "2m": "2min",
+        "3m": "3min",
+        "5m": "5min",
+        "10m": "10min",
+        "15m": "15min",
+        "30m": "30min",
+        "1h": "1h",
+        "2h": "2h",
+        "4h": "4h",
+        "1d": "1D",
+        "1w": "1W",
+    }
+
     freq = freq_map.get(timeframe, "1h")
-    end = datetime.now().replace(minute=0, second=0, microsecond=0)
-    idx = pd.date_range(end=end, periods=limit, freq=freq)
 
-    returns = rng.normal(0.0002, 0.02, size=limit)
-    close = base * np.exp(np.cumsum(returns))
-    high = close * (1 + rng.uniform(0, 0.015, size=limit))
-    low = close * (1 - rng.uniform(0, 0.015, size=limit))
+    idx = pd.date_range(
+        end=datetime.now(),
+        periods=limit,
+        freq=freq,
+    )
+
+    returns = rng.normal(
+        0.0002,
+        0.02,
+        size=limit,
+    )
+
+    close = base * np.exp(
+        np.cumsum(returns)
+    )
+
+    high = close * (
+        1 + rng.uniform(0, 0.015, size=limit)
+    )
+
+    low = close * (
+        1 - rng.uniform(0, 0.015, size=limit)
+    )
+
     open_ = np.roll(close, 1)
+
     open_[0] = base
-    volume = rng.uniform(1e6, 5e7, size=limit)
+
+    volume = rng.uniform(
+        100000,
+        50000000,
+        size=limit,
+    )
 
     return pd.DataFrame(
-        {"open": open_, "high": high, "low": low, "close": close, "volume": volume},
+        {
+            "open": open_,
+            "high": high,
+            "low": low,
+            "close": close,
+            "volume": volume,
+        },
         index=idx,
     )
 
 
-def _synthetic_ticker(symbol: str) -> dict:
-    base_map = {
-        "BTC/USDT": 65_000.0, "ETH/USDT": 3_500.0, "BNB/USDT": 580.0,
-        "SOL/USDT": 180.0,    "XRP/USDT": 0.52,    "ADA/USDT": 0.45,
-        "DOGE/USDT": 0.16,    "TRX/USDT": 0.12,    "LINK/USDT": 14.0,
-        "AVAX/USDT": 36.0,    "SUI/USDT": 2.1,     "XLM/USDT": 0.11,
-        "HBAR/USDT": 0.085,   "TON/USDT": 5.5,     "SHIB/USDT": 0.0000245,
-        "DOT/USDT": 6.8,      "LTC/USDT": 82.0,    "BCH/USDT": 450.0,
-        "UNI/USDT": 7.5,      "APT/USDT": 7.2,     "AR/USDT": 22.0,
+# ─────────────────────────────────────────────────────────────
+# Synthetic Ticker
+# ─────────────────────────────────────────────────────────────
+
+def _synthetic_ticker(symbol: str) -> Dict:
+
+    base_prices = {
+        "BTC/USDT": 65000,
+        "ETH/USDT": 3500,
+        "SOL/USDT": 180,
+        "XRP/USDT": 0.52,
+        "BNB/USDT": 580,
+        "DOGE/USDT": 0.16,
+        "ADA/USDT": 0.45,
+        "LINK/USDT": 14,
+        "AVAX/USDT": 36,
+        "SUI/USDT": 2.1,
+        "AR/USDT": 22,
+        "ZEC/USDT": 35,
+        "FIL/USDT": 5,
+        "ALGO/USDT": 0.18,
+        "PYTH/USDT": 0.55,
     }
-    price = base_map.get(symbol, 1.0)
+
+    price = base_prices.get(symbol, 1)
+
     return {
         "symbol": symbol,
         "last": price,
-        "bid": price * 0.9998,
-        "ask": price * 1.0002,
-        "change": price * 0.015,
-        "percentage": 1.5,
-        "high": price * 1.03,
-        "low": price * 0.97,
-        "volume": 25_000.0,
-        "quoteVolume": price * 25_000.0,
+        "bid": price * 0.999,
+        "ask": price * 1.001,
+        "change": 0,
+        "percentage": 0,
+        "high": price * 1.02,
+        "low": price * 0.98,
+        "volume": 0,
+        "quoteVolume": 0,
         "timestamp": datetime.now(),
     }
