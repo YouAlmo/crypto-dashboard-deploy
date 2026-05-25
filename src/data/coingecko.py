@@ -64,98 +64,62 @@ def _fallback_market_data() -> Dict:
 
 
 def fetch_top20_markets() -> Tuple[List[str], Dict]:
-    """
-    Fetches top ~30 coins by market cap from CoinGecko, filters stablecoins,
-    keeps top 20, always includes AR/USDT.
 
-    Returns:
-        symbols  — list of "XXX/USDT" strings, ordered by CoinGecko market-cap rank
-        cg_data  — dict keyed by "XXX/USDT" symbol with market data
-    """
     url = (
         f"{COINGECKO_BASE}/coins/markets"
         "?vs_currency=usd&order=market_cap_desc&per_page=500&page=1"
         "&sparkline=false&price_change_percentage=24h"
     )
-    resp = requests.get(url, timeout=12, headers={"Accept": "application/json"})
-    raw: list = resp.json()
 
-    non_stable = [
+    try:
+        resp = requests.get(
+            url,
+            timeout=12,
+            headers={"Accept": "application/json"}
+        )
+
+        raw: list = resp.json()
+
+        non_stable = [
             c for c in raw
             if c.get("symbol", "").lower() not in STABLECOINS
         ]
 
-    cg_data: Dict[str, dict] = {}
-    symbols: List[str] = []
+        market_lookup = {
+            f"{c['symbol'].upper()}/USDT": c
+            for c in non_stable
+        }
 
-    symbols = []
-    cg_data = {}
+        cg_data: Dict[str, dict] = {}
+        symbols: List[str] = []
 
-    for coin in non_stable:
-        formatted = f"{coin['symbol'].upper()}/USDT"
+        for formatted in FALLBACK_SYMBOLS:
 
-    cg_data: Dict[str, dict] = {}
-    symbols: List[str] = []
+            coin = market_lookup.get(formatted)
 
-    market_lookup = {
-        f"{c['symbol'].upper()}/USDT": c
-        for c in non_stable
-    }
+            if coin:
+                cg_data[formatted] = _parse_coin(coin)
 
-    for formatted in FALLBACK_SYMBOLS:
+            else:
+                cg_data[formatted] = {
+                    "name": formatted.split("/")[0],
+                    "market_cap": 0,
+                    "total_volume": 0,
+                    "current_price": 0,
+                    "circulating_supply": 0,
+                    "max_supply": 0,
+                    "price_change_percentage_24h": 0,
+                    "ath": 0,
+                    "ath_change_percentage": 0,
+                    "market_cap_rank": 9999,
+                }
 
-        coin = market_lookup.get(formatted)
+            symbols.append(formatted)
 
-        if coin:
-            cg_data[formatted] = {
-                "name": coin.get("name", ""),
-                "market_cap": float(coin.get("market_cap") or 0),
-                "total_volume": float(coin.get("total_volume") or 0),
-                "current_price": float(coin.get("current_price") or 0),
-                "circulating_supply": float(coin.get("circulating_supply") or 0),
-                "max_supply": float(coin.get("max_supply") or 0),
-                "price_change_percentage_24h": float(
-                    coin.get("price_change_percentage_24h") or 0
-                ),
-                "ath": float(coin.get("ath") or 0),
-                "ath_change_percentage": float(
-                    coin.get("ath_change_percentage") or 0
-                ),
-                "market_cap_rank": int(
-                    coin.get("market_cap_rank") or 9999
-                ),
-            }
+        return symbols, cg_data
 
-        else:
-            cg_data[formatted] = {
-                "name": formatted.split("/")[0],
-                "market_cap": 0,
-                "total_volume": 0,
-                "current_price": 0,
-                "circulating_supply": 0,
-                "max_supply": 0,
-                "price_change_percentage_24h": 0,
-                "ath": 0,
-                "ath_change_percentage": 0,
-                "market_cap_rank": 9999,
-            }
-
-        symbols.append(formatted)
-
-        if len(symbols) >= 15:
-            break
-
-
-    seen: set = set()
-    deduped: List[str] = []
-    for s in symbols:
-            if s not in seen:
-                seen.add(s)
-                deduped.append(s)
-
-    return deduped, cg_data
-    
-  
+    except Exception:
+        return FALLBACK_SYMBOLS[:], _fallback_market_data()
 
 
 def fetch_coingecko_markets() -> Dict:
