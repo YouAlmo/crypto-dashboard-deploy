@@ -134,36 +134,65 @@ timeframes = [
     "1M",
 ]
 
+# ---------- SESSION DEFAULTS ----------
+
+defaults = {
+    "symbol": "BTC/USDT",
+    "timeframe": "1h",
+    "limit": 250,
+    "auto_refresh": False,
+    "refresh_speed": 5,
+}
+
+for k, v in defaults.items():
+    if k not in st.session_state:
+        st.session_state[k] = v
+
+# ---------- SYMBOL ----------
+
 st.session_state.symbol = st.sidebar.selectbox(
     "Select Coin",
     symbols,
-    index=symbols.index(st.session_state.symbol)
+    key="symbol_select",
+    index=symbols.index(st.session_state.symbol),
 )
+
+# ---------- TIMEFRAME ----------
 
 st.session_state.timeframe = st.sidebar.selectbox(
     "Timeframe",
     timeframes,
-    index=timeframes.index(st.session_state.timeframe)
+    key="timeframe_select",
+    index=timeframes.index(st.session_state.timeframe),
 )
+
+# ---------- LIMIT ----------
 
 st.session_state.limit = st.sidebar.slider(
     "Candles",
     100,
     1000,
-    st.session_state.limit,
-    50
+    value=st.session_state.limit,
+    step=50,
+    key="candles_slider",
 )
+
+# ---------- AUTO REFRESH ----------
 
 st.session_state.auto_refresh = st.sidebar.checkbox(
     "Auto Refresh",
-    value=st.session_state.auto_refresh
+    value=st.session_state.auto_refresh,
+    key="refresh_checkbox",
 )
 
-refresh_seconds = st.sidebar.slider(
+# ---------- REFRESH SPEED ----------
+
+st.session_state.refresh_speed = st.sidebar.slider(
     "Refresh Speed",
     3,
     60,
-    5
+    value=st.session_state.refresh_speed,
+    key="refresh_speed_slider",
 )
 
 # =========================================================
@@ -348,9 +377,160 @@ with tab1:
 
 with tab2:
 
-    st.subheader("AI Trading Intelligence")
+    signal = ai_analysis.get("signal", "HOLD")
+    confidence = ai_analysis.get("confidence", 0)
+    score = ai_analysis.get("score", 0)
+    summary = ai_analysis.get("summary", "")
+    reasons = ai_analysis.get("reasons", [])
 
-    st.json(ai_analysis)
+    signal_color = {
+        "BUY": "#22c55e",
+        "SELL": "#ef4444",
+        "HOLD": "#f59e0b",
+    }.get(signal, "#ffffff")
+
+    bg_color = {
+        "BUY": "rgba(34,197,94,0.12)",
+        "SELL": "rgba(239,68,68,0.12)",
+        "HOLD": "rgba(245,158,11,0.12)",
+    }.get(signal, "rgba(255,255,255,0.05)")
+
+    # =====================================================
+    # HEADER CARD
+    # =====================================================
+
+    st.markdown(f"""
+    <div style="
+        background:{bg_color};
+        padding:30px;
+        border-radius:22px;
+        border:1px solid rgba(255,255,255,0.08);
+        margin-bottom:25px;
+    ">
+
+    <div style="
+        font-size:42px;
+        font-weight:800;
+        color:{signal_color};
+        margin-bottom:10px;
+    ">
+    {signal}
+    </div>
+
+    <div style="
+        font-size:18px;
+        color:#d1d5db;
+        margin-bottom:8px;
+    ">
+    AI Confidence: {confidence}%
+    </div>
+
+    <div style="
+        font-size:16px;
+        color:#9ca3af;
+    ">
+    Score: {score}
+    </div>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    # =====================================================
+    # SUMMARY
+    # =====================================================
+
+    st.markdown("## 🧠 AI Market Summary")
+
+    st.markdown(f"""
+    <div style="
+        background:#111827;
+        padding:22px;
+        border-radius:18px;
+        border:1px solid #1f2937;
+        color:#e5e7eb;
+        font-size:17px;
+        line-height:1.7;
+        margin-bottom:25px;
+    ">
+    {summary}
+    </div>
+    """, unsafe_allow_html=True)
+
+    # =====================================================
+    # REASONS
+    # =====================================================
+
+    st.markdown("## 📊 AI Decision Factors")
+
+    if len(reasons) == 0:
+
+        st.warning("No AI reasons available.")
+
+    else:
+
+        cols = st.columns(2)
+
+        for i, reason in enumerate(reasons):
+
+            with cols[i % 2]:
+
+                st.markdown(f"""
+                <div style="
+                    background:#111827;
+                    padding:18px;
+                    border-radius:16px;
+                    border:1px solid #1f2937;
+                    margin-bottom:15px;
+                ">
+                    <div style="
+                        color:#e5e7eb;
+                        font-size:16px;
+                        font-weight:600;
+                    ">
+                    {reason}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    # =====================================================
+    # SIGNAL STRENGTH BAR
+    # =====================================================
+
+    st.markdown("## ⚡ Signal Strength")
+
+    st.progress(min(confidence / 100, 1.0))
+
+    # =====================================================
+    # MARKET BIAS
+    # =====================================================
+
+    st.markdown("## 🌍 Market Bias")
+
+    if signal == "BUY":
+
+        bias = "Bullish Momentum"
+
+    elif signal == "SELL":
+
+        bias = "Bearish Momentum"
+
+    else:
+
+        bias = "Neutral / Sideways"
+
+    st.markdown(f"""
+    <div style="
+        background:#111827;
+        padding:20px;
+        border-radius:18px;
+        border:1px solid #1f2937;
+        color:{signal_color};
+        font-size:18px;
+        font-weight:700;
+    ">
+    {bias}
+    </div>
+    """, unsafe_allow_html=True)
 
 # =========================================================
 # MTF TAB
