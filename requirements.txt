@@ -12,3 +12,4 @@ scipy>=1.12.0
 requests>=2.31.0
 python-dateutil>=2.8.2
 streamlit-autorefresh
+websocket-client==1.8.0
