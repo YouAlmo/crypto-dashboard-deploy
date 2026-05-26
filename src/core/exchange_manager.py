@@ -1,46 +1,51 @@
 import ccxt
-import threading
-from typing import Optional
 
 
 class ExchangeManager:
-    """
-    Singleton Bybit exchange manager.
-    Reuses one CCXT instance across the whole app
-    لتحسين الأداء وتقليل الـ latency.
-    """
 
-    _instance = None
-    _lock = threading.Lock()
-
-    def __init__(self):
-        self.exchange = ccxt.bybit({
-            "enableRateLimit": True,
-            "timeout": 15000,
-            "options": {
-                "defaultType": "linear",
-                "adjustForTimeDifference": True,
-            },
-        })
-
-        # تحميل الأسواق مرة واحدة فقط
-        self.exchange.load_markets()
+    _exchange = None
 
     @classmethod
     def get_exchange(cls):
 
-        if cls._instance is None:
+        if cls._exchange is not None:
+            return cls._exchange
 
-            with cls._lock:
+        exchanges_to_try = [
+            "kucoin",
+            "okx",
+            "kraken",
+            "bitfinex",
+        ]
 
-                if cls._instance is None:
-                    cls._instance = cls()
+        for ex_name in exchanges_to_try:
 
-        return cls._instance.exchange
+            try:
+
+                exchange_class = getattr(ccxt, ex_name)
+
+                exchange = exchange_class({
+                    "enableRateLimit": True,
+                })
+
+                exchange.load_markets()
+
+                cls._exchange = exchange
+
+                print(f"Connected to {ex_name}")
+
+                return exchange
+
+            except Exception as e:
+
+                print(f"{ex_name} failed: {e}")
+
+                continue
+
+        raise RuntimeError(
+            "No exchange available."
+        )
 
 
 def get_exchange():
-    """
-    Shortcut helper.
-    """
     return ExchangeManager.get_exchange()
