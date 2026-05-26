@@ -5,7 +5,7 @@ from typing import Optional
 
 class ExchangeManager:
     """
-    Singleton Binance exchange manager.
+    Singleton Bybit exchange manager.
     Reuses one CCXT instance across the whole app
     لتحسين الأداء وتقليل الـ latency.
     """
@@ -14,11 +14,11 @@ class ExchangeManager:
     _lock = threading.Lock()
 
     def __init__(self):
-        self.exchange = ccxt.binance({
+        self.exchange = ccxt.bybit({
             "enableRateLimit": True,
             "timeout": 15000,
             "options": {
-                "defaultType": "spot",
+                "defaultType": "linear",
                 "adjustForTimeDifference": True,
             },
         })
