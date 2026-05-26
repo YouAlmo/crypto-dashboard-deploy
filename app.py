@@ -281,29 +281,32 @@ AI SIGNAL: {verdict}
     )
 
 # =========================================================
-# TABS
+# PROFESSIONAL TRADING TERMINAL LAYOUT
 # =========================================================
 
-tab1, tab2, tab3, tab4 = st.tabs([
-    "📈 Chart",
-    "🤖 AI Analysis",
-    "🌍 Multi-Timeframe",
-    "📚 Orderbook"
-])
+# ---------------------------------------------------------
+# ROW 1
+# ---------------------------------------------------------
+
+left_col, right_col = st.columns([3.5, 1.2])
 
 # =========================================================
-# CHART TAB
+# LEFT — MAIN CHART
 # =========================================================
 
-with tab1:
+with left_col:
+
+    st.markdown("## 📈 Market Structure")
 
     fig = make_subplots(
         rows=2,
         cols=1,
         shared_xaxes=True,
-        vertical_spacing=0.03,
-        row_heights=[0.75, 0.25]
+        vertical_spacing=0.04,
+        row_heights=[0.78, 0.22]
     )
+
+    # ---------------- CANDLESTICK ----------------
 
     fig.add_trace(
         go.Candlestick(
@@ -318,41 +321,53 @@ with tab1:
         col=1
     )
 
+    # ---------------- EMA 9 ----------------
+
     fig.add_trace(
         go.Scatter(
             x=df.index,
             y=df["ema_9"],
-            name="EMA 9"
+            name="EMA 9",
+            line=dict(width=1.8)
         ),
         row=1,
         col=1
     )
+
+    # ---------------- EMA 21 ----------------
 
     fig.add_trace(
         go.Scatter(
             x=df.index,
             y=df["ema_21"],
-            name="EMA 21"
+            name="EMA 21",
+            line=dict(width=2)
         ),
         row=1,
         col=1
     )
+
+    # ---------------- EMA 50 ----------------
 
     fig.add_trace(
         go.Scatter(
             x=df.index,
             y=df["ema_50"],
-            name="EMA 50"
+            name="EMA 50",
+            line=dict(width=2.3)
         ),
         row=1,
         col=1
     )
 
+    # ---------------- VOLUME ----------------
+
     fig.add_trace(
         go.Bar(
             x=df.index,
             y=df["volume"],
-            name="Volume"
+            name="Volume",
+            opacity=0.4
         ),
         row=2,
         col=1
@@ -360,10 +375,23 @@ with tab1:
 
     fig.update_layout(
         template="plotly_dark",
-        height=800,
-        xaxis_rangeslider_visible=False,
+        height=820,
+        margin=dict(
+            l=10,
+            r=10,
+            t=10,
+            b=10
+        ),
         paper_bgcolor="#0b1220",
         plot_bgcolor="#0b1220",
+        xaxis_rangeslider_visible=False,
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1
+        ),
     )
 
     st.plotly_chart(
@@ -372,14 +400,13 @@ with tab1:
     )
 
 # =========================================================
-# AI TAB
+# RIGHT — AI PANEL
 # =========================================================
 
-with tab2:
+with right_col:
 
     signal = ai_analysis.get("signal", "HOLD")
     confidence = ai_analysis.get("confidence", 0)
-    score = ai_analysis.get("score", 0)
     summary = ai_analysis.get("summary", "")
     reasons = ai_analysis.get("reasons", [])
 
@@ -389,11 +416,177 @@ with tab2:
         "HOLD": "#f59e0b",
     }.get(signal, "#ffffff")
 
-    bg_color = {
-        "BUY": "rgba(34,197,94,0.12)",
-        "SELL": "rgba(239,68,68,0.12)",
-        "HOLD": "rgba(245,158,11,0.12)",
-    }.get(signal, "rgba(255,255,255,0.05)")
+    st.markdown(f"""
+    <div style="
+        background:#111827;
+        padding:24px;
+        border-radius:18px;
+        border:1px solid #1f2937;
+        margin-bottom:18px;
+    ">
+        <div style="
+            font-size:32px;
+            font-weight:800;
+            color:{signal_color};
+            margin-bottom:10px;
+        ">
+        {signal}
+        </div>
+
+        <div style="
+            color:#d1d5db;
+            font-size:18px;
+        ">
+        Confidence: {confidence}%
+        </div>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ---------------- SUMMARY ----------------
+
+    st.markdown("### 🧠 AI Summary")
+
+    st.markdown(f"""
+    <div style="
+        background:#111827;
+        padding:18px;
+        border-radius:16px;
+        border:1px solid #1f2937;
+        color:#d1d5db;
+        margin-bottom:18px;
+        line-height:1.7;
+    ">
+    {summary}
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ---------------- REASONS ----------------
+
+    st.markdown("### 📊 AI Factors")
+
+    for reason in reasons:
+
+        st.markdown(f"""
+        <div style="
+            background:#111827;
+            padding:14px;
+            border-radius:14px;
+            border:1px solid #1f2937;
+            margin-bottom:12px;
+            color:#e5e7eb;
+        ">
+        {reason}
+        </div>
+        """, unsafe_allow_html=True)
+
+    # ---------------- RSI ----------------
+
+    st.markdown("### ⚡ RSI")
+
+    st.progress(
+        min(
+            max(last["rsi"] / 100, 0),
+            1
+        )
+    )
+
+# ---------------------------------------------------------
+# ROW 2
+# ---------------------------------------------------------
+
+scanner_col, mtf_col = st.columns([2.4, 1.3])
+
+# =========================================================
+# MARKET SCANNER
+# =========================================================
+
+with scanner_col:
+
+    st.markdown("## 🌍 Market Scanner")
+
+    scanner_rows = []
+
+    for tf, data in mtf.items():
+
+        if tf.startswith("_"):
+            continue
+
+        scanner_rows.append({
+            "TF": tf,
+            "Signal": data.get("verdict", "N/A"),
+            "Score": data.get("score", 0),
+        })
+
+    scanner_df = pd.DataFrame(scanner_rows)
+
+    st.dataframe(
+        scanner_df,
+        use_container_width=True,
+        height=320
+    )
+
+# =========================================================
+# ORDERBOOK
+# =========================================================
+
+with mtf_col:
+
+    st.markdown("## 📚 Order Flow")
+
+    st.metric(
+        "Bid Volume",
+        round(orderbook["total_bid_vol"], 2)
+    )
+
+    st.metric(
+        "Ask Volume",
+        round(orderbook["total_ask_vol"], 2)
+    )
+
+    st.metric(
+        "Spread %",
+        round(orderbook["spread_pct"], 4)
+    )
+
+    st.metric(
+        "Imbalance",
+        round(orderbook["imbalance"], 4)
+    )
+
+# ---------------------------------------------------------
+# ROW 3
+# ---------------------------------------------------------
+
+st.markdown("## 📊 Market Metrics")
+
+m1, m2, m3, m4 = st.columns(4)
+
+with m1:
+    st.metric(
+        "Price",
+        f"${price:,.2f}"
+    )
+
+with m2:
+    st.metric(
+        "RSI",
+        round(last["rsi"], 2)
+    )
+
+with m3:
+    st.metric(
+        "MACD",
+        round(last["macd"], 4)
+    )
+
+with m4:
+    st.metric(
+        "Volume Ratio",
+        round(last.get("volume_ratio", 1), 2)
+    )
+
+
 
     # =====================================================
     # HEADER CARD
@@ -532,31 +725,6 @@ with tab2:
     </div>
     """, unsafe_allow_html=True)
 
-# =========================================================
-# MTF TAB
-# =========================================================
-
-with tab3:
-
-    st.subheader("Multi Timeframe Analysis")
-
-    rows = []
-
-    for tf, data in mtf.items():
-
-        if tf.startswith("_"):
-            continue
-
-        rows.append({
-            "Timeframe": tf,
-            "Signal": data["signal"],
-            "Score": data["score"],
-        })
-
-    st.dataframe(
-        pd.DataFrame(rows),
-        use_container_width=True
-    )
 
 # =========================================================
 # ORDERBOOK TAB
