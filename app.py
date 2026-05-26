@@ -369,7 +369,7 @@ with tab3:
 
         rows.append({
             "Timeframe": tf,
-            "Signal": data["verdict"],
+            "Signal": data["signal"],
             "Score": data["score"],
         })
 
