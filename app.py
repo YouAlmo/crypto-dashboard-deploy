@@ -1,329 +1,364 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
-from streamlit_autorefresh import st_autorefresh
+from src.data.market_data import fetch_ohlcv
+from src.analysis.indicators import add_all_indicators
+from src.analysis.signals import generate_signal
+from src.analysis.mtf import fetch_mtf_analysis
+from src.data.orderbook import fetch_order_book
+from src.core.ai_engine import generate_ai_analysis
 
-from src.data.market_data import (
-    SYMBOLS,
-    TIMEFRAMES,
-    fetch_ohlcv,
-)
-
-from src.analysis.indicators import (
-    add_all_indicators,
-)
-
-from src.analysis.signals import (
-    generate_signal,
-)
-
-from src.analysis.mtf import (
-    fetch_mtf_analysis,
-)
-
-from src.core.ai_engine import (
-    run_ai_analysis,
-    rank_opportunities,
-)
-
-from src.core.websocket_manager import (
-    start_websocket,
-    get_live_prices,
-    websocket_alive,
-)
-
-from src.data.coingecko import (
-    fetch_top20_markets,
-    format_large_number,
-)
-
-from src.data.orderbook import (
-    fetch_order_book,
-)
-
-
-# ─────────────────────────────────────────────────────────────
-# Streamlit Config
-# ─────────────────────────────────────────────────────────────
+# =========================================================
+# PAGE CONFIG
+# =========================================================
 
 st.set_page_config(
     page_title="SuperSignal Pro",
     page_icon="🚀",
     layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-st_autorefresh(
-    interval=3000,
-    key="supersignal-refresh",
-)
+# =========================================================
+# THEME
+# =========================================================
 
+st.markdown("""
+<style>
 
-# ─────────────────────────────────────────────────────────────
-# Theme
-# ─────────────────────────────────────────────────────────────
+html, body, [class*="css"] {
+    background-color: #0b1220;
+    color: #e5e7eb;
+}
 
-st.markdown(
-    """
-    <style>
+section[data-testid="stSidebar"] {
+    background-color: #111827;
+    border-right: 1px solid #1f2937;
+}
 
-    .main {
-        background-color: #0e1117;
-    }
+.stSelectbox label,
+.stSlider label,
+.stCheckbox label {
+    color: #f3f4f6 !important;
+    font-weight: 600;
+}
 
-    .stMetric {
-        background: #161b22;
-        padding: 12px;
-        border-radius: 12px;
-    }
+.metric-card {
+    background: #111827;
+    padding: 18px;
+    border-radius: 18px;
+    border: 1px solid #1f2937;
+}
 
-    div[data-testid="stMetricValue"] {
-        font-size: 24px;
-    }
+.signal-buy {
+    color: #22c55e;
+    font-weight: bold;
+}
 
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+.signal-sell {
+    color: #ef4444;
+    font-weight: bold;
+}
 
+.signal-hold {
+    color: #f59e0b;
+    font-weight: bold;
+}
 
-# ─────────────────────────────────────────────────────────────
-# Start WebSocket
-# ─────────────────────────────────────────────────────────────
+.big-title {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
 
-if not websocket_alive():
+.sub-title {
+    color: #9ca3af;
+    margin-bottom: 25px;
+}
 
-    start_websocket(SYMBOLS)
+</style>
+""", unsafe_allow_html=True)
 
+# =========================================================
+# SESSION STATE
+# =========================================================
 
-# ─────────────────────────────────────────────────────────────
-# Sidebar
-# ─────────────────────────────────────────────────────────────
+if "symbol" not in st.session_state:
+    st.session_state.symbol = "BTC/USDT"
 
-st.sidebar.title("⚡ SuperSignal Pro")
+if "timeframe" not in st.session_state:
+    st.session_state.timeframe = "1h"
 
-symbol = st.sidebar.selectbox(
+if "limit" not in st.session_state:
+    st.session_state.limit = 250
+
+if "auto_refresh" not in st.session_state:
+    st.session_state.auto_refresh = False
+
+# =========================================================
+# SIDEBAR
+# =========================================================
+
+st.sidebar.markdown("# 🚀 SuperSignal Pro")
+
+symbols = [
+    "BTC/USDT",
+    "ETH/USDT",
+    "SOL/USDT",
+    "XRP/USDT",
+    "BNB/USDT",
+    "DOGE/USDT",
+    "ADA/USDT",
+    "LINK/USDT",
+    "AVAX/USDT",
+    "SUI/USDT",
+    "AR/USDT",
+    "ZEC/USDT",
+    "FIL/USDT",
+    "ALGO/USDT",
+    "PYTH/USDT",
+]
+
+timeframes = [
+    "2m",
+    "3m",
+    "5m",
+    "10m",
+    "15m",
+    "1h",
+    "4h",
+    "1d",
+    "1w",
+    "1M",
+]
+
+st.session_state.symbol = st.sidebar.selectbox(
     "Select Coin",
-    SYMBOLS,
+    symbols,
+    index=symbols.index(st.session_state.symbol)
 )
 
-timeframe = st.sidebar.selectbox(
+st.session_state.timeframe = st.sidebar.selectbox(
     "Timeframe",
-    list(TIMEFRAMES.keys()),
-    index=7,
+    timeframes,
+    index=timeframes.index(st.session_state.timeframe)
 )
 
-limit = st.sidebar.slider(
+st.session_state.limit = st.sidebar.slider(
     "Candles",
     100,
-    500,
-    250,
+    1000,
+    st.session_state.limit,
+    50
 )
 
-show_orderbook = st.sidebar.checkbox(
-    "Show Orderbook",
-    value=True,
+st.session_state.auto_refresh = st.sidebar.checkbox(
+    "Auto Refresh",
+    value=st.session_state.auto_refresh
 )
 
-show_ai = st.sidebar.checkbox(
-    "Show AI Analysis",
-    value=True,
+refresh_seconds = st.sidebar.slider(
+    "Refresh Speed",
+    3,
+    60,
+    5
 )
 
-show_mtf = st.sidebar.checkbox(
-    "Show MTF Analysis",
-    value=True,
+# =========================================================
+# LOAD DATA
+# =========================================================
+
+with st.spinner("Loading market data..."):
+
+    df = fetch_ohlcv(
+        st.session_state.symbol,
+        timeframe=st.session_state.timeframe,
+        limit=st.session_state.limit
+    )
+
+    df = add_all_indicators(df)
+
+    signal = generate_signal(df)
+
+    mtf = fetch_mtf_analysis(st.session_state.symbol)
+
+    orderbook = fetch_order_book(st.session_state.symbol)
+
+    ai_analysis = generate_ai_analysis(df)
+
+# =========================================================
+# HEADER
+# =========================================================
+
+last = df.iloc[-1]
+
+price = float(last["close"])
+
+st.markdown(
+    f"""
+<div class="big-title">
+🚀 SuperSignal Pro
+</div>
+
+<div class="sub-title">
+Institutional Trading Intelligence Platform
+</div>
+""",
+    unsafe_allow_html=True
 )
 
+# =========================================================
+# TOP METRICS
+# =========================================================
 
-# ─────────────────────────────────────────────────────────────
-# Header
-# ─────────────────────────────────────────────────────────────
+m1, m2, m3, m4 = st.columns(4)
 
-st.title("🚀 SuperSignal Pro")
-
-st.caption(
-    "Institutional AI Trading Intelligence Platform"
-)
-
-
-# ─────────────────────────────────────────────────────────────
-# Load Market Data
-# ─────────────────────────────────────────────────────────────
-
-df = fetch_ohlcv(
-    symbol=symbol,
-    timeframe=timeframe,
-    limit=limit,
-)
-
-df = add_all_indicators(df)
-
-signal = generate_signal(df)
-
-live_prices = get_live_prices()
-
-live = live_prices.get(symbol, {})
-
-last_price = live.get(
-    "last",
-    df["close"].iloc[-1],
-)
-
-change_pct = live.get(
-    "change_percent",
-    0,
-)
-
-
-# ─────────────────────────────────────────────────────────────
-# Top Metrics
-# ─────────────────────────────────────────────────────────────
-
-c1, c2, c3, c4 = st.columns(4)
-
-with c1:
-
+with m1:
     st.metric(
         "Price",
-        f"${last_price:,.4f}",
-        f"{change_pct:.2f}%",
+        f"${price:,.2f}"
     )
 
-with c2:
-
+with m2:
     st.metric(
-        "Signal",
-        signal["signal"],
-        f"{signal['confidence']}%",
+        "RSI",
+        round(last["rsi"], 2)
     )
 
-with c3:
-
+with m3:
     st.metric(
-        "Trend",
-        signal["trend"],
-        signal["strength"],
+        "MACD",
+        round(last["macd"], 4)
     )
 
-with c4:
+with m4:
 
-    st.metric(
-        "Risk",
-        signal["risk"],
+    verdict = signal["signal"]
+
+    color_class = {
+        "BUY": "signal-buy",
+        "SELL": "signal-sell",
+    }.get(verdict, "signal-hold")
+
+    st.markdown(
+        f"""
+<div class="{color_class}">
+AI SIGNAL: {verdict}
+</div>
+""",
+        unsafe_allow_html=True
     )
 
+# =========================================================
+# TABS
+# =========================================================
 
-# ─────────────────────────────────────────────────────────────
-# Candlestick Chart
-# ─────────────────────────────────────────────────────────────
+tab1, tab2, tab3, tab4 = st.tabs([
+    "📈 Chart",
+    "🤖 AI Analysis",
+    "🌍 Multi-Timeframe",
+    "📚 Orderbook"
+])
 
-fig = go.Figure()
+# =========================================================
+# CHART TAB
+# =========================================================
 
-fig.add_trace(
-    go.Candlestick(
-        x=df.index,
-        open=df["open"],
-        high=df["high"],
-        low=df["low"],
-        close=df["close"],
-        name="Price",
-    )
-)
+with tab1:
 
-fig.add_trace(
-    go.Scatter(
-        x=df.index,
-        y=df["ema_9"],
-        name="EMA 9",
-    )
-)
-
-fig.add_trace(
-    go.Scatter(
-        x=df.index,
-        y=df["ema_21"],
-        name="EMA 21",
-    )
-)
-
-fig.add_trace(
-    go.Scatter(
-        x=df.index,
-        y=df["ema_50"],
-        name="EMA 50",
-    )
-)
-
-fig.update_layout(
-    height=650,
-    template="plotly_dark",
-    xaxis_rangeslider_visible=False,
-)
-
-st.plotly_chart(
-    fig,
-    use_container_width=True,
-)
-
-
-# ─────────────────────────────────────────────────────────────
-# AI Analysis
-# ─────────────────────────────────────────────────────────────
-
-if show_ai:
-
-    st.subheader("🧠 AI Analysis")
-
-    ai = run_ai_analysis(
-        symbol,
-        df,
+    fig = make_subplots(
+        rows=2,
+        cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.03,
+        row_heights=[0.75, 0.25]
     )
 
-    a1, a2, a3, a4 = st.columns(4)
-
-    with a1:
-
-        st.metric(
-            "AI Score",
-            ai["ai_score"],
-        )
-
-    with a2:
-
-        st.metric(
-            "Opportunity",
-            ai["opportunity"],
-        )
-
-    with a3:
-
-        st.metric(
-            "Regime",
-            ai["market_regime"],
-        )
-
-    with a4:
-
-        st.metric(
-            "Verdict",
-            ai["verdict"],
-        )
-
-    st.progress(
-        ai["ai_score"] / 100
+    fig.add_trace(
+        go.Candlestick(
+            x=df.index,
+            open=df["open"],
+            high=df["high"],
+            low=df["low"],
+            close=df["close"],
+            name="Price"
+        ),
+        row=1,
+        col=1
     )
 
+    fig.add_trace(
+        go.Scatter(
+            x=df.index,
+            y=df["ema_9"],
+            name="EMA 9"
+        ),
+        row=1,
+        col=1
+    )
 
-# ─────────────────────────────────────────────────────────────
-# MTF Analysis
-# ─────────────────────────────────────────────────────────────
+    fig.add_trace(
+        go.Scatter(
+            x=df.index,
+            y=df["ema_21"],
+            name="EMA 21"
+        ),
+        row=1,
+        col=1
+    )
 
-if show_mtf:
+    fig.add_trace(
+        go.Scatter(
+            x=df.index,
+            y=df["ema_50"],
+            name="EMA 50"
+        ),
+        row=1,
+        col=1
+    )
 
-    st.subheader("📊 Multi-Timeframe Analysis")
+    fig.add_trace(
+        go.Bar(
+            x=df.index,
+            y=df["volume"],
+            name="Volume"
+        ),
+        row=2,
+        col=1
+    )
 
-    mtf = fetch_mtf_analysis(symbol)
+    fig.update_layout(
+        template="plotly_dark",
+        height=800,
+        xaxis_rangeslider_visible=False,
+        paper_bgcolor="#0b1220",
+        plot_bgcolor="#0b1220",
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
+
+# =========================================================
+# AI TAB
+# =========================================================
+
+with tab2:
+
+    st.subheader("AI Trading Intelligence")
+
+    st.json(ai_analysis)
+
+# =========================================================
+# MTF TAB
+# =========================================================
+
+with tab3:
+
+    st.subheader("Multi Timeframe Analysis")
 
     rows = []
 
@@ -333,186 +368,59 @@ if show_mtf:
             continue
 
         rows.append({
-
-            "TF": data["label"],
-
-            "Signal": data["signal"],
-
+            "Timeframe": tf,
+            "Signal": data["verdict"],
             "Score": data["score"],
-
-            "Confidence": data["confidence"],
-
-            "Trend": data["trend"],
-
-            "RSI": round(data["rsi"], 2),
-
-            "ADX": round(data["adx"], 2),
-
-            "Momentum": round(
-                data["momentum"],
-                2,
-            ),
         })
 
-    mtf_df = pd.DataFrame(rows)
-
     st.dataframe(
-        mtf_df,
-        use_container_width=True,
+        pd.DataFrame(rows),
+        use_container_width=True
     )
 
-    overall = mtf["_overall"]
+# =========================================================
+# ORDERBOOK TAB
+# =========================================================
 
-    st.success(
-        f"""
-        Overall Bias: {overall['market_bias']}
-        | Alignment: {overall['alignment']}
-        | Confidence: {overall['confidence']}%
-        """
-    )
+with tab4:
 
+    st.subheader("Live Orderbook")
 
-# ─────────────────────────────────────────────────────────────
-# Market Scanner
-# ─────────────────────────────────────────────────────────────
+    c1, c2, c3 = st.columns(3)
 
-st.subheader("🔥 AI Opportunity Scanner")
-
-scanner_results = []
-
-for sym in SYMBOLS:
-
-    try:
-
-        sdf = fetch_ohlcv(
-            sym,
-            timeframe="1h",
-            limit=200,
-        )
-
-        sdf = add_all_indicators(sdf)
-
-        ai = run_ai_analysis(
-            sym,
-            sdf,
-        )
-
-        scanner_results.append(ai)
-
-    except Exception as e:
-
-        print(e)
-
-scanner_results = rank_opportunities(
-    scanner_results
-)
-
-scanner_rows = []
-
-for row in scanner_results:
-
-    scanner_rows.append({
-
-        "Symbol": row["symbol"],
-
-        "AI Score": row["ai_score"],
-
-        "Verdict": row["verdict"],
-
-        "Opportunity": row["opportunity"],
-
-        "Regime": row["market_regime"],
-    })
-
-scanner_df = pd.DataFrame(scanner_rows)
-
-st.dataframe(
-    scanner_df,
-    use_container_width=True,
-)
-
-
-# ─────────────────────────────────────────────────────────────
-# Market Cap Table
-# ─────────────────────────────────────────────────────────────
-
-st.subheader("🌍 Market Overview")
-
-symbols, cg = fetch_top20_markets()
-
-market_rows = []
-
-for sym in symbols:
-
-    coin = cg.get(sym, {})
-
-    market_rows.append({
-
-        "Coin": sym,
-
-        "Market Cap": format_large_number(
-            coin.get("market_cap", 0)
-        ),
-
-        "Volume": format_large_number(
-            coin.get("total_volume", 0)
-        ),
-
-        "24H %": round(
-            coin.get(
-                "price_change_percentage_24h",
-                0,
-            ),
-            2,
-        ),
-    })
-
-market_df = pd.DataFrame(market_rows)
-
-st.dataframe(
-    market_df,
-    use_container_width=True,
-)
-
-
-# ─────────────────────────────────────────────────────────────
-# Orderbook
-# ─────────────────────────────────────────────────────────────
-
-if show_orderbook:
-
-    st.subheader("📚 Live Orderbook")
-
-    ob = fetch_order_book(symbol)
-
-    o1, o2, o3 = st.columns(3)
-
-    with o1:
-
+    with c1:
         st.metric(
-            "Bid Pressure",
-            f"{ob['buy_pct']:.2f}%",
+            "Bid Volume",
+            round(orderbook["total_bid_vol"], 2)
         )
 
-    with o2:
-
+    with c2:
         st.metric(
-            "Ask Pressure",
-            f"{ob['sell_pct']:.2f}%",
+            "Ask Volume",
+            round(orderbook["total_ask_vol"], 2)
         )
 
-    with o3:
-
+    with c3:
         st.metric(
             "Spread %",
-            f"{ob['spread_pct']:.4f}",
+            round(orderbook["spread_pct"], 4)
         )
 
+    ob_df = pd.DataFrame(orderbook["bids"])
 
-# ─────────────────────────────────────────────────────────────
-# Footer
-# ─────────────────────────────────────────────────────────────
+    st.dataframe(
+        ob_df,
+        use_container_width=True
+    )
 
-st.caption(
-    "SuperSignal Pro • Real-Time AI Trading Terminal"
-)
+# =========================================================
+# AUTO REFRESH
+# =========================================================
+
+if st.session_state.auto_refresh:
+
+    import time
+
+    time.sleep(refresh_seconds)
+
+    st.rerun()
