@@ -14,8 +14,10 @@ SYMBOLS = [
 
 TIMEFRAMES = {
     "1m":  "1 minute",
+    "2m":  "2 minutes",
     "3m":  "3 minutes",
     "5m":  "5 minutes",
+    "10m": "10 minutes",
     "15m": "15 minutes",
     "30m": "30 minutes",
     "1h":  "1 hour",
@@ -159,8 +161,17 @@ def _generate_synthetic_data(symbol: str, timeframe: str, limit: int) -> pd.Data
     rng = np.random.default_rng(seed_map.get(symbol, hash(symbol) % 1000))
     base = base_price_map.get(symbol, 1.0)
 
-    freq_map = {"1m": "1min", "5m": "5min", "15m": "15min",
-                "1h": "1h", "4h": "4h", "1d": "1D"}
+    freq_map = {
+        "1m": "1min",
+        "2m": "2min",
+        "5m": "5min",
+        "10m": "10min",
+        "15m": "15min",
+        "1h": "1h",
+        "4h": "4h",
+        "1d": "1D"
+    }
+
     freq = freq_map.get(timeframe, "1h")
     end = datetime.now().replace(minute=0, second=0, microsecond=0)
     idx = pd.date_range(end=end, periods=limit, freq=freq)
@@ -199,7 +210,7 @@ def _synthetic_ticker(symbol: str) -> dict:
         "percentage": 1.5,
         "high": price * 1.03,
         "low": price * 0.97,
-        "volume": 25_000.0,
-        "quoteVolume": price * 25_000.0,
+        "volume": 25_000_000,
+        "quoteVolume": 125_000_000,
         "timestamp": datetime.now(),
     }
