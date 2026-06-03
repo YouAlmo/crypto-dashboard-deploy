@@ -24,6 +24,8 @@ _CATEGORY_WEIGHTS = {
     "fg":        0.5,
     "ob":        0.8,
     "mtf":       1.5,
+    "institutional": 1.0,
+    "regime": 0.8,
 }
 
 
@@ -56,6 +58,91 @@ def classify_risk(confidence: float, bull_count: int, bear_count: int) -> str:
         return "Medium"
 
     return "High"
+
+
+def _detect_institutional_bias(orderbook: dict) -> dict:
+    buy_pct = orderbook.get("buy_pct", 50)
+    sell_pct = orderbook.get("sell_pct", 50)
+    imbalance = orderbook.get("imbalance", (buy_pct - sell_pct) / 100)
+
+    bids = orderbook.get("bids", []) or []
+    asks = orderbook.get("asks", []) or []
+    top_bid = max((item.get("size", 0) for item in bids), default=0)
+    top_ask = max((item.get("size", 0) for item in asks), default=0)
+
+    size_bias = 0.0
+    if top_bid > top_ask * 1.25:
+        size_bias = 0.25
+    elif top_ask > top_bid * 1.25:
+        size_bias = -0.25
+
+    raw_score = ((buy_pct - sell_pct) / 100) * 0.6 + imbalance * 0.3 + size_bias * 0.3
+    raw_score = max(-1.0, min(1.0, raw_score))
+
+    if raw_score > 0.25:
+        label = "Bullish"
+        reason = "Institutional buy-side bias"
+    elif raw_score < -0.25:
+        label = "Bearish"
+        reason = "Institutional sell-side bias"
+    else:
+        label = "Neutral"
+        reason = "No clear institutional bias"
+
+    return {"score": raw_score, "label": label, "reason": reason}
+
+
+def classify_market_regime(indicators: dict, mtf_overall: dict = None) -> str:
+    close = indicators.get("close", 0)
+    ema_9 = indicators.get("ema_9", close)
+    ema_21 = indicators.get("ema_21", close)
+    ema_50 = indicators.get("ema_50", close)
+    ema_200 = indicators.get("ema_200", close)
+    avg_mtf = mtf_overall.get("avg_score", 0) if mtf_overall else 0
+
+    bull = close > ema_50 > ema_200 and ema_9 > ema_21
+    bear = close < ema_50 < ema_200 and ema_9 < ema_21
+    narrow_range = abs(ema_50 - ema_200) / max(ema_200, 1) < 0.03
+
+    if bull and avg_mtf >= 1:
+        return "Bull"
+    if bear and avg_mtf <= -1:
+        return "Bear"
+    if narrow_range:
+        return "Sideways"
+
+    return "Transitional"
+
+
+def score_trend_strength(indicators: dict, mtf_overall: dict = None) -> float:
+    ema_9 = indicators.get("ema_9", indicators.get("close", 0))
+    ema_21 = indicators.get("ema_21", indicators.get("close", 0))
+    macd = indicators.get("macd", 0)
+    macd_sig = indicators.get("macd_signal", 0)
+    rsi = indicators.get("rsi", 50)
+    avg_mtf = mtf_overall.get("avg_score", 0) if mtf_overall else 0
+
+    ema_gap = abs(ema_9 - ema_21) / max(abs(ema_21), 1)
+    macd_gap = abs(macd - macd_sig) / max(abs(macd_sig), 1)
+    rsi_gap = abs(rsi - 50) / 50
+    mtf_factor = min(1.0, abs(avg_mtf) / 4)
+
+    score = 0.4 * min(1.0, ema_gap / 0.02)
+    score += 0.3 * min(1.0, macd_gap / 0.5)
+    score += 0.2 * rsi_gap
+    score += 0.1 * mtf_factor
+
+    return max(0.0, min(1.0, score))
+
+
+def classify_trend_strength(score: float) -> str:
+    if score >= 0.75:
+        return "Strong"
+    if score >= 0.5:
+        return "Moderate"
+    if score >= 0.25:
+        return "Weak"
+    return "Flat"
 
 
 def generate_signal(
@@ -200,6 +287,27 @@ def generate_signal(
 
         max_possible += _CATEGORY_WEIGHTS["mtf"] * 3
 
+    # Institutional bias and regime detection
+    bias = _detect_institutional_bias(ob)
+    market_regime = classify_market_regime(indicators, mtf_overall)
+    trend_strength = score_trend_strength(indicators, mtf_overall)
+    trend_label = classify_trend_strength(trend_strength)
+
+    if bias["label"] == "Bullish":
+        _push(1.5, "institutional", bias["reason"])
+    elif bias["label"] == "Bearish":
+        _push(-1.5, "institutional", bias["reason"])
+
+    if market_regime == "Bull":
+        _push(1.0, "regime", "Bull market regime")
+    elif market_regime == "Bear":
+        _push(-1.0, "regime", "Bear market regime")
+    elif market_regime == "Sideways":
+        _push(0.4, "regime", "Sideways market regime")
+
+    max_possible += _CATEGORY_WEIGHTS["institutional"] * 1.5
+    max_possible += _CATEGORY_WEIGHTS["regime"] * 1.0
+
     # Sentiment
     if sentiment_score > 0.4:
         _push(2, "sentiment", "Strong positive sentiment")
@@ -231,6 +339,9 @@ def generate_signal(
         signal = SIGNAL_HOLD
         conf = max(0.40, 0.65 - abs(norm) * 0.25)
 
+    if signal != SIGNAL_HOLD:
+        conf = max(0.40, min(0.98, conf + (trend_strength - 0.5) * 0.06))
+
     bull_count = sum(1 for s in scores if s > 0)
     bear_count = sum(1 for s in scores if s < 0)
 
@@ -250,6 +361,11 @@ def generate_signal(
         "strength": strength,
         "risk_level": risk_level,
         "normalized_score": round(norm, 3),
+        "institutional_bias": bias["label"],
+        "institutional_bias_score": round(bias["score"], 3),
+        "market_regime": market_regime,
+        "trend_strength": round(trend_strength, 3),
+        "trend_strength_label": trend_label,
         "reasons": [r for _, r in reasons_sorted],
         "bull_signals": bull_count,
         "bear_signals": bear_count,

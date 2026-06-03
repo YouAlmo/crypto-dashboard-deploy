@@ -1,10 +1,11 @@
+# SuperSignal AI Engine
 import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 import streamlit as st
 import pandas as pd
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
@@ -41,73 +42,130 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-def render_sidebar(watchlist_symbols: list):
-
-    symbol_default = st.query_params.get("symbol", watchlist_symbols[0])
-
-    if isinstance(symbol_default, str):
-        symbol_default = st.query_params.get("symbol", watchlist_symbols[0])
-
-    if isinstance(symbol_default, list):
-        symbol_default = symbol_default[0]
-    st.query_params["symbol"] = symbol
-
-    symbol = st.sidebar.selectbox(
-        "Symbol",
-        watchlist_symbols,
-        index=watchlist_symbols.index(symbol_default) if symbol_default in watchlist_symbols else 0
-    )
-
-    st.query_params["symbol"] = symbol
-
-    timeframe_default = st.query_params.get(
-        "timeframe",
-        list(TIMEFRAMES)[0]
-    )
-
-    if isinstance(timeframe_default, list):
-        timeframe_default = timeframe_default[0]
-
-    timeframe = st.sidebar.selectbox(
-        "Timeframe",
-        list(TIMEFRAMES),
-        index=list(TIMEFRAMES).index(timeframe_default)
-    )
-
-    st.query_params["timeframe"] = timeframe
-# ── Persistent settings ─────────────────────────────────────
-    if "paper_capital" not in st.session_state:
-        st.session_state.paper_capital = 100.0
-
-    if "risk_tolerance" not in st.session_state:
-        st.session_state.risk_tolerance = 0.5
-
-    if "sl_pct" not in st.session_state:
-        st.session_state.sl_pct = 2.0
-
-    if "tp_pct" not in st.session_state:
-        st.session_state.tp_pct = 4.0
-
-# ── theme CSS ────────────────────────────────────────────────────────────────
-
-st.markdown("""
-<style>
-.terminal-card {
-    border: 1px solid #1e2130;
-    border-radius: 8px;
-    padding: 12px 16px;
-    background: #0d1117;
-    margin-bottom: 6px;
+THEME_OPTIONS = ["Institutional Dark", "Premium Light"]
+THEME_TOKENS = {
+    "Institutional Dark": {
+        "app_bg": "#05101d",
+        "panel_bg": "rgba(9,17,31,0.94)",
+        "card_bg": "rgba(10,18,30,0.96)",
+        "card_border": "rgba(97,156,255,0.16)",
+        "text": "#e2e8f0",
+        "muted": "#94a3b8",
+        "accent": "#60a5fa",
+        "accent_alt": "#26c6da",
+        "success": "#26a69a",
+        "danger": "#ef5350",
+        "warning": "#fbbf24",
+        "shadow": "0 24px 60px rgba(10,18,35,0.28)",
+        "sidebar": "rgba(8,12,18,0.98)",
+        "tab_bg": "rgba(15,23,42,0.95)",
+        "tab_active": "rgba(34,70,124,0.95)",
+        "tab_border": "rgba(97,156,255,0.18)",
+        "heat_bull": "rgba(38,166,154,0.28)",
+        "heat_bear": "rgba(239,83,80,0.28)",
+    },
+    "Premium Light": {
+        "app_bg": "#eff5fb",
+        "panel_bg": "#f5f8ff",
+        "card_bg": "rgba(255,255,255,0.98)",
+        "card_border": "rgba(37,99,235,0.15)",
+        "text": "#102a43",
+        "muted": "#64748b",
+        "accent": "#2563eb",
+        "accent_alt": "#1d4ed8",
+        "success": "#047857",
+        "danger": "#b91c1c",
+        "warning": "#c2410b",
+        "shadow": "0 22px 52px rgba(15,23,42,0.08)",
+        "sidebar": "#eef4fb",
+        "tab_bg": "#e7f0ff",
+        "tab_active": "#ffffff",
+        "tab_border": "rgba(37,99,235,0.18)",
+        "heat_bull": "rgba(34,197,94,0.18)",
+        "heat_bear": "rgba(248,113,113,0.18)",
+    },
 }
-.badge-buy  { background:#1a7f37;color:#fff;padding:2px 10px;border-radius:4px;font-weight:700;font-size:.82em }
-.badge-sell { background:#8b0000;color:#fff;padding:2px 10px;border-radius:4px;font-weight:700;font-size:.82em }
-.badge-hold { background:#7d5a00;color:#fff;padding:2px 10px;border-radius:4px;font-weight:700;font-size:.82em }
-.metric-label { color:#8b949e;font-size:.75em;text-transform:uppercase;letter-spacing:.04em }
-.metric-val   { font-size:1.3em;font-weight:700 }
-.up   { color:#26a69a }
-.down { color:#ef5350 }
-</style>
-""", unsafe_allow_html=True)
+
+def get_theme_css(theme_name: str) -> str:
+    t = THEME_TOKENS.get(theme_name, THEME_TOKENS["Institutional Dark"])
+    return f"""
+    <style>
+    :root {{
+      --app-bg: {t['app_bg']};
+      --panel-bg: {t['panel_bg']};
+      --card-bg: {t['card_bg']};
+      --card-border: {t['card_border']};
+      --text: {t['text']};
+      --muted: {t['muted']};
+      --accent: {t['accent']};
+      --accent-alt: {t['accent_alt']};
+      --success: {t['success']};
+      --danger: {t['danger']};
+      --warning: {t['warning']};
+      --shadow: {t['shadow']};
+      --sidebar: {t['sidebar']};
+      --tab-bg: {t['tab_bg']};
+      --tab-active: {t['tab_active']};
+      --tab-border: {t['tab_border']};
+      --heat-bull: {t['heat_bull']};
+      --heat-bear: {t['heat_bear']};
+    }}
+    body, .stApp, .block-container, .main {{ background: var(--app-bg) !important; color: var(--text) !important; }}
+    section[data-testid="stSidebar"], .sidebar .css-1lcbmhc, .stSidebar {{ background: var(--sidebar) !important; border-right: 1px solid var(--card-border); }}
+    .sidebar-block {{ background: var(--panel-bg); border-color: var(--card-border); color: var(--text); padding: 18px 20px; border-radius: 18px; box-shadow: var(--shadow); }}
+    .sidebar-block h3 {{ color: var(--text); margin-bottom: 10px; }}
+    .sidebar-block p {{ color: var(--muted); margin-bottom: 0; }}
+    .stSidebar .element-container {{ background: transparent !important; }}
+    .stSidebar .stSelectbox > div > div, .stSidebar .stSlider > div, .stSidebar .stNumberInput > div, .stSidebar .stCheckbox > div, .stSidebar .stRadio > div {{ border-radius: 16px !important; }}
+    .dashboard-card, .dashboard-tile, .table-card, .terminal-card, .signal-card {{ background: var(--card-bg); border-color: var(--card-border); box-shadow: var(--shadow); color: var(--text); border-radius: 20px; padding: 18px 20px; }}
+    .dashboard-card:hover, .signal-card:hover {{ transform: translateY(-3px); }}
+    .dashboard-card {{ border: 1px solid var(--card-border); }}
+    .dashboard-tile {{ border: 1px solid var(--card-border); }}
+    .table-card {{ border: 1px solid var(--card-border); }}
+    .terminal-card {{ border: 1px solid var(--card-border); }}
+    .metric-pill {{ color: var(--text); padding: 7px 14px; font-size: 0.78rem; }}
+    .metric-pill.buy {{ background: rgba(38,166,154,0.14); color: var(--success); }}
+    .metric-pill.sell {{ background: rgba(239,83,80,0.14); color: var(--danger); }}
+    .metric-pill.hold {{ background: rgba(251,191,36,0.16); color: var(--warning); }}
+    .signal-card.buy {{ box-shadow: 0 20px 52px rgba(38,166,154,0.16); }}
+    .signal-card.sell {{ box-shadow: 0 20px 52px rgba(239,83,80,0.16); }}
+    .signal-card.hold {{ box-shadow: 0 20px 52px rgba(251,191,36,0.14); }}
+    .signal-badge {{ background: var(--accent); color: #fff; }}
+    .small-muted {{ color: var(--muted); }}
+    .conf-wrap, .dom-wrap {{ background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; }}
+    .conf-bar {{ background: rgba(255,255,255,0.12); }}
+    .dom-bar {{ background: rgba(255,255,255,0.12); }}
+    .risk-badge {{ color: var(--text); }}
+    .risk-low {{ background: linear-gradient(90deg, var(--success), #a5f3c9); }}
+    .risk-medium {{ background: linear-gradient(90deg, var(--warning), #fde68a); }}
+    .risk-high {{ background: linear-gradient(90deg, var(--danger), #fca5a5); }}
+    .section-title {{ color: var(--text); font-size: 1.45rem; letter-spacing: -0.02em; margin-bottom: 0.35rem; }}
+    .section-subtitle {{ color: var(--muted); margin-bottom: 1.15rem; font-size: 0.95rem; }}
+    .stTabs [role="tab"] {{ display: inline-flex !important; align-items: center; justify-content: center; gap: 0.45rem; min-height: 52px; padding: 0.9rem 1rem; margin-right: 8px; border-radius: 14px 14px 0 0; border: 1px solid var(--tab-border); background: var(--tab-bg); color: var(--text); transition: transform .18s ease, box-shadow .18s ease, background .18s ease; font-size: 0.95rem; font-weight: 600; }}
+    .stTabs [role="tab"]:hover {{ transform: translateY(-1px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }}
+    .stTabs [role="tab"][aria-selected="true"] {{ background: var(--tab-active); color: var(--text); box-shadow: 0 10px 28px rgba(0,0,0,0.14); border-bottom: 4px solid var(--accent); }}
+    .stTabs [role="tab"] span, .stTabs [role="tab"] svg {{ line-height: 1.2; }}
+    .signal-item {{ background: rgba(255,255,255,0.08); color: var(--text); }}
+    .table-card h5 {{ color: var(--text); }}
+    button[aria-label*="Theme"], button[title*="Theme"], [data-testid="stThemeToggle"] {{ display: none !important; }}
+    .stButton>button {{ border-radius: 14px; padding: 0.95rem 1rem; font-weight: 700; }}
+    .stSidebar .stButton>button {{ width: 100%; }}
+    .stSidebar label {{ color: var(--text) !important; font-weight: 600; }}
+    .stSidebar .stSelectbox>div, .stSidebar .stSlider>div, .stSidebar .stNumberInput>div {{ background: var(--card-bg) !important; border: 1px solid var(--card-border) !important; box-shadow: inset 0 0 0 rgba(0,0,0,0.02); }}
+    .stSidebar .stSlider .expy {{
+      background: transparent !important;
+    }}
+    @keyframes pulse {{
+      0%, 100% {{ opacity: 0.6; }}
+      50% {{ opacity: 1; }}
+    }}
+    @media (max-width: 1024px) {{ .stTabs [role="tab"] {{ padding: 0.75rem 0.85rem; min-height: 48px; }} }}
+    @media (max-width: 760px) {{ .stTabs [role="tab"] {{ flex: 1 1 auto; margin-right: 6px; min-width: 120px; }} }}
+    </style>
+    """
+
+def render_theme_css(theme_name: str):
+    st.markdown(get_theme_css(theme_name), unsafe_allow_html=True)
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -137,6 +195,54 @@ def sig_badge(sig: str) -> str:
 def sentiment_color(s: str) -> str:
     return {"positive": "#26a69a", "negative": "#ef5350", "neutral": "#f39c12"}.get(s, "#888")
 
+def render_dashboard_card(title: str, value: str, subtitle: str = "", accent: str = "var(--accent)") -> str:
+    return (
+        f"<div class='dashboard-card'>"
+        f"<div style='font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px'>{title}</div>"
+        f"<div style='font-size:2rem;font-weight:800;color:{accent};line-height:1.05;margin-bottom:6px'>{value}</div>"
+        f"<div style='font-size:.92rem;color:var(--muted)'>{subtitle}</div>"
+        f"</div>"
+    )
+
+def render_metric_tile(title: str, value: str, detail: str = "", badge: str = "") -> str:
+    badge_html = f"<span class='metric-pill {badge}'>{badge.replace('-', ' ').title()}</span>" if badge else ""
+    return (
+        f"<div class='dashboard-tile'>"
+        f"<h4>{title}{badge_html}</h4>"
+        f"<div style='font-size:1.5rem;font-weight:800;line-height:1.1;margin-top:8px;color:var(--text)'>{value}</div>"
+        f"<p style='color:var(--muted)'>{detail}</p>"
+        f"</div>"
+    )
+
+def render_section_header(title: str, subtitle: str = "") -> str:
+    description = f"<div class='section-subtitle'>{subtitle}</div>" if subtitle else ""
+    return (
+        f"<div class='section-title'>{title}</div>"
+        f"{description}"
+    )
+
+def render_notice_badge(message: str, kind: str = "info") -> None:
+    colors = {
+        "info": ("#2563eb", "rgba(37,99,235,0.08)"),
+        "warning": ("#f59e0b", "rgba(251,146,60,0.12)"),
+        "error": ("#ef4444", "rgba(239,68,68,0.12)"),
+    }
+    fg, bg = colors.get(kind, ("#64748b", "rgba(100,116,139,0.1)"))
+    st.markdown(
+        f"<div style='padding:12px 16px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);"
+        f"background:{bg};color:{fg};font-size:0.95rem;margin-bottom:16px;line-height:1.4;'>"
+        f"<strong>{message}</strong></div>",
+        unsafe_allow_html=True,
+    )
+
+def render_empty_state(message: str = "Data unavailable.", icon: str = "⚠️") -> None:
+    st.markdown(
+        f"<div style='padding:18px 20px;border-radius:18px;border:1px solid rgba(255,255,255,0.08);"
+        f"background:rgba(255,255,255,0.05);color:var(--muted);font-size:0.95rem;'>"
+        f"{icon} {message}</div>",
+        unsafe_allow_html=True,
+    )
+
 def verdict_color(v: str) -> str:
     return {
         "Strong Buy":  "#1a7f37",
@@ -146,53 +252,339 @@ def verdict_color(v: str) -> str:
         "Strong Sell": "#8b0000",
     }.get(v, "#888")
 
+# ── PERF: Session state & lazy loading ─────────────────────────────────────
+if "rendered_tabs" not in st.session_state:
+    st.session_state.rendered_tabs = set()
+
+def mark_tab_rendered(tab_name: str):
+    st.session_state.rendered_tabs.add(tab_name)
+
+def is_tab_rendered(tab_name: str) -> bool:
+    return tab_name in st.session_state.rendered_tabs
+
+def render_skeleton_loader(height: str = "200px", count: int = 1):
+    """Lightweight placeholder during data load."""
+    for _ in range(count):
+        st.markdown(
+            f"<div style='background:rgba(255,255,255,0.08);height:{height};border-radius:12px;"
+            f"margin-bottom:16px;animation:pulse 1.5s infinite' />\n",
+            unsafe_allow_html=True
+        )
+
 # ── cache layer ───────────────────────────────────────────────────────────────
 
+@st.cache_data(ttl=45)
 def load_watchlist():
+    """Top 20 coins - cached 45s."""
     return fetch_top20_markets()
 
-@st.cache_data(ttl=20, show_spinner=False)
+@st.cache_data(ttl=15, show_spinner=False)
 def load_tickers_for_watchlist(symbols_key: str) -> dict:
+    """Binance tickers - cached 15s."""
     return fetch_tickers_for(symbols_key.split("|"))
 
-@st.cache_data(ttl=30, show_spinner=False)
+@st.cache_data(ttl=10, show_spinner=False)
 def load_market_data(symbol: str, timeframe: str, limit: int = 200):
+    """Basic + indicators - cached 10s."""
     df = fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
     df = add_all_indicators(df)
     return df
 
-@st.cache_data(ttl=30, show_spinner=False)
+@st.cache_data(ttl=10, show_spinner=False)
 def load_full_data(symbol: str, timeframe: str, limit: int = 200):
-    """Loads basic + advanced indicators for the main chart."""
+    """Full data with advanced indicators - cached 10s."""
     df = fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
     df = add_all_indicators(df)
     df = add_all_advanced_indicators(df)
     return df
 
-@st.cache_data(ttl=20, show_spinner=False)
-def load_watchlist_data(symbol: str, timeframe: str):
-    df = fetch_ohlcv(symbol, timeframe=timeframe, limit=80)
+@st.cache_data(ttl=10, show_spinner=False)
+def load_watchlist_data(symbol: str, timeframe: str, limit: int = 80):
+    """Fast watchlist scan - cached 10s."""
+    df = fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
     df = add_all_indicators(df)
     return df
 
+@st.cache_data(ttl=15)
 def load_fear_greed():
+    """Fear & Greed - cached 15s."""
     return fetch_fear_greed_index()
 
-@st.cache_data(ttl=120, show_spinner=False)
+@st.cache_data(ttl=45, show_spinner=False)
 def load_smc(symbol: str, timeframe: str, limit: int = 200):
-    df = fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
-    df = add_all_indicators(df)
-    return analyze_smc(df)
+    """SMC analysis - cached 45s."""
+    limit = min(limit, 220)
+    try:
+        df = fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
+        df = add_all_indicators(df)
+        return analyze_smc(df)
+    except Exception:
+        return _default_smc()
 
-@st.cache_data(ttl=20, show_spinner=False)
+
+def _default_smc() -> dict:
+    return {
+        "premium_discount": {
+            "current_zone": "N/A",
+            "equilibrium": 0.0,
+            "range_high": 0.0,
+            "range_low": 0.0,
+        },
+        "bos_bull": [], "bos_bear": [],
+        "choch_bull": [], "choch_bear": [],
+        "swing_highs": [], "swing_lows": [],
+        "bull_fvg": [], "bear_fvg": [],
+        "supply_zones": [], "demand_zones": [],
+        "equal_highs_above": [], "equal_lows_below": [],
+    }
+
+@st.cache_data(ttl=10, show_spinner=False)
 def load_orderbook(symbol: str):
-    return fetch_order_book(symbol)
+    """Order book - cached 10s with retry, timeout, and fallback."""
+    def fetch_once():
+        return fetch_order_book(symbol)
+
+    ob = None
+    for attempt in range(2):
+        try:
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(fetch_once)
+                ob = future.result(timeout=3)
+            if ob and isinstance(ob, dict) and "bids" in ob and "asks" in ob:
+                return ob
+        except Exception:
+            ob = None
+    return {
+        "best_bid": 0.0,
+        "best_ask": 0.0,
+        "spread": 0.0,
+        "spread_pct": 0.0,
+        "buy_pct": 50.0,
+        "sell_pct": 50.0,
+        "imbalance": 0.0,
+        "cum_delta": 0.0,
+        "bids": [{"price": 0, "size": 0, "cumulative": 0, "value": 0}],
+        "asks": [{"price": 0, "size": 0, "cumulative": 0, "value": 0}],
+        "source": "synthetic",
+    }
+
+
+def _default_mtf() -> dict:
+    def _tf_template():
+        return {
+            "score": 0,
+            "verdict": "N/A",
+            "signal": "N/A",
+            "color": "#999",
+            "details": {"trend": "Unavailable"},
+            "indicators": {},
+            "momentum": 0,
+            "confidence": 0.0,
+        }
+    results = {tf: _tf_template() for tf in ["1m", "5m", "15m", "1h", "4h"]}
+    results["_overall"] = {
+        "signal": "N/A",
+        "score": 0,
+        "alignment": "Neutral",
+        "verdict": "N/A",
+        "avg_score": 0.0,
+        "color": "#999",
+        "confidence": 0.0,
+        "bullish": 0,
+        "bearish": 0,
+        "hold": 0,
+        "agreement": 0,
+        "base_tf": "1h",
+    }
+    return results
+
+@st.cache_data(ttl=15, show_spinner=False)
+def load_mtf_data(symbol: str, base_tf: str = "1h"):
+    """Multi-Timeframe analysis - cached 15s with concurrency and safe defaults."""
+    tfs = ["1m", "5m", "15m", "1h", "4h"]
+
+    def default_tf(tf: str):
+        return {
+            "score": 0,
+            "verdict": "N/A",
+            "signal": "N/A",
+            "color": "#999",
+            "details": {"trend": "Unavailable"},
+            "indicators": {},
+            "momentum": 0,
+            "confidence": 0.0,
+        }
+
+    def normalize_indicator_value(df, col, default=0.0):
+        val = df[col].iloc[-1] if col in df.columns else default
+        return float(val) if pd.notna(val) else default
+
+    def classify(scores: dict) -> dict:
+        score = scores.get("score", 0)
+        if score >= 2.0:
+            signal = "BUY"
+            alignment = "Strong Bullish"
+            color = "#1a7f37"
+        elif score >= 1.0:
+            signal = "BUY"
+            alignment = "Bullish"
+            color = "#2ecc71"
+        elif score <= -2.0:
+            signal = "SELL"
+            alignment = "Strong Bearish"
+            color = "#8b0000"
+        elif score <= -1.0:
+            signal = "SELL"
+            alignment = "Bearish"
+            color = "#e74c3c"
+        else:
+            signal = "HOLD"
+            alignment = "Neutral"
+            color = "#f59e0b"
+        scores["signal"] = signal
+        scores["alignment"] = alignment
+        scores["color"] = color
+        scores["confidence"] = min(max(abs(score) / 2.0, 0.0), 1.0)
+        return scores
+
+    def load_tf(tf: str):
+        try:
+            limit = 150 if tf == "1m" else 250
+            df = fetch_ohlcv(symbol, timeframe=tf, limit=limit)
+            if df is None or df.empty or len(df) < 2:
+                raise ValueError("no data")
+            df = add_all_indicators(df)
+            last = df.iloc[-1]
+            prev = df.iloc[-2]
+            ind = {
+                "close":       normalize_indicator_value(df, "close"),
+                "rsi":         normalize_indicator_value(df, "rsi", 50),
+                "macd":        normalize_indicator_value(df, "macd"),
+                "macd_signal": normalize_indicator_value(df, "macd_signal"),
+                "ema_9":       normalize_indicator_value(df, "ema_9"),
+                "ema_21":      normalize_indicator_value(df, "ema_21"),
+                "ema_50":      normalize_indicator_value(df, "ema_50"),
+                "ema_200":     normalize_indicator_value(df, "ema_200"),
+                "bb_pct":      normalize_indicator_value(df, "bb_pct", 0.5),
+            }
+            score = 0
+            details = {}
+            rsi = ind["rsi"]
+            if rsi < 30:
+                score += 2
+                details["rsi"] = "Oversold"
+            elif rsi < 45:
+                score += 1
+                details["rsi"] = "Leaning Bull"
+            elif rsi > 70:
+                score -= 2
+                details["rsi"] = "Overbought"
+            elif rsi > 55:
+                score -= 1
+                details["rsi"] = "Leaning Bear"
+            else:
+                details["rsi"] = "Neutral"
+            macd = ind["macd"]
+            macd_sig = ind["macd_signal"]
+            macd_score = 1 if macd > macd_sig else -1
+            score += macd_score
+            details["macd"] = "Bullish" if macd_score > 0 else "Bearish"
+            if ind["ema_9"] > ind["ema_21"]:
+                score += 1
+                details["ema_9_21"] = "9/21 Bullish"
+            else:
+                score -= 1
+                details["ema_9_21"] = "9/21 Bearish"
+            if ind["ema_50"] > ind["ema_200"]:
+                score += 1
+                details["ema"] = "Bullish"
+            else:
+                score -= 1
+                details["ema"] = "Bearish"
+            trend_score = 1 if last["close"] >= prev["close"] else -1
+            score += trend_score
+            details["trend"] = "Uptrend" if trend_score > 0 else "Downtrend"
+            motion = float((last["close"] - prev["close"]) / prev["close"] * 100) if prev["close"] else 0
+            result = {
+                "score": score,
+                "verdict": "BUY" if score > 0 else "SELL" if score < 0 else "HOLD",
+                "details": details,
+                "indicators": ind,
+                "momentum": round(motion, 2),
+                "confidence": min(max(abs(score) / 4.0, 0.0), 1.0),
+            }
+            return tf, classify(result)
+        except Exception:
+            return tf, default_tf(tf)
+
+    results = {tf: default_tf(tf) for tf in tfs}
+    try:
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            futures = {executor.submit(load_tf, tf): tf for tf in tfs}
+            for future in as_completed(futures, timeout=15):
+                tf = futures.get(future)
+                try:
+                    tf, data = future.result()
+                except Exception:
+                    data = default_tf(tf)
+                results[tf] = data
+    except Exception:
+        return _default_mtf()
+
+    if not results:
+        results = {tf: default_tf(tf) for tf in tfs}
+
+    valid_scores = [v["score"] for v in results.values() if isinstance(v, dict)]
+    avg_score = float(np.mean(valid_scores)) if valid_scores else 0.0
+    overall_signal = "HOLD"
+    if avg_score >= 1.0:
+        overall_signal = "BUY"
+    elif avg_score <= -1.0:
+        overall_signal = "SELL"
+    overall = {
+        "signal": overall_signal,
+        "score": min(max((avg_score + 2) / 4.0, 0.0), 1.0),
+        "alignment": "Bullish" if avg_score > 0 else "Bearish" if avg_score < 0 else "Neutral",
+        "verdict": overall_signal,
+        "avg_score": avg_score,
+        "color": "#2ecc71" if avg_score > 0 else ("#e74c3c" if avg_score < 0 else "#fbbf24"),
+        "confidence": min(max(abs(avg_score) / 2.0, 0.0), 1.0),
+        "bullish": sum(1 for v in results.values() if v.get("score", 0) > 0),
+        "bearish": sum(1 for v in results.values() if v.get("score", 0) < 0),
+        "hold": sum(1 for v in results.values() if v.get("score", 0) == 0),
+        "agreement": sum(1 for v in results.values() if v.get("signal") == overall_signal),
+        "base_tf": base_tf,
+    }
+    results["_overall"] = overall
+    return results
+
+@st.cache_data(ttl=120, show_spinner=False)
+def load_news_sentiment(symbol: str):
+    """News sentiment - cached 120s (static-like data)."""
+    try:
+        return get_news_sentiment(symbol)
+    except Exception:
+        return {"score": 0.0, "sentiment": "neutral"}
 
 # ── sidebar ───────────────────────────────────────────────────────────────────
 
 def render_sidebar(watchlist_symbols: list):
-    st.sidebar.title("⚙️ SuperSignal")
+    st.sidebar.markdown(
+        "<div class='sidebar-block'><h3>SuperSignal</h3>Institutional crypto terminal for advanced traders.</div>",
+        unsafe_allow_html=True,
+    )
+    st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
 
+    theme_default = st.session_state.get("theme", THEME_OPTIONS[0])
+    theme = st.sidebar.selectbox(
+        "Theme",
+        THEME_OPTIONS,
+        index=THEME_OPTIONS.index(theme_default) if theme_default in THEME_OPTIONS else 0,
+        help="Choose the interface theme for the dashboard.",
+    )
+    st.session_state.theme = theme
+
+    st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
     st.sidebar.subheader("Market")
 
     symbol_default = st.query_params.get(
@@ -240,6 +632,7 @@ def render_sidebar(watchlist_symbols: list):
     ms_map    = {"Off": None, "30s": 30_000, "1m": 60_000, "5m": 300_000}
     refresh_ms = ms_map[refresh_option]
 
+    st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
     st.sidebar.subheader("Chart Overlays")
     show = {}
     with st.sidebar.expander("Trend", expanded=False):
@@ -339,7 +732,7 @@ def render_sidebar(watchlist_symbols: list):
     st.sidebar.subheader("Backtesting")
     bt_pos_size = st.sidebar.slider("Position Size %", 5, 50, 10, 5) / 100
 
-    st.sidebar.markdown("---")
+    st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
     st.sidebar.info("🔒 **Paper Trading Only** — no real funds.")
 
     return dict(
@@ -350,41 +743,96 @@ def render_sidebar(watchlist_symbols: list):
         capital=capital, risk_tolerance=risk_tolerance,
         stop_loss_pct=stop_loss_pct, take_profit_pct=take_profit_pct,
         risk_reward=rr, bt_pos_size=bt_pos_size,
+        theme=theme,
     )
 
 # ── Tab 1: Overview ───────────────────────────────────────────────────────────
 
 def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg):
-    # Top strip
-    top6 = watchlist_symbols[:6]
-    cols = st.columns(len(top6) + 1)
-    for col, sym in zip(cols[:6], top6):
-        t   = tickers.get(sym, {})
-        cg  = cg_data.get(sym, {})
+    st.markdown(render_section_header(
+        "Market Overview",
+        "Premium crypto market pulse with institutional-grade sentiment, movers, and AI signal insights."
+    ), unsafe_allow_html=True)
+
+    all_prices = []
+    all_changes = []
+    total_mcap = 0
+    for sym in watchlist_symbols:
+        t = tickers.get(sym, {})
+        cg = cg_data.get(sym, {})
         price = t.get("last", 0) or cg.get("current_price", 0)
-        pct   = t.get("percentage", 0) or cg.get("price_change_percentage_24h", 0)
-        mc    = cg.get("market_cap", 0)
-        col.markdown(
-            f"<div class='terminal-card'>"
-            f"<div class='metric-label'>{sym.split('/')[0]}</div>"
-            f"<div class='metric-val'>{fmt_price(price, sym)}</div>"
-            f"{pct_str(pct)}<br/>"
-            f"<span style='font-size:.75em;color:#8b949e'>MCap {format_large_number(mc)}</span>"
-            f"</div>",
-            unsafe_allow_html=True,
-        )
-    with cols[6]:
+        change = t.get("percentage", 0) or cg.get("price_change_percentage_24h", 0)
+        cap = cg.get("market_cap", 0)
+        all_prices.append(price)
+        all_changes.append(change)
+        total_mcap += cap
+
+    avg_change = np.mean(all_changes) if all_changes else 0
+    buy_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_BUY)
+    sell_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_SELL)
+    hold_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_HOLD)
+    avg_conf = np.mean([sig.get("confidence", 0.0) for sig in signal_map.values()]) if signal_map else 0.0
+
+    mover_data = []
+    for sym in watchlist_symbols:
+        t = tickers.get(sym, {})
+        cg = cg_data.get(sym, {})
+        pct = t.get("percentage", 0) or cg.get("price_change_percentage_24h", 0)
+        mover_data.append((sym, pct, t.get("last", 0) or cg.get("current_price", 0)))
+    movers = sorted(mover_data, key=lambda x: x[1], reverse=True)
+    top_gainers = movers[:3]
+    top_losers = movers[-3:][::-1]
+
+    with st.container():
+        cols = st.columns(4)
+        cols[0].markdown(render_dashboard_card(
+            "Total Watchlist Market Cap",
+            format_large_number(total_mcap),
+            "Aggregate value across tracked crypto assets.",
+            accent="#60a5fa"
+        ), unsafe_allow_html=True)
+        cols[1].markdown(render_dashboard_card(
+            "Avg 24h Change",
+            f"{avg_change:+.2f}%",
+            "Weighted performance across selected coins.",
+            accent="#26a69a" if avg_change >= 0 else "#ef5350"
+        ), unsafe_allow_html=True)
+        cols[2].markdown(render_dashboard_card(
+            "AI Market Pulse",
+            f"{buy_count} BUY / {sell_count} SELL",
+            f"{hold_count} Neutral · {avg_conf*100:.0f}% avg confidence",
+            accent="#fbbf24"
+        ), unsafe_allow_html=True)
         fg_val = fg.get("value", 50)
-        fg_c   = get_fg_color(fg_val)
-        fg_cl  = fg.get("classification", "Neutral")
-        st.markdown(
-            f"<div class='terminal-card'>"
-            f"<div class='metric-label'>Fear & Greed</div>"
-            f"<div class='metric-val' style='color:{fg_c}'>{fg_val}</div>"
-            f"<span style='color:{fg_c};font-size:.8em'>{get_fg_emoji(fg_cl)} {fg_cl}</span>"
-            f"</div>",
-            unsafe_allow_html=True,
-        )
+        fg_c = get_fg_color(fg_val)
+        fg_cl = fg.get("classification", "Neutral")
+        cols[3].markdown(render_dashboard_card(
+            "Fear & Greed",
+            f"{fg_val}",
+            f"{get_fg_emoji(fg_cl)} {fg_cl}",
+            accent=fg_c
+        ), unsafe_allow_html=True)
+
+    st.markdown("<div class='dashboard-grid'>", unsafe_allow_html=True)
+    for sym, pct, price in top_gainers:
+        label = "Gainer"
+        color = "#26a69a"
+        st.markdown(render_dashboard_card(
+            f"{sym} Top Gainer",
+            f"{pct:+.2f}%",
+            f"{fmt_price(price, sym)}",
+            accent=color
+        ), unsafe_allow_html=True)
+    for sym, pct, price in top_losers:
+        label = "Loser"
+        color = "#ef5350"
+        st.markdown(render_dashboard_card(
+            f"{sym} Top Loser",
+            f"{pct:+.2f}%",
+            f"{fmt_price(price, sym)}",
+            accent=color
+        ), unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("### 📋 Market Scanner")
     st.caption(f"{len(watchlist_symbols)} coins · sorted by Market Cap · indicators on 200-candle 1h OHLCV")
@@ -451,8 +899,17 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
 
 def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
                      symbol: str, sr: dict, cfg: dict, fg: dict):
+    if df is None or not isinstance(df, pd.DataFrame) or df.empty:
+        render_empty_state("Technical analysis data unavailable. Try a different timeframe.")
+        return
+    if not ind or not isinstance(ind, dict):
+        render_empty_state("Technical indicators unavailable.")
+        return
     # ── Indicator summary ──────────────────────────────────────────────────
-    st.markdown("### 📐 Indicator Dashboard")
+    st.markdown(render_section_header(
+        "Technical Dashboard",
+        "Compact professional indicators, chart overlays, and support/resistance insights."
+    ), unsafe_allow_html=True)
     bullish_cross = ind.get("ema_bullish_cross", False)
     bearish_cross = ind.get("ema_bearish_cross", False)
     if bullish_cross:
@@ -464,10 +921,10 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
 
     def ind_card(label, val_str, sub="", color="#ccc"):
         return (
-            f"<div class='terminal-card' style='text-align:center'>"
+            f"<div class='dashboard-card' style='text-align:center'>"
             f"<div class='metric-label'>{label}</div>"
-            f"<div class='metric-val' style='color:{color}'>{val_str}</div>"
-            f"<div style='font-size:.72em;color:#8b949e'>{sub}</div>"
+            f"<div class='metric-val' style='color:{color};font-size:1.35em'>{val_str}</div>"
+            f"<div style='font-size:.78em;color:#8b949e;margin-top:5px'>{sub}</div>"
             f"</div>"
         )
 
@@ -782,11 +1239,17 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
 # ── Tab 3: Smart Money ────────────────────────────────────────────────────────
 
 def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
-    if not smc:
-        st.warning("Insufficient data for SMC analysis (need ≥ 20 candles).")
+    if df is None or not isinstance(df, pd.DataFrame) or df.empty:
+        render_empty_state("Smart Money data unavailable. Check symbol/timeframe and try again.")
+        return
+    if not smc or not isinstance(smc, dict):
+        render_empty_state("Smart Money data unavailable. SMC analysis could not be loaded.")
         return
 
-    st.markdown("### 💰 Smart Money Concepts (SMC / ICT)")
+    st.markdown(render_section_header(
+        "Smart Money Concepts",
+        "Institutional order flow, FVGs, liquidity zones and SMC insights in a premium dashboard."
+    ), unsafe_allow_html=True)
 
     pd_zone = smc.get("premium_discount", {})
     zone    = pd_zone.get("current_zone", "N/A")
@@ -961,32 +1424,50 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
 # ── Tab 4: Order Book ─────────────────────────────────────────────────────────
 
 def render_orderbook(ob: dict, symbol: str):
-    if not ob:
-        st.error("Order book unavailable.")
+    # PERF: Validate data before rendering
+    if not ob or not isinstance(ob, dict):
+        render_empty_state("Order book data unavailable.")
         return
+    
+    if "bids" not in ob or "asks" not in ob:
+        render_empty_state("Order book data unavailable.")
+        return
+    
+    if ob.get("source") in {"unavailable", "synthetic"}:
+        render_notice_badge(
+            "Live order book unavailable. Showing fallback synthetic order book data.",
+            kind="warning",
+        )
 
     src = ob.get("source", "")
     if src == "synthetic":
         st.caption("⚠️ Showing synthetic order book (Binance rate-limited)")
 
-    st.markdown(f"### 📖 Live Order Book — {symbol}")
+    st.markdown(render_section_header(f"Live Order Book — {symbol}", f"Source: {src or 'Live'}"), unsafe_allow_html=True)
 
-    # ── Key metrics ────────────────────────────────────────────────────────
-    m1, m2, m3, m4, m5, m6 = st.columns(6)
-    m1.metric("Best Bid",    fmt_price(ob["best_bid"], symbol))
-    m2.metric("Best Ask",    fmt_price(ob["best_ask"], symbol))
-    m3.metric("Spread",      fmt_price(ob["spread"], symbol),
-              f"{ob['spread_pct']:.4f}%")
-    m4.metric("Buy Pressure",  f"{ob['buy_pct']:.1f}%")
-    m5.metric("Sell Pressure", f"{ob['sell_pct']:.1f}%")
     imb = ob["imbalance"]
-    m6.metric("Imbalance",   f"{imb:+.3f}",
-              "Bid dominant" if imb > 0 else "Ask dominant")
+    imb_label = "Bid dominant" if imb > 0 else "Ask dominant"
+    imb_badge = "buy" if imb > 0 else "sell"
+    spread_note = f"{ob['spread_pct']:.4f}% of price"
+    buy_pct = f"{ob['buy_pct']:.1f}%"
+    sell_pct = f"{ob['sell_pct']:.1f}%"
+    imbalance = f"{imb:+.3f}"
+    st.markdown(
+        "<div class='dashboard-grid'>"
+        + render_metric_tile('Best Bid', fmt_price(ob['best_bid'], symbol), 'Near-term support', 'buy')
+        + render_metric_tile('Best Ask', fmt_price(ob['best_ask'], symbol), 'Immediate resistance', 'sell')
+        + render_metric_tile('Spread', fmt_price(ob['spread'], symbol), spread_note, 'hold')
+        + render_metric_tile('Buy Pressure', buy_pct, 'Bid-side liquidity', 'buy')
+        + render_metric_tile('Sell Pressure', sell_pct, 'Ask-side liquidity', 'sell')
+        + render_metric_tile('Imbalance', imbalance, imb_label, imb_badge)
+        + "</div>",
+        unsafe_allow_html=True,
+    )
 
     # ── Bid / Ask tables side by side ──────────────────────────────────────
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown("##### 🟢 Top Bids")
+        st.markdown("<div class='table-card'><h5 style='margin:0 0 12px;color:#e2e8f0'>🟢 Top Bids</h5></div>", unsafe_allow_html=True)
         bids_df = pd.DataFrame(ob["bids"]).rename(
             columns={"price":"Price","size":"Size","cumulative":"Cumulative","value":"Value ($)"})
         bids_df["Price"]      = bids_df["Price"].apply(lambda x: fmt_price(x, symbol))
@@ -997,7 +1478,7 @@ def render_orderbook(ob: dict, symbol: str):
                      width="stretch", hide_index=True)
 
     with col2:
-        st.markdown("##### 🔴 Top Asks")
+        st.markdown("<div class='table-card'><h5 style='margin:0 0 12px;color:#e2e8f0'>🔴 Top Asks</h5></div>", unsafe_allow_html=True)
         asks_df = pd.DataFrame(ob["asks"]).rename(
             columns={"price":"Price","size":"Size","cumulative":"Cumulative","value":"Value ($)"})
         asks_df["Price"]      = asks_df["Price"].apply(lambda x: fmt_price(x, symbol))
@@ -1052,73 +1533,92 @@ def render_orderbook(ob: dict, symbol: str):
 
 # ── Tab 5: Multi-Timeframe ────────────────────────────────────────────────────
 
-def render_mtf(mtf: dict, symbol: str):
-    st.markdown(f"### ⏰ Multi-Timeframe Analysis — {symbol}")
+def render_mtf(mtf: dict, symbol: str, theme_name: str = "Institutional Dark"):
+    # PERF: Validate data before rendering
+    if not mtf or not isinstance(mtf, dict):
+        st.info("⏰ Multi-timeframe data unavailable")
+        return
+    
+    if "_overall" not in mtf:
+        st.info("⏰ Multi-timeframe data unavailable")
+        return
+    
+    theme = THEME_TOKENS.get(theme_name, THEME_TOKENS["Institutional Dark"])
+    st.markdown(render_section_header(
+        f"Multi-Timeframe Analysis — {symbol}",
+        "Fast institutional regime alignment view"
+    ), unsafe_allow_html=True)
 
-    overall = mtf.get("_overall", {})
+    overall = mtf.get("_overall", {
+        "verdict": "N/A", "color": theme["muted"], "avg_score": 0,
+        "bullish": 0, "bearish": 0, "hold": 0,
+        "confidence": 0.0, "agreement": 0,
+        "signal": "N/A", "alignment": "Unavailable",
+    })
+    if overall.get("signal") in {"N/A", "HOLD"} and overall.get("avg_score", 0) == 0:
+        render_notice_badge(
+            "Multi-timeframe analysis is partially degraded. Showing best available data.",
+            kind="warning",
+        )
     ov = overall.get("verdict", "N/A")
-    ov_c = overall.get("color", "#888")
-    avg  = overall.get("avg_score", 0)
+    ov_c = overall.get("color", theme["muted"])
+    avg = overall.get("avg_score", 0)
+    conf = int(overall.get("confidence", 0.0) * 100)
 
     st.markdown(
-        f"<div class='terminal-card' style='text-align:center;padding:18px'>"
-        f"<div class='metric-label'>Overall MTF Alignment</div>"
-        f"<div style='font-size:2em;font-weight:900;color:{ov_c}'>{ov}</div>"
-        f"<div style='color:#8b949e'>Avg score: {avg:+.2f}</div>"
-        f"</div>",
+        "<div class='dashboard-grid'>"
+        + render_dashboard_card("MTF Consensus", ov, f"Avg score {avg:+.2f} · {conf}% confidence", ov_c)
+        + render_dashboard_card("Bullish Timeframes", str(overall.get("bullish", 0)), "Weighted alignment", theme["success"])
+        + render_dashboard_card("Bearish Timeframes", str(overall.get("bearish", 0)), "Market pressure", theme["danger"])
+        + render_dashboard_card("Neutral / Hold", str(overall.get("hold", 0)), "Divergence zones", theme["warning"])
+        + "</div>",
         unsafe_allow_html=True,
     )
 
-    st.markdown("#### Timeframe Breakdown")
     tfs = [tf for tf in MTF_TIMEFRAMES if tf in mtf]
     if not tfs:
-        st.warning("No MTF data available")
+        st.info("No timeframe data available")
         return
-    cols = st.columns(len(tfs))
 
-    for col, tf in zip(cols, tfs):
+    cards_html = ""
+    for tf in tfs:
         d = mtf[tf]
-        verdict = d.get("verdict", "N/A")
-        color   = d.get("color", "#888")
-        score   = d.get("score", 0)
-        det     = d.get("details", {})
-        ind     = d.get("indicators", {})
+        tf_color = d.get("color", theme["muted"])
+        momentum = d.get("momentum", 0)
+        confidence = int(d.get("confidence", 0.0) * 100)
+        trend = d.get("details", {}).get("trend", "Neutral")
+        cards_html += (
+            "<div class='dashboard-card' style='padding:18px;'>"
+            f"<div class='metric-label'>{MTF_LABELS.get(tf, tf)}</div>"
+            f"<div style='font-size:1.4rem;font-weight:800;color:{tf_color};margin-bottom:4px'>{d.get('verdict', 'N/A')}</div>"
+            f"<div style='font-size:.88rem;color:var(--muted);margin-bottom:12px'>Trend: {trend}</div>"
+            f"<div style='display:flex;gap:7px;flex-wrap:wrap'>"
+            f"<span class='metric-pill' style='background:rgba(37,99,235,0.12);color:{theme['accent']}'>Momentum {momentum}%</span>"
+            f"<span class='metric-pill' style='background:rgba(248,113,113,0.12);color:{theme['danger']}'>Conf {confidence}%</span>"
+            f"<span class='metric-pill' style='background:rgba(16,185,129,0.12);color:{theme['success']}'>Signal {d.get('signal','N/A')}</span>"
+            f"</div>"
+            "</div>"
+        )
+    st.markdown(f"<div class='dashboard-grid'>{cards_html}</div>", unsafe_allow_html=True)
 
-        with col:
-            st.markdown(
-                f"<div class='terminal-card' style='text-align:center'>"
-                f"<div class='metric-label'>{MTF_LABELS.get(tf, tf)}</div>"
-                f"<div style='color:{color};font-size:1.2em;font-weight:700'>{verdict}</div>"
-                f"<div style='color:#8b949e;font-size:.8em'>Score: {score:+d}</div>"
-                f"</div>",
-                unsafe_allow_html=True,
-            )
-            with st.expander("Details", expanded=False):
-                for k, v in det.items():
-                    st.caption(f"**{k.upper()}**: {v}")
-                if ind:
-                    st.caption(f"RSI: {ind.get('rsi',0):.1f}")
-                    st.caption(f"EMA 9/21: {'↑' if ind.get('ema_9',0) > ind.get('ema_21',0) else '↓'}")
-                    macd = ind.get("macd", 0)
-                    sig  = ind.get("macd_signal", 0)
-                    st.caption(f"MACD: {'Bullish' if macd > sig else 'Bearish'}")
-
-    # ── Alignment heatmap ──────────────────────────────────────────────────
     st.markdown("#### Alignment Matrix")
-    metrics = ["rsi", "macd", "ema_9_21", "ema"]
-    metric_labels = {"rsi": "RSI", "macd": "MACD", "ema_9_21": "EMA 9/21", "ema": "EMA 50/200"}
+    metrics = ["rsi", "macd", "ema_9_21", "ema", "trend"]
+    metric_labels = {
+        "rsi": "RSI", "macd": "MACD", "ema_9_21": "EMA 9/21",
+        "ema": "EMA 50/200", "trend": "Trend",
+    }
     heat_data = []
     heat_colors = []
     for tf in tfs:
-        d = mtf[tf]
-        row_d, row_c = [], []
+        row_d = []
+        row_c = []
         for m in metrics:
-            v = d.get("details", {}).get(m, "N/A")
+            v = mtf[tf].get("details", {}).get(m, "N/A")
             row_d.append(v)
-            if "Bull" in v or "Full Bull" in v or "Oversold" in v or "Leaning Bull" in v:
-                row_c.append("rgba(38,166,154,0.3)")
-            elif "Bear" in v or "Full Bear" in v or "Overbought" in v or "Leaning Bear" in v:
-                row_c.append("rgba(239,83,80,0.3)")
+            if any(label in v for label in ["Bull", "Oversold", "Strong Bull"]):
+                row_c.append(theme["heat_bull"])
+            elif any(label in v for label in ["Bear", "Overbought", "Strong Bear"]):
+                row_c.append(theme["heat_bear"])
             else:
                 row_c.append("rgba(128,128,128,0.15)")
         heat_data.append(row_d)
@@ -1127,21 +1627,26 @@ def render_mtf(mtf: dict, symbol: str):
     fig = go.Figure(data=go.Table(
         header=dict(
             values=["Timeframe"] + [metric_labels[m] for m in metrics],
-            fill_color="#0d1117",
-            font=dict(color="white", size=12),
+            fill_color=theme["panel_bg"],
+            font=dict(color=theme["text"], size=12),
             align="center",
         ),
         cells=dict(
-            values=[[MTF_LABELS.get(tf, tf) for tf in tfs]]
-                   + [[heat_data[i][j] for i in range(len(tfs))] for j in range(len(metrics))],
-            fill_color=["#0d1117"] + [[heat_colors[i][j] for i in range(len(tfs))] for j in range(len(metrics))],
-            font=dict(color="white", size=11),
+            values=[
+                [MTF_LABELS.get(tf, tf) for tf in tfs],
+                *[[heat_data[i][j] for i in range(len(tfs))] for j in range(len(metrics))],
+            ],
+            fill_color=[theme["card_bg"]] + [[heat_colors[i][j] for i in range(len(tfs))] for j in range(len(metrics))],
+            font=dict(color=theme["text"], size=11),
             align="center",
-            height=28,
+            height=32,
         ),
     ))
-    fig.update_layout(height=260, margin=dict(l=0, r=0, t=10, b=0),
-                      paper_bgcolor="rgba(0,0,0,0)")
+    fig.update_layout(
+        height=320,
+        margin=dict(l=0, r=0, t=10, b=0),
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
     st.plotly_chart(fig, width="stretch")
 
 
@@ -1149,66 +1654,90 @@ def render_mtf(mtf: dict, symbol: str):
 
 def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_result,
                       risk, symbol, cfg):
+    if not isinstance(signal_result, dict) or not signal_result:
+        render_empty_state("AI signal data unavailable.")
+        return
+    if not isinstance(ind, dict) or not ind:
+        render_empty_state("Technical indicator data unavailable.")
+        return
+    if not isinstance(risk, dict) or not risk:
+        render_empty_state("Risk assessment unavailable.")
+        return
+
     st.markdown("### 🤖 AI Signal Engine")
 
-    sig  = signal_result["signal"]
-    conf = signal_result["confidence"]
-    sc   = signal_result["score"]
+    sig  = signal_result.get("signal", "HOLD")
+    conf = signal_result.get("confidence", 0.0)
+    sc   = signal_result.get("score", 0.0)
     bull = signal_result.get("bull_signals", 0)
     bear = signal_result.get("bear_signals", 0)
     norm = signal_result.get("normalized_score", 0)
     color = signal_color(sig)
 
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.markdown(
-            f"<div class='terminal-card' style='text-align:center;padding:20px'>"
-            f"<div class='metric-label'>Institutional Signal</div>"
-            f"<div style='font-size:3em;font-weight:900;color:{color}'>{sig}</div>"
-            f"<div style='color:{color}'>{conf*100:.1f}% confidence</div>"
-            f"</div>",
-            unsafe_allow_html=True,
-        )
-        st.progress(conf)
-    with c2:
-        st.markdown("**Signal Components**")
-        st.metric("Raw Score",       f"{sc:+.2f}")
-        st.metric("Normalized",      f"{norm:+.3f}")
-        st.metric("Bull Signals",    bull)
-        st.metric("Bear Signals",    bear)
-    with c3:
-        st.markdown("**Trade Levels**")
-        close = ind["close"]
-        st.markdown(f"**Entry:** `{fmt_price(close, symbol)}`")
-        st.markdown(f"**Stop Loss:** `{fmt_price(risk['stop_loss'], symbol)}`"
-                    f" `(-{risk['sl_pct']:.1f}%)`")
-        st.markdown(f"**Take Profit:** `{fmt_price(risk['take_profit'], symbol)}`"
-                    f" `(+{risk['tp_pct']:.1f}%)`")
-        st.markdown(f"**R/R:** `1:{risk['risk_reward']:.1f}`")
-        pos = risk["position_size"]
-        st.markdown(f"**Position:** `${pos['position_value']:,.2f}` "
-                    f"({pos['position_pct']:.1f}%)")
-    with c4:
-        st.markdown("**Supporting Data**")
-        overall = mtf.get("_overall", {})
-        mtf_v = overall.get("verdict", "N/A")
-        mtf_c = overall.get("color", "#888")
-        st.markdown(f"MTF: <span style='color:{mtf_c}'><b>{mtf_v}</b></span>",
-                    unsafe_allow_html=True)
-        ob_buy = ob.get("buy_pct", 50)
-        ob_c   = "#26a69a" if ob_buy > 55 else ("#ef5350" if ob_buy < 45 else "#f39c12")
-        st.markdown(f"Order Book: <span style='color:{ob_c}'><b>{ob_buy:.1f}% Buy</b></span>",
-                    unsafe_allow_html=True)
-        sent_ov = sentiment.get("overall", "neutral")
-        sent_c  = sentiment_color(sent_ov)
-        st.markdown(f"Sentiment: <span style='color:{sent_c}'><b>{sent_ov.upper()}</b></span>",
-                    unsafe_allow_html=True)
-        fg_val = fg.get("value", 50)
-        fg_c   = get_fg_color(fg_val)
-        st.markdown(f"Fear & Greed: <span style='color:{fg_c}'><b>{fg_val}</b></span>",
-                    unsafe_allow_html=True)
-        pd_z = smc.get("premium_discount", {}).get("current_zone", "N/A") if smc else "N/A"
-        st.markdown(f"SMC Zone: **{pd_z}**")
+    inst_label = signal_result.get("institutional_bias", "Neutral")
+    inst_score = signal_result.get("institutional_bias_score", 0.0)
+    market_regime = signal_result.get("market_regime", "N/A")
+    trend_strength = float(signal_result.get("trend_strength", 0.0))
+    # Map numeric trend strength to categorical label: Weak/Moderate/Strong/Extreme
+    if trend_strength >= 0.9:
+        trend_category = "Extreme"
+    elif trend_strength >= 0.66:
+        trend_category = "Strong"
+    elif trend_strength >= 0.33:
+        trend_category = "Moderate"
+    else:
+        trend_category = "Weak"
+    risk_level = signal_result.get("risk_level", "N/A")
+
+    # dynamic classes and layout helpers
+    css_state = "buy" if sig == "BUY" else ("sell" if sig == "SELL" else "hold")
+    dominance_total = bull + bear
+    if dominance_total > 0:
+        bull_pct = bull / dominance_total * 100
+    else:
+        # fallback to orderbook buy_pct if available
+        bull_pct = ob.get("buy_pct", 50)
+    bear_pct = max(0.0, 100 - bull_pct)
+
+    # risk badge class
+    rclass = "risk-low" if risk_level == "Low" else ("risk-medium" if risk_level == "Medium" else "risk-high")
+
+    with st.container():
+        left, right = st.columns([1, 2])
+        with left:
+            st.markdown(
+                f"<div class='signal-card {css_state}'><div style='display:flex;align-items:center;justify-content:space-between'>"
+                f"<div style='display:flex;flex-direction:column;align-items:flex-start'>"
+                f"<div class='signal-badge' style='background:{color}'>{sig}</div>"
+                f"<div class='small-muted' style='margin-top:6px'>Confidence</div>"
+                f"<div style='font-size:1.6em;font-weight:800;color:{color}'>{conf*100:.1f}%</div>"
+                f"<div class='conf-wrap'><div class='conf-bar'><div class='conf-fill' style='width:{conf*100:.1f}%;background:{color}'></div></div></div>"
+                f"</div>"
+                f"<div style='text-align:right'>"
+                f"<div class='small-muted'>Raw</div><div style='font-weight:700'>{sc:+.2f}</div>"
+                f"<div class='small-muted' style='margin-top:8px'>Normalized</div><div style='font-weight:700'>{norm:+.3f}</div>"
+                f"</div></div>"
+                f"<div style='margin-top:8px' class='dom-wrap'><div class='dom-bar'><div class='dom-bull' style='width:{bull_pct:.1f}%;'></div><div class='dom-bear' style='width:{bear_pct:.1f}%;'></div></div></div>"
+                f"</div>",
+                unsafe_allow_html=True,
+            )
+
+        with right:
+            # Top meta row
+            st.markdown(
+                f"<div class='signal-card'><div class='signal-row'>"
+                f"<div style='flex:1'><div class='signal-meta'><b>Institutional:</b> {inst_label} ({inst_score:+.3f})</div></div>"
+                f"<div style='flex:1'><div class='signal-meta'><b>Regime:</b> {market_regime}</div></div>"
+                f"<div style='flex:1' style='text-align:right'><div class='signal-meta'><b>Risk:</b> <span class='risk-badge {rclass}'>{risk_level}</span></div></div>"
+                f"</div>"
+                f"<div style='height:8px'></div>"
+                f"<div class='signal-row'>"
+                f"<div style='flex:1'><div class='signal-item'><b>Trend:</b> {trend_category}</div></div>"
+                f"<div style='flex:1'><div class='signal-item'><b>Bull:</b> {bull}</div></div>"
+                f"<div style='flex:1'><div class='signal-item'><b>Bear:</b> {bear}</div></div>"
+                f"</div></div></div>",
+                unsafe_allow_html=True,
+            )
 
     st.divider()
     st.markdown("#### Signal Reasoning (top factors by weight)")
@@ -1234,7 +1763,7 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
             f"<div class='terminal-card' style='text-align:center'>"
             f"<div class='metric-label'>ML Consensus</div>"
             f"<div style='font-size:1.8em;color:{dir_c};font-weight:700'>"
-            f"{'↑' if direction=='UP' else '↓'} {direction}</div></div>",
+            f"{('↑' if direction=='UP' else '↓')} {direction}</div></div>",
             unsafe_allow_html=True)
         mc2.metric("Up Probability", f"{prob*100:.1f}%")
         rf  = ml_result.get("rf", {}) or {}
@@ -1258,7 +1787,10 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
 # ── Tab 7: Backtest ───────────────────────────────────────────────────────────
 
 def render_backtest(df, cfg, symbol):
-    st.subheader("🔬 Strategy Backtester")
+    if df is None or not isinstance(df, pd.DataFrame) or df.empty:
+        render_empty_state("Backtest requires market data. Select a valid symbol and timeframe.")
+        return
+    st.markdown(render_section_header("Strategy Backtester", "Simulate trade performance with premium risk controls"), unsafe_allow_html=True)
     bc1, bc2 = st.columns(2)
     with bc1:
         bt_sl  = st.slider("Stop Loss %",   0.5, 10.0, cfg["stop_loss_pct"]*100,  0.5) / 100
@@ -1271,8 +1803,13 @@ def render_backtest(df, cfg, symbol):
         bt_pos = st.slider("Position Size %", 5, 50, int(cfg["bt_pos_size"]*100), 5) / 100
 
     if st.button("▶️ Run Backtest", type="primary"):
+        with st.spinner("Preparing full dataset for backtest…"):
+            try:
+                full_df = load_full_data(symbol, cfg.get("timeframe", "1h"), cfg["limit"])
+            except Exception:
+                full_df = df
         with st.spinner("Running backtest…"):
-            bt_r = run_backtest(df, initial_capital=bt_cap,
+            bt_r = run_backtest(full_df, initial_capital=bt_cap,
                                 stop_loss_pct=bt_sl, take_profit_pct=bt_tp,
                                 position_size_pct=bt_pos)
         st.session_state["bt_result"] = bt_r
@@ -1287,19 +1824,17 @@ def render_backtest(df, cfg, symbol):
         st.warning("No trades generated. Try different SL/TP or more candles.")
         return
 
-    r1, r2, r3, r4 = st.columns(4)
-    r1.metric("Total Return", f"${m['total_return']:,.2f}", f"{m['total_return_pct']:+.2f}%",
-              delta_color="normal" if m["total_return_pct"] >= 0 else "inverse")
-    r2.metric("Win Rate",     f"{m['win_rate']:.1f}%",
-              f"{m['winning_trades']}W / {m['losing_trades']}L")
-    r3.metric("Sharpe Ratio", f"{m['sharpe_ratio']:.3f}")
-    r4.metric("Max Drawdown", f"{m['max_drawdown']:.2f}%", delta_color="inverse")
-
-    r5, r6, r7, r8 = st.columns(4)
-    r5.metric("Total Trades",  m["total_trades"])
-    r6.metric("Avg Win",       f"${m['avg_win']:,.2f}")
-    r7.metric("Avg Loss",      f"${m['avg_loss']:,.2f}")
-    r8.metric("Profit Factor", f"{m['profit_factor']:.3f}")
+    st.markdown(
+        "<div class='dashboard-grid'>" +
+        render_dashboard_card("Total Return", f"${m['total_return']:,.2f}", f"{m['total_return_pct']:+.2f}%") +
+        render_dashboard_card("Win Rate", f"{m['win_rate']:.1f}%", f"{m['winning_trades']}W / {m['losing_trades']}L") +
+        render_dashboard_card("Sharpe Ratio", f"{m['sharpe_ratio']:.3f}", "Risk-adjusted returns") +
+        render_dashboard_card("Max Drawdown", f"{m['max_drawdown']:.2f}%", "Peak-to-trough", "#f97316") +
+        render_dashboard_card("Total Trades", str(m['total_trades']), "Market events") +
+        render_dashboard_card("Profit Factor", f"{m['profit_factor']:.3f}", "Gross profit / loss") +
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
     eq = st.session_state["bt_result"]["equity_curve"].reset_index()
     if len(eq):
@@ -1328,14 +1863,32 @@ def render_backtest(df, cfg, symbol):
 # ── Tab 8: Portfolio (Paper Trading) ──────────────────────────────────────────
 
 def render_portfolio(signal_result, ind, risk, symbol, capital):
-    st.subheader("📋 Paper Trading Portfolio")
+    if not isinstance(signal_result, dict) or not signal_result:
+        render_empty_state("Portfolio signal engine unavailable.")
+        return
+    if not isinstance(ind, dict) or not ind:
+        render_empty_state("Pricing data unavailable.")
+        return
+    if not isinstance(risk, dict) or not risk:
+        render_empty_state("Risk sizing unavailable.")
+        return
+    st.markdown(render_section_header("Paper Trading Portfolio", "Institutional trade log with sizing and risk controls"), unsafe_allow_html=True)
     if "paper_trades" not in st.session_state:
         st.session_state.paper_trades = []
 
-    sig   = signal_result["signal"]
+    sig   = signal_result.get("signal", "HOLD")
     close = ind["close"]
     pos   = risk["position_size"]
     ts    = now_str("%Y-%m-%d %H:%M:%S WIB")
+
+    st.markdown(
+        "<div class='dashboard-grid'>"
+        + render_dashboard_card("Active Signal", sig, f"Price @ {fmt_price(close, symbol)}")
+        + render_dashboard_card("Capital", f"${capital:,.2f}", "Paper trading balance")
+        + render_dashboard_card("Position Size", f"${pos['position_value']:,.2f}", f"{pos['units']:.6f} units")
+        + "</div>",
+        unsafe_allow_html=True,
+    )
 
     col1, col2 = st.columns(2)
     with col1:
@@ -1442,6 +1995,7 @@ def main():
         watchlist_symbols = FALLBACK_SYMBOLS[:10]
 
     cfg = render_sidebar(watchlist_symbols)
+    render_theme_css(cfg["theme"])
 
     if cfg["auto_refresh"]:
         count = st_autorefresh(interval=cfg["refresh_ms"], key="live_refresh")
@@ -1466,7 +2020,9 @@ def main():
     with st.spinner("Loading data…"):
         tickers = load_tickers_for_watchlist(symbols_key)
         fg      = load_fear_greed()
-        df      = load_full_data(symbol, timeframe, cfg["limit"])
+        # For UI responsiveness, load a smaller slice for initial rendering.
+        ui_limit = min(cfg["limit"], 250)
+        df      = load_full_data(symbol, timeframe, ui_limit)
 
     if df is None or df.empty:
         st.warning("No market data available for this symbol/timeframe.")
@@ -1477,34 +2033,22 @@ def main():
     sr  = find_support_resistance(df)
 
     # ── Watchlist scanner (basic indicators only) ───────────────────────────
-    def scan_symbol(sym):
-
+    @st.cache_data(ttl=10, show_spinner=False)
+    def scan_symbol_cached(sym: str):
+        """Cached watchlist scan to avoid duplicate 1h fetches."""
         try:
-            dft = load_watchlist_data(sym, "1h")
-
+            dft = load_watchlist_data(sym, "1h", limit=80)
             i = get_current_indicator_values(dft)
-
             i["bb_width"] = (
                 float(dft["bb_width"].iloc[-1])
                 if "bb_width" in dft.columns else 0.0
             )
-
-            return (
-                sym,
-                i,
-                generate_signal(i, 0.0)
-            )
-
+            return (sym, i, generate_signal(i, 0.0))
         except Exception:
-            return (
-                sym,
-                {},
-                {
-                    "signal": "HOLD",
-                    "confidence": 0.5,
-                    "reasons": []
-                }
-            )
+            return (sym, {}, {"signal": "HOLD", "confidence": 0.5, "reasons": []})
+    
+    def scan_symbol(sym):
+        return scan_symbol_cached(sym)
 
     ind_map = {}
 
@@ -1521,11 +2065,22 @@ def main():
             signal_map[sym] = signal        
 
 
-    # ── Load heavier per-selected-coin data in parallel ─────────────────────
-   
-    smc = load_smc(symbol, timeframe, cfg["limit"])
-    ob  = load_orderbook(symbol)
-    mtf = {}
+    # ── Heavy sources are loaded lazily per tab to keep the dashboard responsive.
+    smc = _default_smc()
+    ob = {
+        "best_bid": 0.0,
+        "best_ask": 0.0,
+        "spread": 0.0,
+        "spread_pct": 0.0,
+        "buy_pct": 50.0,
+        "sell_pct": 50.0,
+        "imbalance": 0.0,
+        "cum_delta": 0.0,
+        "bids": [{"price": 0, "size": 0, "cumulative": 0, "value": 0}],
+        "asks": [{"price": 0, "size": 0, "cumulative": 0, "value": 0}],
+        "source": "synthetic",
+    }
+    mtf = _default_mtf()
 
     # ── Tabs ────────────────────────────────────────────────────────────────
     tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
@@ -1546,25 +2101,50 @@ def main():
         render_technical(df, ind, adv, symbol, sr, cfg, fg)
 
     with tab3:
-        render_smart_money(df, smc, symbol)
+        if "smc" not in st.session_state:
+            with st.spinner("Loading Smart Money data…"):
+                st.session_state.smc = load_smc(symbol, timeframe, cfg["limit"])
+        render_smart_money(df, st.session_state.smc, symbol)
 
     with tab4:
-        render_orderbook(ob, symbol)
+        if "ob" not in st.session_state:
+            with st.spinner("Fetching order book…"):
+                st.session_state.ob = load_orderbook(symbol)
+        render_orderbook(st.session_state.ob, symbol)
 
     with tab5:
-        render_mtf(mtf, symbol)
+        if "mtf" not in st.session_state:
+            with st.spinner("Loading multi-timeframe analysis…"):
+                st.session_state.mtf = load_mtf_data(symbol, timeframe)
+        render_mtf(st.session_state.mtf, symbol, cfg["theme"])
 
     with tab6:
+        # PERF: Lazy load AI Signals - only compute when tab opened
+        if not is_tab_rendered("ai_signals"):
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.markdown("**🤖 Analyzing...**")
+                render_skeleton_loader("60px", 1)
+            with col2:
+                render_skeleton_loader("240px", 1)
+            with col3:
+                render_skeleton_loader("80px", 1)
+            mark_tab_rendered("ai_signals")
+        
         with st.spinner("Loading sentiment…"):
-            sentiment = get_news_sentiment(symbol)
+            sentiment = load_news_sentiment(symbol)
         sentiment_score = sentiment.get("score", 0.0)
         fg_val = fg.get("value", 50)
-        mtf_overall = mtf.get("_overall", {})
+        # Use session-state heavy loaders if available (loaded when user opened those tabs)
+        smc_used = st.session_state.get("smc", smc)
+        ob_used = st.session_state.get("ob", ob)
+        mtf_used = st.session_state.get("mtf", mtf)
+        mtf_overall = mtf_used.get("_overall", {}) if mtf_used else {}
 
         signal_result = generate_signal(
             ind, sentiment_score,
-            advanced=adv, smc=smc, mtf_overall=mtf_overall,
-            orderbook=ob, fg_value=fg_val,
+            advanced=adv, smc=smc_used, mtf_overall=mtf_overall,
+            orderbook=ob_used, fg_value=fg_val,
         )
         risk = assess_risk(
             cfg["capital"], ind["close"],
@@ -1573,27 +2153,47 @@ def main():
             cfg["risk_tolerance"],
         )
         risk["risk_reward"] = cfg["risk_reward"]
+        ml_result = None
 
-        df_hash  = str(hash(str(df.index[-1]) + symbol + timeframe))
-        df_json  = df.reset_index().to_json(date_format="iso")
-        with st.spinner("Training ML models…"):
-            ml_result = None
-
-        render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg,
-                          signal_result, ml_result, risk, symbol, cfg)
+        # persist for Portfolio tab
+        st.session_state["signal_result"] = signal_result
+        render_ai_signals(ind, adv, smc_used, mtf_used, ob_used, sentiment, fg,
+                  signal_result, ml_result, risk, symbol, cfg)
 
     with tab7:
+        # PERF: Lazy load Backtest - expensive computation only when tab opened
+        if not is_tab_rendered("backtest"):
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                st.markdown("**🔬 Running Backtest...**")
+                render_skeleton_loader("150px", 2)
+            with col2:
+                render_skeleton_loader("360px", 1)
+            mark_tab_rendered("backtest")
         render_backtest(df, cfg, symbol)
 
     with tab8:
-        if "signal_result" not in dir():
-            sentiment = get_news_sentiment(symbol)
-            sentiment_score = sentiment.get("score", 0.0)
-            signal_result = generate_signal(ind, sentiment_score, advanced=adv, smc=smc)
+        # PERF: Lazy load Portfolio - only compute when tab opened
+        if not is_tab_rendered("portfolio"):
+            st.markdown("**📋 Loading Portfolio...**")
+            render_skeleton_loader("200px", 2)
+            mark_tab_rendered("portfolio")
+        
+        if "signal_result" in st.session_state:
+            signal_result = st.session_state.get("signal_result")
             risk = assess_risk(cfg["capital"], ind["close"],
                                ind.get("atr", ind["close"]*0.02),
                                signal_result["confidence"], cfg["risk_tolerance"])
             risk["risk_reward"] = cfg["risk_reward"]
+        else:
+            sentiment = load_news_sentiment(symbol)
+            sentiment_score = sentiment.get("score", 0.0)
+            signal_result = generate_signal(ind, sentiment_score, advanced=adv, smc=st.session_state.get("smc", smc))
+            risk = assess_risk(cfg["capital"], ind["close"],
+                               ind.get("atr", ind["close"]*0.02),
+                               signal_result["confidence"], cfg["risk_tolerance"])
+            risk["risk_reward"] = cfg["risk_reward"]
+            st.session_state["signal_result"] = signal_result
         render_portfolio(signal_result, ind, risk, symbol, cfg["capital"])
 
     st.caption(
