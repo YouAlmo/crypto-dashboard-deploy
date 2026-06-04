@@ -1,0 +1,39 @@
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Streamlit/runtime local state
+.streamlit/secrets.toml
+.cache/
+
+# Node/package manager artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+
+# OS/editor files
+.DS_Store
+.idea/
+.vscode/
+
+# TypeScript build cache
+*.tsbuildinfo
