@@ -35,6 +35,12 @@ from src.analysis.backtest import run_backtest
 from src.ml.models import train_and_predict
 from src.data.news_sentiment import get_news_sentiment
 from src.risk.risk_manager import assess_risk
+from src.ui.layout import (
+    render_header,
+    render_tabs,
+    get_theme_css
+)
+from src.ui.charts import render_price_chart
 
 st.set_page_config(
     page_title="SuperSignal",
@@ -42,6 +48,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+st.markdown(get_theme_css(), unsafe_allow_html=True)
 THEME_OPTIONS = ["Institutional Dark", "Premium Light"]
 THEME_TOKENS = {
     "Institutional Dark": {
@@ -1234,7 +1241,7 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
     for i in range(1, 6):
         fig.update_xaxes(gridcolor="rgba(255,255,255,0.04)", row=i, col=1)
         fig.update_yaxes(gridcolor="rgba(255,255,255,0.04)", row=i, col=1)
-    st.plotly_chart(fig, width="stretch")
+    render_price_chart(fig)
 
 # ── Tab 3: Smart Money ────────────────────────────────────────────────────────
 
@@ -2002,15 +2009,6 @@ def main():
     else:
         count = 0
 
-    st.markdown(
-        f"<h2 style='margin-bottom:0'>📈 SuperSignal</h2>"
-        f"<div style='color:#8b949e;font-size:.85em'>"
-        f"Top {len(watchlist_symbols)} coins by MCap · Binance + CoinGecko + Fear&amp;Greed · "
-        f"Paper trading only 🔒 · {now_str('%H:%M:%S')} WIB"
-        + (f" · Auto-refresh {cfg['refresh_option']} (#{count})" if cfg["auto_refresh"] else "")
-        + f"</div>",
-        unsafe_allow_html=True,
-    )
 
     symbol    = cfg["symbol"]
     timeframe = cfg["timeframe"]
@@ -2083,16 +2081,10 @@ def main():
     mtf = _default_mtf()
 
     # ── Tabs ────────────────────────────────────────────────────────────────
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
-        "📊 Overview",
-        "📈 Technical",
-        "💰 Smart Money",
-        "📖 Order Book",
-        "⏰ Multi-TF",
-        "🤖 AI Signals",
-        "🔬 Backtest",
-        "📋 Portfolio",
-    ])
+
+    render_header()
+
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = render_tabs()
 
     with tab1:
         render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg)
