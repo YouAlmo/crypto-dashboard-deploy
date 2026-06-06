@@ -2009,15 +2009,6 @@ def main():
     else:
         count = 0
 
-    st.markdown(
-        f"<h2 style='margin-bottom:0'>📈 SuperSignal</h2>"
-        f"<div style='color:#8b949e;font-size:.85em'>"
-        f"Top {len(watchlist_symbols)} coins by MCap · Binance + CoinGecko + Fear&amp;Greed · "
-        f"Paper trading only 🔒 · {now_str('%H:%M:%S')} WIB"
-        + (f" · Auto-refresh {cfg['refresh_option']} (#{count})" if cfg["auto_refresh"] else "")
-        + f"</div>",
-        unsafe_allow_html=True,
-    )
 
     symbol    = cfg["symbol"]
     timeframe = cfg["timeframe"]
