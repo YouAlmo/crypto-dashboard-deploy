@@ -53,58 +53,70 @@ st.markdown(get_theme_css(), unsafe_allow_html=True)
 THEME_OPTIONS = ["Institutional Dark", "Premium Light"]
 THEME_TOKENS = {
     "Institutional Dark": {
-        "app_bg": "#05101d",
-        "panel_bg": "rgba(9,17,31,0.94)",
-        "card_bg": "rgba(10,18,30,0.96)",
-        "card_border": "rgba(97,156,255,0.16)",
-        "text": "#e2e8f0",
-        "muted": "#94a3b8",
-        "accent": "#60a5fa",
-        "accent_alt": "#26c6da",
-        "success": "#26a69a",
-        "danger": "#ef5350",
+        "app_bg": "#0b1220",
+        "app_bg_alt": "#111827",
+        "panel_bg": "rgba(17,24,39,0.92)",
+        "card_bg": "rgba(20,29,45,0.94)",
+        "card_bg_hover": "rgba(24,35,54,0.98)",
+        "card_border": "rgba(148,163,184,0.18)",
+        "text": "#e5edf7",
+        "muted": "#9aa8bb",
+        "subtle": "#64748b",
+        "accent": "#38bdf8",
+        "accent_alt": "#22d3ee",
+        "success": "#2dd4bf",
+        "danger": "#fb7185",
         "warning": "#fbbf24",
-        "shadow": "0 24px 60px rgba(10,18,35,0.28)",
-        "sidebar": "rgba(8,12,18,0.98)",
-        "tab_bg": "rgba(15,23,42,0.95)",
-        "tab_active": "rgba(34,70,124,0.95)",
-        "tab_border": "rgba(97,156,255,0.18)",
-        "heat_bull": "rgba(38,166,154,0.28)",
-        "heat_bear": "rgba(239,83,80,0.28)",
+        "shadow": "0 18px 44px rgba(2,6,23,0.34)",
+        "sidebar": "rgba(15,23,42,0.98)",
+        "sidebar_panel": "rgba(30,41,59,0.72)",
+        "tab_bg": "rgba(30,41,59,0.68)",
+        "tab_active": "rgba(14,165,233,0.18)",
+        "tab_border": "rgba(148,163,184,0.20)",
+        "input_bg": "rgba(15,23,42,0.86)",
+        "heat_bull": "rgba(45,212,191,0.24)",
+        "heat_bear": "rgba(251,113,133,0.24)",
     },
     "Premium Light": {
-        "app_bg": "#eff5fb",
-        "panel_bg": "#f5f8ff",
+        "app_bg": "#f3f6fb",
+        "app_bg_alt": "#e8eef7",
+        "panel_bg": "rgba(255,255,255,0.92)",
         "card_bg": "rgba(255,255,255,0.98)",
-        "card_border": "rgba(37,99,235,0.15)",
-        "text": "#102a43",
-        "muted": "#64748b",
-        "accent": "#2563eb",
-        "accent_alt": "#1d4ed8",
+        "card_bg_hover": "#ffffff",
+        "card_border": "rgba(51,65,85,0.14)",
+        "text": "#132033",
+        "muted": "#526176",
+        "subtle": "#7a8799",
+        "accent": "#0f6fdc",
+        "accent_alt": "#0891b2",
         "success": "#047857",
-        "danger": "#b91c1c",
-        "warning": "#c2410b",
-        "shadow": "0 22px 52px rgba(15,23,42,0.08)",
-        "sidebar": "#eef4fb",
-        "tab_bg": "#e7f0ff",
-        "tab_active": "#ffffff",
-        "tab_border": "rgba(37,99,235,0.18)",
-        "heat_bull": "rgba(34,197,94,0.18)",
-        "heat_bear": "rgba(248,113,113,0.18)",
+        "danger": "#be123c",
+        "warning": "#b45309",
+        "shadow": "0 16px 38px rgba(15,23,42,0.08)",
+        "sidebar": "rgba(248,250,252,0.98)",
+        "sidebar_panel": "rgba(255,255,255,0.86)",
+        "tab_bg": "rgba(255,255,255,0.74)",
+        "tab_active": "rgba(15,111,220,0.10)",
+        "tab_border": "rgba(51,65,85,0.15)",
+        "input_bg": "#ffffff",
+        "heat_bull": "rgba(16,185,129,0.16)",
+        "heat_bear": "rgba(244,63,94,0.16)",
     },
 }
-
 def get_theme_css(theme_name: str) -> str:
     t = THEME_TOKENS.get(theme_name, THEME_TOKENS["Institutional Dark"])
     return f"""
     <style>
     :root {{
       --app-bg: {t['app_bg']};
+      --app-bg-alt: {t['app_bg_alt']};
       --panel-bg: {t['panel_bg']};
       --card-bg: {t['card_bg']};
+      --card-bg-hover: {t['card_bg_hover']};
       --card-border: {t['card_border']};
       --text: {t['text']};
       --muted: {t['muted']};
+      --subtle: {t['subtle']};
       --accent: {t['accent']};
       --accent-alt: {t['accent_alt']};
       --success: {t['success']};
@@ -112,63 +124,226 @@ def get_theme_css(theme_name: str) -> str:
       --warning: {t['warning']};
       --shadow: {t['shadow']};
       --sidebar: {t['sidebar']};
+      --sidebar-panel: {t['sidebar_panel']};
       --tab-bg: {t['tab_bg']};
       --tab-active: {t['tab_active']};
       --tab-border: {t['tab_border']};
+      --input-bg: {t['input_bg']};
       --heat-bull: {t['heat_bull']};
       --heat-bear: {t['heat_bear']};
+      --radius-sm: 8px;
+      --radius-md: 10px;
+      --radius-lg: 12px;
     }}
-    body, .stApp, .block-container, .main {{ background: var(--app-bg) !important; color: var(--text) !important; }}
-    section[data-testid="stSidebar"], .sidebar .css-1lcbmhc, .stSidebar {{ background: var(--sidebar) !important; border-right: 1px solid var(--card-border); }}
-    .sidebar-block {{ background: var(--panel-bg); border-color: var(--card-border); color: var(--text); padding: 18px 20px; border-radius: 18px; box-shadow: var(--shadow); }}
-    .sidebar-block h3 {{ color: var(--text); margin-bottom: 10px; }}
-    .sidebar-block p {{ color: var(--muted); margin-bottom: 0; }}
-    .stSidebar .element-container {{ background: transparent !important; }}
-    .stSidebar .stSelectbox > div > div, .stSidebar .stSlider > div, .stSidebar .stNumberInput > div, .stSidebar .stCheckbox > div, .stSidebar .stRadio > div {{ border-radius: 16px !important; }}
-    .dashboard-card, .dashboard-tile, .table-card, .terminal-card, .signal-card {{ background: var(--card-bg); border-color: var(--card-border); box-shadow: var(--shadow); color: var(--text); border-radius: 20px; padding: 18px 20px; }}
-    .dashboard-card:hover, .signal-card:hover {{ transform: translateY(-3px); }}
-    .dashboard-card {{ border: 1px solid var(--card-border); }}
-    .dashboard-tile {{ border: 1px solid var(--card-border); }}
-    .table-card {{ border: 1px solid var(--card-border); }}
-    .terminal-card {{ border: 1px solid var(--card-border); }}
-    .metric-pill {{ color: var(--text); padding: 7px 14px; font-size: 0.78rem; }}
-    .metric-pill.buy {{ background: rgba(38,166,154,0.14); color: var(--success); }}
-    .metric-pill.sell {{ background: rgba(239,83,80,0.14); color: var(--danger); }}
-    .metric-pill.hold {{ background: rgba(251,191,36,0.16); color: var(--warning); }}
-    .signal-card.buy {{ box-shadow: 0 20px 52px rgba(38,166,154,0.16); }}
-    .signal-card.sell {{ box-shadow: 0 20px 52px rgba(239,83,80,0.16); }}
-    .signal-card.hold {{ box-shadow: 0 20px 52px rgba(251,191,36,0.14); }}
-    .signal-badge {{ background: var(--accent); color: #fff; }}
-    .small-muted {{ color: var(--muted); }}
-    .conf-wrap, .dom-wrap {{ background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; }}
-    .conf-bar {{ background: rgba(255,255,255,0.12); }}
-    .dom-bar {{ background: rgba(255,255,255,0.12); }}
-    .risk-badge {{ color: var(--text); }}
-    .risk-low {{ background: linear-gradient(90deg, var(--success), #a5f3c9); }}
-    .risk-medium {{ background: linear-gradient(90deg, var(--warning), #fde68a); }}
-    .risk-high {{ background: linear-gradient(90deg, var(--danger), #fca5a5); }}
-    .section-title {{ color: var(--text); font-size: 1.45rem; letter-spacing: -0.02em; margin-bottom: 0.35rem; }}
-    .section-subtitle {{ color: var(--muted); margin-bottom: 1.15rem; font-size: 0.95rem; }}
-    .stTabs [role="tab"] {{ display: inline-flex !important; align-items: center; justify-content: center; gap: 0.45rem; min-height: 52px; padding: 0.9rem 1rem; margin-right: 8px; border-radius: 14px 14px 0 0; border: 1px solid var(--tab-border); background: var(--tab-bg); color: var(--text); transition: transform .18s ease, box-shadow .18s ease, background .18s ease; font-size: 0.95rem; font-weight: 600; }}
-    .stTabs [role="tab"]:hover {{ transform: translateY(-1px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }}
-    .stTabs [role="tab"][aria-selected="true"] {{ background: var(--tab-active); color: var(--text); box-shadow: 0 10px 28px rgba(0,0,0,0.14); border-bottom: 4px solid var(--accent); }}
-    .stTabs [role="tab"] span, .stTabs [role="tab"] svg {{ line-height: 1.2; }}
-    .signal-item {{ background: rgba(255,255,255,0.08); color: var(--text); }}
-    .table-card h5 {{ color: var(--text); }}
-    button[aria-label*="Theme"], button[title*="Theme"], [data-testid="stThemeToggle"] {{ display: none !important; }}
-    .stButton>button {{ border-radius: 14px; padding: 0.95rem 1rem; font-weight: 700; }}
-    .stSidebar .stButton>button {{ width: 100%; }}
-    .stSidebar label {{ color: var(--text) !important; font-weight: 600; }}
-    .stSidebar .stSelectbox>div, .stSidebar .stSlider>div, .stSidebar .stNumberInput>div {{ background: var(--card-bg) !important; border: 1px solid var(--card-border) !important; box-shadow: inset 0 0 0 rgba(0,0,0,0.02); }}
-    .stSidebar .stSlider .expy {{
+    body, .stApp {{
+      background: linear-gradient(180deg, var(--app-bg) 0%, var(--app-bg-alt) 100%) !important;
+      color: var(--text) !important;
+      font-feature-settings: "tnum" 1, "ss01" 1;
+    }}
+    .block-container {{
       background: transparent !important;
+      color: var(--text) !important;
+      padding-top: 1.25rem !important;
+      padding-left: clamp(1rem, 2vw, 2rem) !important;
+      padding-right: clamp(1rem, 2vw, 2rem) !important;
+      max-width: 1580px;
     }}
+    h1, h2, h3, h4, h5, h6, p, label, span, div {{ letter-spacing: 0 !important; }}
+    h1 {{ font-size: clamp(2rem, 3vw, 2.75rem) !important; line-height: 1.08 !important; }}
+    h2 {{ font-size: clamp(1.45rem, 2vw, 1.9rem) !important; }}
+    h3 {{ font-size: clamp(1.08rem, 1.5vw, 1.35rem) !important; }}
+    p, .stCaption, [data-testid="stCaptionContainer"] {{ color: var(--muted) !important; }}
+    .app-header {{
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 0 0 1.05rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--card-border);
+    }}
+    .app-header h1 {{ margin: 0 !important; font-size: clamp(1.85rem, 2.5vw, 2.45rem) !important; }}
+    .app-header p {{ margin: 0.28rem 0 0; color: var(--muted) !important; font-size: 0.98rem; }}
+    .brand-mark {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 28%, transparent), color-mix(in srgb, var(--accent-alt) 20%, transparent));
+      border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--card-border));
+      color: var(--text);
+      font-weight: 900;
+      font-size: 0.88rem;
+      box-shadow: 0 14px 30px color-mix(in srgb, var(--accent) 14%, transparent);
+    }}
+
+    section[data-testid="stSidebar"], .sidebar .css-1lcbmhc, .stSidebar {{
+      background: var(--sidebar) !important;
+      border-right: 1px solid var(--card-border);
+      box-shadow: 12px 0 36px rgba(2,6,23,0.08);
+    }}
+    section[data-testid="stSidebar"] .block-container {{ padding-top: 1.1rem !important; padding-inline: 1rem !important; }}
+    .sidebar-block {{
+      background: var(--sidebar-panel);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 14px 15px;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 12px 28px rgba(2,6,23,0.10);
+    }}
+    .sidebar-block h3 {{ color: var(--text); margin: 0 0 4px 0; font-size: 1rem; }}
+    .sidebar-block p {{ color: var(--muted); margin-bottom: 0; }}
+    .sidebar-divider {{ height: 1px; background: var(--card-border); margin: 14px 0; }}
+    .stSidebar .element-container {{ background: transparent !important; margin-bottom: 0.44rem !important; }}
+    .stSidebar [data-testid="stMarkdownContainer"] p {{ margin-bottom: 0.15rem; }}
+    .stSidebar h3 {{ font-size: 0.78rem !important; text-transform: uppercase; color: var(--subtle) !important; margin: 0.8rem 0 0.35rem 0 !important; }}
+    .stSidebar label {{ color: var(--text) !important; font-weight: 650 !important; font-size: 0.84rem !important; }}
+    .stSidebar .stSelectbox > div > div,
+    .stSidebar .stNumberInput input,
+    .stSidebar [data-baseweb="select"] > div,
+    .stSidebar [data-baseweb="input"] {{
+      background: var(--input-bg) !important;
+      border: 1px solid var(--card-border) !important;
+      border-radius: var(--radius-md) !important;
+      min-height: 38px !important;
+      color: var(--text) !important;
+      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }}
+    .stSidebar .stSelectbox > div > div:hover,
+    .stSidebar .stNumberInput input:hover,
+    .stSidebar [data-baseweb="select"] > div:hover {{ border-color: color-mix(in srgb, var(--accent) 52%, var(--card-border)) !important; }}
+    .stSidebar .stCheckbox {{ padding-block: 1px; }}
+    .stSidebar .stSlider {{ padding-top: 0.05rem; }}
+    .stSidebar .stSlider [role="slider"] {{ border: 2px solid var(--accent) !important; box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent); }}
+    .stSidebar [data-baseweb="slider"] div {{ transition: background .16s ease, box-shadow .16s ease; }}
+    .stSidebar details {{ border: 1px solid var(--card-border); border-radius: var(--radius-lg); background: color-mix(in srgb, var(--sidebar-panel) 68%, transparent); padding: 2px 8px 6px; }}
+    .stSidebar summary {{ color: var(--text); font-weight: 650; }}
+
+    .dashboard-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      align-items: stretch;
+      margin: 0.75rem 0 1rem;
+    }}
+    .dashboard-card, .dashboard-tile, .table-card, .terminal-card, .signal-card {{
+      background: linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 88%, var(--panel-bg)));
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      color: var(--text);
+      border-radius: var(--radius-lg);
+      padding: 16px 17px;
+      min-height: 104px;
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+    }}
+    .dashboard-card:hover, .dashboard-tile:hover, .signal-card:hover {{
+      transform: translateY(-2px);
+      background: var(--card-bg-hover);
+      border-color: color-mix(in srgb, var(--accent) 34%, var(--card-border));
+      box-shadow: 0 20px 48px rgba(2,6,23,0.18);
+    }}
+    .dashboard-tile h4 {{ margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.88rem; color: var(--muted); }}
+    .dashboard-tile p {{ margin: 0.45rem 0 0; color: var(--muted) !important; font-size: 0.84rem; }}
+    .terminal-card {{ min-height: 92px; }}
+    .metric-label {{ color: var(--muted); font-size: 0.74rem; font-weight: 700; text-transform: uppercase; }}
+    .metric-val {{ color: var(--text); font-weight: 800; }}
+    .metric-pill {{ color: var(--text); padding: 4px 9px; font-size: 0.68rem; border-radius: 999px; border: 1px solid var(--card-border); }}
+    .metric-pill.buy {{ background: color-mix(in srgb, var(--success) 15%, transparent); color: var(--success); }}
+    .metric-pill.sell {{ background: color-mix(in srgb, var(--danger) 15%, transparent); color: var(--danger); }}
+    .metric-pill.hold {{ background: color-mix(in srgb, var(--warning) 16%, transparent); color: var(--warning); }}
+    .signal-card.buy {{ box-shadow: 0 16px 42px color-mix(in srgb, var(--success) 15%, transparent); }}
+    .signal-card.sell {{ box-shadow: 0 16px 42px color-mix(in srgb, var(--danger) 15%, transparent); }}
+    .signal-card.hold {{ box-shadow: 0 16px 42px color-mix(in srgb, var(--warning) 13%, transparent); }}
+    .signal-badge {{ background: var(--accent); color: #fff; border-radius: 999px; padding: 6px 11px; font-weight: 800; letter-spacing: .04em !important; }}
+    .small-muted {{ color: var(--muted); }}
+    .conf-wrap, .dom-wrap {{ background: color-mix(in srgb, var(--panel-bg) 70%, transparent); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 3px; }}
+    .conf-bar, .dom-bar {{ background: color-mix(in srgb, var(--muted) 16%, transparent); border-radius: 999px; overflow: hidden; min-height: 8px; }}
+    .conf-fill, .dom-bull, .dom-bear {{ min-height: 8px; }}
+    .signal-row {{ display: flex; gap: 12px; align-items: stretch; flex-wrap: wrap; }}
+    .signal-meta, .signal-item {{ color: var(--text); background: color-mix(in srgb, var(--panel-bg) 55%, transparent); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px 12px; }}
+    .risk-badge {{ color: var(--text); border-radius: 999px; padding: 3px 8px; font-size: 0.78rem; font-weight: 800; }}
+    .risk-low {{ background: color-mix(in srgb, var(--success) 24%, transparent); color: var(--success); }}
+    .risk-medium {{ background: color-mix(in srgb, var(--warning) 24%, transparent); color: var(--warning); }}
+    .risk-high {{ background: color-mix(in srgb, var(--danger) 24%, transparent); color: var(--danger); }}
+
+    .section-title {{ color: var(--text); font-size: clamp(1.22rem, 1.7vw, 1.52rem); font-weight: 800; margin-bottom: 0.18rem; }}
+    .section-subtitle {{ color: var(--muted); margin-bottom: 0.95rem; font-size: 0.92rem; max-width: 980px; }}
+    .table-card h5 {{ color: var(--text); }}
+    div[data-testid="stMetric"] {{
+      background: var(--card-bg) !important;
+      border: 1px solid var(--card-border) !important;
+      border-radius: var(--radius-lg) !important;
+      padding: 13px 15px !important;
+      box-shadow: var(--shadow);
+    }}
+    div[data-testid="stMetric"] label, div[data-testid="stMetric"] [data-testid="stMetricLabel"] {{ color: var(--muted) !important; }}
+    div[data-testid="stMetricValue"] {{ color: var(--text) !important; font-size: clamp(1.15rem, 1.6vw, 1.55rem) !important; font-weight: 800 !important; }}
+    .stDataFrame, [data-testid="stDataFrame"] {{ border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--card-border); box-shadow: var(--shadow); }}
+
+    div[role="radiogroup"] {{
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 6px;
+      margin: 0.2rem 0 1.1rem;
+      background: color-mix(in srgb, var(--panel-bg) 78%, transparent);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 12px 30px rgba(2,6,23,0.10);
+    }}
+    div[role="radiogroup"] label {{
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      padding: 8px 12px;
+      min-height: 38px;
+      color: var(--muted) !important;
+      background: transparent;
+      transition: background .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+    }}
+    div[role="radiogroup"] label:hover {{
+      color: var(--text) !important;
+      background: var(--tab-bg);
+      border-color: var(--tab-border);
+      transform: translateY(-1px);
+    }}
+    div[role="radiogroup"] label:has(input:checked) {{
+      color: var(--text) !important;
+      background: var(--tab-active);
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--tab-border));
+      box-shadow: inset 0 -2px 0 var(--accent);
+      font-weight: 800;
+    }}
+    div[role="radiogroup"] label > div:first-child {{ display: none !important; }}
+
+    button[aria-label*="Theme"], button[title*="Theme"], [data-testid="stThemeToggle"] {{ display: none !important; }}
+    .stButton>button {{
+      border-radius: var(--radius-md);
+      padding: 0.72rem 0.95rem;
+      font-weight: 750;
+      border: 1px solid var(--card-border);
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }}
+    .stButton>button:hover {{ transform: translateY(-1px); border-color: var(--accent); box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 16%, transparent); }}
+    .stSidebar .stButton>button {{ width: 100%; }}
+    button:focus-visible, input:focus-visible, [role="button"]:focus-visible, [role="slider"]:focus-visible {{ outline: 2px solid var(--accent) !important; outline-offset: 2px !important; }}
+
     @keyframes pulse {{
-      0%, 100% {{ opacity: 0.6; }}
+      0%, 100% {{ opacity: 0.72; }}
       50% {{ opacity: 1; }}
     }}
-    @media (max-width: 1024px) {{ .stTabs [role="tab"] {{ padding: 0.75rem 0.85rem; min-height: 48px; }} }}
-    @media (max-width: 760px) {{ .stTabs [role="tab"] {{ flex: 1 1 auto; margin-right: 6px; min-width: 120px; }} }}
+    @media (max-width: 1180px) {{
+      .dashboard-grid {{ grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 12px; }}
+      .dashboard-card, .dashboard-tile, .terminal-card, .signal-card {{ padding: 14px 15px; min-height: 96px; }}
+      div[role="radiogroup"] label {{ padding: 7px 10px; font-size: 0.9rem; }}
+    }}
+    @media (max-width: 760px) {{
+      .block-container {{ padding-inline: 0.75rem !important; }}
+      .dashboard-grid {{ grid-template-columns: 1fr; }}
+      div[role="radiogroup"] {{ gap: 6px; }}
+      div[role="radiogroup"] label {{ flex: 1 1 130px; justify-content: center; }}
+      .section-subtitle {{ font-size: 0.86rem; }}
+    }}
     </style>
     """
 
@@ -206,9 +381,9 @@ def sentiment_color(s: str) -> str:
 def render_dashboard_card(title: str, value: str, subtitle: str = "", accent: str = "var(--accent)") -> str:
     return (
         f"<div class='dashboard-card'>"
-        f"<div style='font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px'>{title}</div>"
-        f"<div style='font-size:2rem;font-weight:800;color:{accent};line-height:1.05;margin-bottom:6px'>{value}</div>"
-        f"<div style='font-size:.92rem;color:var(--muted)'>{subtitle}</div>"
+        f"<div class='metric-label'>{title}</div>"
+        f"<div class='metric-val' style='font-size:clamp(1.35rem,1.9vw,1.85rem);color:{accent};line-height:1.08;margin-top:8px'>{value}</div>"
+        f"<div style='font-size:.84rem;color:var(--muted);margin-top:7px;line-height:1.35'>{subtitle}</div>"
         f"</div>"
     )
 
@@ -217,8 +392,8 @@ def render_metric_tile(title: str, value: str, detail: str = "", badge: str = ""
     return (
         f"<div class='dashboard-tile'>"
         f"<h4>{title}{badge_html}</h4>"
-        f"<div style='font-size:1.5rem;font-weight:800;line-height:1.1;margin-top:8px;color:var(--text)'>{value}</div>"
-        f"<p style='color:var(--muted)'>{detail}</p>"
+        f"<div class='metric-val' style='font-size:clamp(1.15rem,1.5vw,1.45rem);line-height:1.1;margin-top:9px;color:var(--text)'>{value}</div>"
+        f"<p>{detail}</p>"
         f"</div>"
     )
 
@@ -274,14 +449,14 @@ def render_ml_prediction_state(ml_result: dict) -> bool:
     return True
 
 TAB_OPTIONS = [
-    ("overview", "📊 Overview"),
-    ("technical", "📈 Technical"),
-    ("smart_money", "💰 Smart Money"),
-    ("order_book", "📖 Order Book"),
-    ("multi_tf", "⏰ Multi-TF"),
-    ("ai_signals", "🤖 AI Signals"),
-    ("backtest", "🧪 Backtest"),
-    ("portfolio", "📋 Portfolio"),
+    ("overview", "01 Overview"),
+    ("technical", "02 Technical"),
+    ("smart_money", "03 Smart Money"),
+    ("order_book", "04 Order Book"),
+    ("multi_tf", "05 Multi-TF"),
+    ("ai_signals", "06 AI Signals"),
+    ("backtest", "07 Backtest"),
+    ("portfolio", "08 Portfolio"),
 ]
 TAB_LABEL_BY_ID = dict(TAB_OPTIONS)
 TAB_ID_BY_LABEL = {label: tab_id for tab_id, label in TAB_OPTIONS}
@@ -348,12 +523,13 @@ def init_widget_from_query(widget_key: str, query_key: str, default, cast=str):
 
 def render_persistent_tabs() -> str:
     initial_tab = qp_choice("tab", [tab_id for tab_id, _ in TAB_OPTIONS], "overview")
-    if "active_tab_label" not in st.session_state:
+    tab_labels = [label for _, label in TAB_OPTIONS]
+    if "active_tab_label" not in st.session_state or st.session_state.active_tab_label not in tab_labels:
         st.session_state.active_tab_label = TAB_LABEL_BY_ID[initial_tab]
 
     selected_label = st.radio(
         "Navigation",
-        [label for _, label in TAB_OPTIONS],
+        tab_labels,
         key="active_tab_label",
         horizontal=True,
         label_visibility="collapsed",
@@ -968,7 +1144,7 @@ def render_sidebar(watchlist_symbols: list):
     bt_pos_size = bt_pos_size_pct / 100
 
     st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
-    st.sidebar.info("🔒 **Paper Trading Only** — no real funds.")
+    st.sidebar.info("**Paper Trading Only** · no real funds.")
 
     return dict(
         symbol=symbol, timeframe=timeframe, limit=limit,
