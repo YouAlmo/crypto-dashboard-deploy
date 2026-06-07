@@ -15,10 +15,15 @@ except ImportError:
     _CCXT_OK = False
 
 
+@st.cache_resource(show_spinner=False)
 def _get_exchange():
     if not _CCXT_OK:
         return None
-    return ccxt.binance({"enableRateLimit": True, "options": {"defaultType": "spot"}})
+    return ccxt.binance({
+        "enableRateLimit": True,
+        "timeout": 6000,
+        "options": {"defaultType": "spot"},
+    })
 
 
 @st.cache_data(ttl=5, show_spinner=False)
