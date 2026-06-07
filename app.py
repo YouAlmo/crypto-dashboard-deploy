@@ -2,6 +2,7 @@
 import sys
 import os
 import hashlib
+import time
 sys.path.insert(0, os.path.dirname(__file__))
 
 import streamlit as st
@@ -35,7 +36,7 @@ from src.analysis.support_resistance import find_support_resistance
 from src.analysis.backtest import run_backtest
 from src.ml.models import train_and_predict
 from src.data.news_sentiment import get_news_sentiment
-from src.risk.risk_manager import assess_risk
+from src.risk.risk_manager import assess_risk, calculate_position_size
 from src.ui.layout import (
     render_header,
     render_tabs,
@@ -251,6 +252,16 @@ def render_empty_state(message: str = "Data unavailable.", icon: str = "⚠️")
         unsafe_allow_html=True,
     )
 
+def render_compact_state(message: str, detail: str = "") -> None:
+    detail_html = f"<span style='color:var(--muted);font-weight:500;margin-left:8px'>{detail}</span>" if detail else ""
+    st.markdown(
+        f"<div style='display:inline-flex;align-items:center;padding:9px 12px;border-radius:12px;"
+        f"border:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.06);"
+        f"color:var(--text);font-size:0.9rem;margin:4px 0 12px 0;'>"
+        f"<strong>{message}</strong>{detail_html}</div>",
+        unsafe_allow_html=True,
+    )
+
 def render_ml_prediction_state(ml_result: dict) -> bool:
     if not isinstance(ml_result, dict) or not ml_result:
         render_empty_state("ML predictions are unavailable for the current market dataset.", icon="ℹ️")
@@ -399,6 +410,79 @@ def load_ml_prediction(df: pd.DataFrame, symbol: str) -> dict:
         return train_and_predict(df_hash, df_serialized, symbol)
     except Exception as exc:
         return {"error": str(exc)}
+
+
+def market_data_cache_key(df: pd.DataFrame, symbol: str, timeframe: str, limit: int) -> str:
+    if df is None or not isinstance(df, pd.DataFrame) or df.empty:
+        return f"{symbol}|{timeframe}|{limit}|empty"
+    close_tail = df["close"].tail(5).round(8).astype(str).tolist() if "close" in df.columns else []
+    last_index = str(df.index[-1])
+    return "|".join([symbol, timeframe, str(limit), str(len(df)), last_index, *close_tail])
+
+
+def trim_session_cache(cache_name: str, max_items: int = 6) -> None:
+    cache = st.session_state.get(cache_name, {})
+    if isinstance(cache, dict) and len(cache) > max_items:
+        for key in list(cache.keys())[:-max_items]:
+            cache.pop(key, None)
+
+
+def get_cached_ml_prediction(df: pd.DataFrame, symbol: str, timeframe: str, limit: int) -> dict:
+    key = market_data_cache_key(df, symbol, timeframe, limit)
+    cache = st.session_state.setdefault("ml_prediction_cache", {})
+    if key in cache:
+        result = dict(cache[key])
+        result["_cache_status"] = "cached"
+        return result
+
+    start = time.perf_counter()
+    result = dict(load_ml_prediction(df, symbol) or {})
+    result["_elapsed_ms"] = int((time.perf_counter() - start) * 1000)
+    result["_cache_status"] = "calculated"
+    cache[key] = result
+    trim_session_cache("ml_prediction_cache")
+    return dict(result)
+
+
+def has_cached_ml_prediction(df: pd.DataFrame, symbol: str, timeframe: str, limit: int) -> bool:
+    key = market_data_cache_key(df, symbol, timeframe, limit)
+    return key in st.session_state.get("ml_prediction_cache", {})
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def load_backtest_result(symbol: str, timeframe: str, limit: int, initial_capital: float,
+                         stop_loss_pct: float, take_profit_pct: float, position_size_pct: float) -> dict:
+    full_df = load_full_data(symbol, timeframe, limit)
+    return run_backtest(
+        full_df,
+        initial_capital=initial_capital,
+        stop_loss_pct=stop_loss_pct,
+        take_profit_pct=take_profit_pct,
+        position_size_pct=position_size_pct,
+    )
+
+
+def backtest_cache_key(symbol: str, timeframe: str, limit: int, initial_capital: float,
+                       stop_loss_pct: float, take_profit_pct: float, position_size_pct: float) -> tuple:
+    return (
+        symbol, timeframe, int(limit), round(float(initial_capital), 2),
+        round(float(stop_loss_pct), 4), round(float(take_profit_pct), 4),
+        round(float(position_size_pct), 4),
+    )
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def load_portfolio_risk(capital: float, close: float, atr: float, confidence: float,
+                        risk_tolerance: str, risk_reward: float) -> dict:
+    risk = assess_risk(capital, close, atr, confidence, risk_tolerance)
+    risk["risk_reward"] = risk_reward
+    return risk
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def load_position_size_cached(capital: float, entry: float, stop_loss: float,
+                              risk_per_trade: float, max_position_pct: float) -> dict:
+    return calculate_position_size(capital, entry, stop_loss, risk_per_trade, max_position_pct)
 
 
 def orderbook_source_label(ob: dict) -> str:
@@ -1825,6 +1909,13 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
                               plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0,r=0,t=40,b=0))
             st.plotly_chart(fig, width="stretch")
 
+        cache_status = ml_result.get("_cache_status")
+        elapsed_ms = ml_result.get("_elapsed_ms")
+        if cache_status == "cached":
+            st.caption("ML prediction reused from the current session cache.")
+        elif elapsed_ms is not None:
+            st.caption(f"ML prediction refreshed in {elapsed_ms / 1000:.1f}s.")
+
 
 # ── Tab 7: Backtest ───────────────────────────────────────────────────────────
 
@@ -1844,24 +1935,46 @@ def render_backtest(df, cfg, symbol):
             bt_cap = 5.0
         bt_pos = st.slider("Position Size %", 5, 50, int(cfg["bt_pos_size"]*100), 5) / 100
 
-    if st.button("▶️ Run Backtest", type="primary"):
-        with st.spinner("Preparing full dataset for backtest…"):
-            try:
-                full_df = load_full_data(symbol, cfg.get("timeframe", "1h"), cfg["limit"])
-            except Exception:
-                full_df = df
-        with st.spinner("Running backtest…"):
-            bt_r = run_backtest(full_df, initial_capital=bt_cap,
-                                stop_loss_pct=bt_sl, take_profit_pct=bt_tp,
-                                position_size_pct=bt_pos)
-        st.session_state["bt_result"] = bt_r
-        st.success("Done!")
+    bt_key = backtest_cache_key(symbol, cfg.get("timeframe", "1h"), cfg["limit"], bt_cap, bt_sl, bt_tp, bt_pos)
+    bt_cache = st.session_state.setdefault("bt_result_cache", {})
 
-    if "bt_result" not in st.session_state:
-        st.info("Configure parameters above and click **Run Backtest**.")
+    if st.button("▶️ Run Backtest", type="primary"):
+        status = st.empty()
+        with status.container():
+            if bt_key in bt_cache:
+                render_compact_state("Loading cached result…", "Backtest settings unchanged")
+            else:
+                render_compact_state("Calculating…", "Preparing full dataset and strategy results")
+        start = time.perf_counter()
+        bt_r = bt_cache.get(bt_key)
+        if bt_r is None:
+            bt_r = load_backtest_result(
+                symbol, cfg.get("timeframe", "1h"), cfg["limit"],
+                bt_cap, bt_sl, bt_tp, bt_pos,
+            )
+            bt_cache[bt_key] = bt_r
+            trim_session_cache("bt_result_cache")
+        st.session_state["bt_result"] = bt_r
+        st.session_state["bt_result_key"] = bt_key
+        status.empty()
+        elapsed = time.perf_counter() - start
+        st.success(f"Done in {elapsed:.1f}s")
+
+    if st.session_state.get("bt_result_key") != bt_key:
+        if bt_key in bt_cache:
+            st.session_state["bt_result"] = bt_cache[bt_key]
+            st.session_state["bt_result_key"] = bt_key
+            render_compact_state("Loading cached result…", "Backtest settings unchanged")
+        else:
+            st.info("Configure parameters above and click **Run Backtest**.")
+            return
+
+    bt_result = st.session_state.get("bt_result")
+    if not isinstance(bt_result, dict):
+        render_empty_state("Backtest result unavailable.")
         return
 
-    m = st.session_state["bt_result"]["metrics"]
+    m = bt_result["metrics"]
     if m["total_trades"] == 0:
         st.warning("No trades generated. Try different SL/TP or more candles.")
         return
@@ -1878,7 +1991,7 @@ def render_backtest(df, cfg, symbol):
         unsafe_allow_html=True,
     )
 
-    eq = st.session_state["bt_result"]["equity_curve"].reset_index()
+    eq = bt_result["equity_curve"].reset_index()
     if len(eq):
         fig = go.Figure(go.Scatter(x=eq["timestamp"], y=eq["equity"],
             fill="tozeroy", fillcolor="rgba(38,166,154,0.10)",
@@ -1890,7 +2003,7 @@ def render_backtest(df, cfg, symbol):
             margin=dict(l=0, r=0, t=40, b=0))
         st.plotly_chart(fig, width="stretch")
 
-    trades = st.session_state["bt_result"]["trades"]
+    trades = bt_result["trades"]
     if trades:
         td = pd.DataFrame(trades)
         td["pnl_pct"] = (td["pnl_pct"] * 100).round(2)
@@ -1984,8 +2097,7 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
         custom_risk  = st.slider("Risk per Trade %", 0.1, 5.0, 1.0, 0.1, key="rrp") / 100
         custom_maxp  = st.slider("Max Position %",   5,   50,  25,  5,   key="rmp") / 100
 
-    from src.risk.risk_manager import calculate_position_size
-    sz     = calculate_position_size(custom_cap, custom_entry, custom_sl, custom_risk, custom_maxp)
+    sz     = load_position_size_cached(custom_cap, custom_entry, custom_sl, custom_risk, custom_maxp)
     rr_c   = abs(custom_tp - custom_entry) / abs(custom_entry - custom_sl) if abs(custom_entry - custom_sl) > 0 else 0
     q1, q2, q3, q4 = st.columns(4)
     q1.metric("Units",          f"{sz['units']:.6f}")
@@ -2167,15 +2279,20 @@ def main():
             advanced=adv, smc=smc_used, mtf_overall=mtf_overall,
             orderbook=ob_used, fg_value=fg_val,
         )
-        risk = assess_risk(
+        risk = load_portfolio_risk(
             cfg["capital"], ind["close"],
             ind.get("atr", ind["close"] * 0.02),
             signal_result["confidence"],
-            cfg["risk_tolerance"],
+            cfg["risk_tolerance"], cfg["risk_reward"],
         )
-        risk["risk_reward"] = cfg["risk_reward"]
-        with st.spinner("Loading ML prediction…"):
-            ml_result = load_ml_prediction(df, symbol)
+        ml_status = st.empty()
+        with ml_status.container():
+            if has_cached_ml_prediction(df, symbol, timeframe, cfg["limit"]):
+                render_compact_state("Loading cached result…", "ML prediction")
+            else:
+                render_compact_state("Calculating…", "ML prediction")
+        ml_result = get_cached_ml_prediction(df, symbol, timeframe, cfg["limit"])
+        ml_status.empty()
 
         # persist for Portfolio tab
         st.session_state["signal_result"] = signal_result
@@ -2191,21 +2308,24 @@ def main():
         if not is_tab_rendered("portfolio"):
             mark_tab_rendered("portfolio")
 
+        portfolio_status = st.empty()
         if "signal_result" in st.session_state:
             signal_result = st.session_state.get("signal_result")
-            risk = assess_risk(cfg["capital"], ind["close"],
-                               ind.get("atr", ind["close"]*0.02),
-                               signal_result["confidence"], cfg["risk_tolerance"])
-            risk["risk_reward"] = cfg["risk_reward"]
+            with portfolio_status.container():
+                render_compact_state("Loading cached result…", "Portfolio risk")
         else:
+            with portfolio_status.container():
+                render_compact_state("Refreshing signal…", "Portfolio inputs")
             sentiment = load_news_sentiment(symbol)
             sentiment_score = sentiment.get("score", 0.0)
             signal_result = generate_signal(ind, sentiment_score, advanced=adv, smc=st.session_state.get("smc", smc))
-            risk = assess_risk(cfg["capital"], ind["close"],
-                               ind.get("atr", ind["close"]*0.02),
-                               signal_result["confidence"], cfg["risk_tolerance"])
-            risk["risk_reward"] = cfg["risk_reward"]
             st.session_state["signal_result"] = signal_result
+
+        risk = load_portfolio_risk(
+            cfg["capital"], ind["close"], ind.get("atr", ind["close"]*0.02),
+            signal_result["confidence"], cfg["risk_tolerance"], cfg["risk_reward"],
+        )
+        portfolio_status.empty()
         render_portfolio(signal_result, ind, risk, symbol, cfg["capital"])
 
     st.caption(
