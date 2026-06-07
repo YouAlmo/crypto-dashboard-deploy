@@ -143,9 +143,10 @@ def get_theme_css(theme_name: str) -> str:
     .block-container {{
       background: transparent !important;
       color: var(--text) !important;
-      padding-top: 1.25rem !important;
-      padding-left: clamp(1rem, 2vw, 2rem) !important;
-      padding-right: clamp(1rem, 2vw, 2rem) !important;
+      padding-top: 0.85rem !important;
+      padding-left: clamp(0.85rem, 1.6vw, 1.55rem) !important;
+      padding-right: clamp(0.85rem, 1.6vw, 1.55rem) !important;
+      padding-bottom: 1rem !important;
       max-width: 1580px;
     }}
     h1, h2, h3, h4, h5, h6, p, label, span, div {{ letter-spacing: 0 !important; }}
@@ -156,19 +157,19 @@ def get_theme_css(theme_name: str) -> str:
     .app-header {{
       display: flex;
       align-items: center;
-      gap: 14px;
-      margin: 0 0 1.05rem;
-      padding-bottom: 1rem;
+      gap: 11px;
+      margin: 0 0 0.65rem;
+      padding-bottom: 0.7rem;
       border-bottom: 1px solid var(--card-border);
     }}
-    .app-header h1 {{ margin: 0 !important; font-size: clamp(1.85rem, 2.5vw, 2.45rem) !important; }}
-    .app-header p {{ margin: 0.28rem 0 0; color: var(--muted) !important; font-size: 0.98rem; }}
+    .app-header h1 {{ margin: 0 !important; font-size: clamp(1.6rem, 2.1vw, 2.05rem) !important; }}
+    .app-header p {{ margin: 0.18rem 0 0; color: var(--muted) !important; font-size: 0.88rem; }}
     .brand-mark {{
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 44px;
-      height: 44px;
+      width: 36px;
+      height: 36px;
       border-radius: var(--radius-lg);
       background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 28%, transparent), color-mix(in srgb, var(--accent-alt) 20%, transparent));
       border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--card-border));
@@ -183,21 +184,21 @@ def get_theme_css(theme_name: str) -> str:
       border-right: 1px solid var(--card-border);
       box-shadow: 12px 0 36px rgba(2,6,23,0.08);
     }}
-    section[data-testid="stSidebar"] .block-container {{ padding-top: 1.1rem !important; padding-inline: 1rem !important; }}
+    section[data-testid="stSidebar"] .block-container {{ padding-top: 0.75rem !important; padding-inline: 0.85rem !important; }}
     .sidebar-block {{
       background: var(--sidebar-panel);
       border: 1px solid var(--card-border);
       color: var(--text);
-      padding: 14px 15px;
+      padding: 10px 12px;
       border-radius: var(--radius-lg);
       box-shadow: 0 12px 28px rgba(2,6,23,0.10);
     }}
     .sidebar-block h3 {{ color: var(--text); margin: 0 0 4px 0; font-size: 1rem; }}
     .sidebar-block p {{ color: var(--muted); margin-bottom: 0; }}
-    .sidebar-divider {{ height: 1px; background: var(--card-border); margin: 14px 0; }}
-    .stSidebar .element-container {{ background: transparent !important; margin-bottom: 0.44rem !important; }}
+    .sidebar-divider {{ height: 1px; background: var(--card-border); margin: 9px 0; }}
+    .stSidebar .element-container {{ background: transparent !important; margin-bottom: 0.26rem !important; }}
     .stSidebar [data-testid="stMarkdownContainer"] p {{ margin-bottom: 0.15rem; }}
-    .stSidebar h3 {{ font-size: 0.78rem !important; text-transform: uppercase; color: var(--subtle) !important; margin: 0.8rem 0 0.35rem 0 !important; }}
+    .stSidebar h3 {{ font-size: 0.72rem !important; text-transform: uppercase; color: var(--subtle) !important; margin: 0.55rem 0 0.25rem 0 !important; }}
     .stSidebar label {{ color: var(--text) !important; font-weight: 650 !important; font-size: 0.84rem !important; }}
     .stSidebar .stSelectbox > div > div,
     .stSidebar .stNumberInput input,
@@ -206,7 +207,7 @@ def get_theme_css(theme_name: str) -> str:
       background: var(--input-bg) !important;
       border: 1px solid var(--card-border) !important;
       border-radius: var(--radius-md) !important;
-      min-height: 38px !important;
+      min-height: 34px !important;
       color: var(--text) !important;
       transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
     }}
@@ -222,10 +223,10 @@ def get_theme_css(theme_name: str) -> str:
 
     .dashboard-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
       align-items: stretch;
-      margin: 0.75rem 0 1rem;
+      margin: 0.5rem 0 0.7rem;
     }}
     .dashboard-card, .dashboard-tile, .table-card, .terminal-card, .signal-card {{
       background: linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 88%, var(--panel-bg)));
@@ -233,8 +234,8 @@ def get_theme_css(theme_name: str) -> str:
       box-shadow: var(--shadow);
       color: var(--text);
       border-radius: var(--radius-lg);
-      padding: 16px 17px;
-      min-height: 104px;
+      padding: 11px 13px;
+      min-height: 78px;
       transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
     }}
     .dashboard-card:hover, .dashboard-tile:hover, .signal-card:hover {{
@@ -244,49 +245,53 @@ def get_theme_css(theme_name: str) -> str:
       box-shadow: 0 20px 48px rgba(2,6,23,0.18);
     }}
     .dashboard-tile h4 {{ margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.88rem; color: var(--muted); }}
-    .dashboard-tile p {{ margin: 0.45rem 0 0; color: var(--muted) !important; font-size: 0.84rem; }}
-    .terminal-card {{ min-height: 92px; }}
-    .metric-label {{ color: var(--muted); font-size: 0.74rem; font-weight: 700; text-transform: uppercase; }}
+    .dashboard-tile p {{ margin: 0.32rem 0 0; color: var(--muted) !important; font-size: 0.78rem; line-height: 1.25; }}
+    .terminal-card {{ min-height: 72px; }}
+    .metric-label {{ color: var(--muted); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; }}
     .metric-val {{ color: var(--text); font-weight: 800; }}
-    .metric-pill {{ color: var(--text); padding: 4px 9px; font-size: 0.68rem; border-radius: 999px; border: 1px solid var(--card-border); }}
+    .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); }}
     .metric-pill.buy {{ background: color-mix(in srgb, var(--success) 15%, transparent); color: var(--success); }}
     .metric-pill.sell {{ background: color-mix(in srgb, var(--danger) 15%, transparent); color: var(--danger); }}
     .metric-pill.hold {{ background: color-mix(in srgb, var(--warning) 16%, transparent); color: var(--warning); }}
     .signal-card.buy {{ box-shadow: 0 16px 42px color-mix(in srgb, var(--success) 15%, transparent); }}
     .signal-card.sell {{ box-shadow: 0 16px 42px color-mix(in srgb, var(--danger) 15%, transparent); }}
     .signal-card.hold {{ box-shadow: 0 16px 42px color-mix(in srgb, var(--warning) 13%, transparent); }}
-    .signal-badge {{ background: var(--accent); color: #fff; border-radius: 999px; padding: 6px 11px; font-weight: 800; letter-spacing: .04em !important; }}
+    .signal-badge {{ background: var(--accent); color: #fff; border-radius: 999px; padding: 4px 9px; font-weight: 800; letter-spacing: .04em !important; }}
     .small-muted {{ color: var(--muted); }}
     .conf-wrap, .dom-wrap {{ background: color-mix(in srgb, var(--panel-bg) 70%, transparent); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 3px; }}
     .conf-bar, .dom-bar {{ background: color-mix(in srgb, var(--muted) 16%, transparent); border-radius: 999px; overflow: hidden; min-height: 8px; }}
     .conf-fill, .dom-bull, .dom-bear {{ min-height: 8px; }}
     .signal-row {{ display: flex; gap: 12px; align-items: stretch; flex-wrap: wrap; }}
-    .signal-meta, .signal-item {{ color: var(--text); background: color-mix(in srgb, var(--panel-bg) 55%, transparent); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px 12px; }}
+    .signal-meta, .signal-item {{ color: var(--text); background: color-mix(in srgb, var(--panel-bg) 55%, transparent); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 7px 9px; }}
     .risk-badge {{ color: var(--text); border-radius: 999px; padding: 3px 8px; font-size: 0.78rem; font-weight: 800; }}
     .risk-low {{ background: color-mix(in srgb, var(--success) 24%, transparent); color: var(--success); }}
     .risk-medium {{ background: color-mix(in srgb, var(--warning) 24%, transparent); color: var(--warning); }}
     .risk-high {{ background: color-mix(in srgb, var(--danger) 24%, transparent); color: var(--danger); }}
 
-    .section-title {{ color: var(--text); font-size: clamp(1.22rem, 1.7vw, 1.52rem); font-weight: 800; margin-bottom: 0.18rem; }}
-    .section-subtitle {{ color: var(--muted); margin-bottom: 0.95rem; font-size: 0.92rem; max-width: 980px; }}
+    .section-title {{ color: var(--text); font-size: clamp(1.08rem, 1.45vw, 1.34rem); font-weight: 800; margin-bottom: 0.1rem; }}
+    .section-subtitle {{ color: var(--muted); margin-bottom: 0.58rem; font-size: 0.84rem; max-width: 980px; }}
     .table-card h5 {{ color: var(--text); }}
     div[data-testid="stMetric"] {{
       background: var(--card-bg) !important;
       border: 1px solid var(--card-border) !important;
       border-radius: var(--radius-lg) !important;
-      padding: 13px 15px !important;
+      padding: 9px 11px !important;
       box-shadow: var(--shadow);
     }}
     div[data-testid="stMetric"] label, div[data-testid="stMetric"] [data-testid="stMetricLabel"] {{ color: var(--muted) !important; }}
     div[data-testid="stMetricValue"] {{ color: var(--text) !important; font-size: clamp(1.15rem, 1.6vw, 1.55rem) !important; font-weight: 800 !important; }}
     .stDataFrame, [data-testid="stDataFrame"] {{ border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--card-border); box-shadow: var(--shadow); }}
+    div[data-testid="stToolbar"], div[data-testid="stDecoration"], button[title="View fullscreen"] {{ display: none !important; }}
+    div[data-testid="stVerticalBlock"] {{ gap: 0.45rem !important; }}
+    hr {{ margin: 0.65rem 0 !important; border-color: var(--card-border) !important; }}
+    [data-testid="stExpander"] {{ border-color: var(--card-border) !important; border-radius: var(--radius-lg) !important; }}
 
     div[role="radiogroup"] {{
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
-      padding: 6px;
-      margin: 0.2rem 0 1.1rem;
+      padding: 4px;
+      margin: 0.05rem 0 0.65rem;
       background: color-mix(in srgb, var(--panel-bg) 78%, transparent);
       border: 1px solid var(--card-border);
       border-radius: var(--radius-lg);
@@ -295,8 +300,8 @@ def get_theme_css(theme_name: str) -> str:
     div[role="radiogroup"] label {{
       border-radius: var(--radius-md);
       border: 1px solid transparent;
-      padding: 8px 12px;
-      min-height: 38px;
+      padding: 5px 9px;
+      min-height: 30px;
       color: var(--muted) !important;
       background: transparent;
       transition: background .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
@@ -333,9 +338,9 @@ def get_theme_css(theme_name: str) -> str:
       50% {{ opacity: 1; }}
     }}
     @media (max-width: 1180px) {{
-      .dashboard-grid {{ grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 12px; }}
-      .dashboard-card, .dashboard-tile, .terminal-card, .signal-card {{ padding: 14px 15px; min-height: 96px; }}
-      div[role="radiogroup"] label {{ padding: 7px 10px; font-size: 0.9rem; }}
+      .dashboard-grid {{ grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 9px; }}
+      .dashboard-card, .dashboard-tile, .terminal-card, .signal-card {{ padding: 10px 12px; min-height: 72px; }}
+      div[role="radiogroup"] label {{ padding: 5px 8px; font-size: 0.84rem; }}
     }}
     @media (max-width: 760px) {{
       .block-container {{ padding-inline: 0.75rem !important; }}
@@ -382,8 +387,8 @@ def render_dashboard_card(title: str, value: str, subtitle: str = "", accent: st
     return (
         f"<div class='dashboard-card'>"
         f"<div class='metric-label'>{title}</div>"
-        f"<div class='metric-val' style='font-size:clamp(1.35rem,1.9vw,1.85rem);color:{accent};line-height:1.08;margin-top:8px'>{value}</div>"
-        f"<div style='font-size:.84rem;color:var(--muted);margin-top:7px;line-height:1.35'>{subtitle}</div>"
+        f"<div class='metric-val' style='font-size:clamp(1.12rem,1.55vw,1.52rem);color:{accent};line-height:1.05;margin-top:5px'>{value}</div>"
+        f"<div style='font-size:.76rem;color:var(--muted);margin-top:4px;line-height:1.25'>{subtitle}</div>"
         f"</div>"
     )
 
@@ -392,7 +397,7 @@ def render_metric_tile(title: str, value: str, detail: str = "", badge: str = ""
     return (
         f"<div class='dashboard-tile'>"
         f"<h4>{title}{badge_html}</h4>"
-        f"<div class='metric-val' style='font-size:clamp(1.15rem,1.5vw,1.45rem);line-height:1.1;margin-top:9px;color:var(--text)'>{value}</div>"
+        f"<div class='metric-val' style='font-size:clamp(1rem,1.3vw,1.22rem);line-height:1.06;margin-top:6px;color:var(--text)'>{value}</div>"
         f"<p>{detail}</p>"
         f"</div>"
     )
@@ -1633,7 +1638,7 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
 
     chart_xmin = df.index[-min(200, len(df))]
     fig.update_layout(
-        height=900,
+        height=720,
         showlegend=True,
         legend=dict(orientation="h", yanchor="bottom", y=1.01, xanchor="right", x=1,
                     font=dict(size=10)),
@@ -1769,7 +1774,7 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
                       annotation_text="EQ", annotation_position="right")
 
     fig.update_layout(
-        height=580, xaxis_rangeslider_visible=False,
+        height=480, xaxis_rangeslider_visible=False,
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         margin=dict(l=10, r=10, t=30, b=10),
         showlegend=False,
@@ -1917,7 +1922,7 @@ def render_orderbook(ob: dict, symbol: str):
         line=dict(color="#ef5350", width=2),
     ))
     fig.update_layout(
-        height=320, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        height=260, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         margin=dict(l=0, r=0, t=20, b=0),
         xaxis_title="Price", yaxis_title="Cumulative Volume",
     )
@@ -1930,7 +1935,7 @@ def render_orderbook(ob: dict, symbol: str):
         marker_color="#26a69a", name="Bids"))
     fig2.add_trace(go.Bar(x=["Sell Pressure"], y=[ob["sell_pct"]],
         marker_color="#ef5350", name="Asks"))
-    fig2.update_layout(height=180, paper_bgcolor="rgba(0,0,0,0)",
+    fig2.update_layout(height=145, paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0,r=0,t=10,b=0),
         showlegend=False, yaxis=dict(range=[0,100], ticksuffix="%"))
     st.plotly_chart(fig2, width="stretch")
@@ -2051,8 +2056,8 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Institutional Dark"):
         ),
     ))
     fig.update_layout(
-        height=320,
-        margin=dict(l=0, r=0, t=10, b=0),
+        height=250,
+        margin=dict(l=0, r=0, t=6, b=0),
         paper_bgcolor="rgba(0,0,0,0)",
     )
     st.plotly_chart(fig, width="stretch")
@@ -2185,7 +2190,7 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
             fig = px.bar(fi_df.tail(10), x="Importance", y="Feature", orientation="h",
                          title="Top Feature Importances", color="Importance",
                          color_continuous_scale="teal")
-            fig.update_layout(height=240, paper_bgcolor="rgba(0,0,0,0)",
+            fig.update_layout(height=200, paper_bgcolor="rgba(0,0,0,0)",
                               plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0,r=0,t=40,b=0))
             st.plotly_chart(fig, width="stretch")
 
@@ -2289,7 +2294,7 @@ def render_backtest(df, cfg, symbol):
         fig = go.Figure(go.Scatter(x=eq["timestamp"], y=eq["equity"],
             fill="tozeroy", fillcolor="rgba(38,166,154,0.10)",
             line=dict(color="#26a69a", width=2), name="Portfolio"))
-        fig.update_layout(height=260, title="Equity Curve",
+        fig.update_layout(height=220, title="Equity Curve",
             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
             yaxis=dict(tickprefix="$", gridcolor="rgba(255,255,255,0.04)"),
             xaxis=dict(gridcolor="rgba(255,255,255,0.04)"),
@@ -2440,7 +2445,7 @@ def render_fear_greed_gauge(fg: dict):
         },
     ))
     fig.update_layout(
-        height=200, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        height=160, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         margin=dict(l=15, r=15, t=30, b=5), font={"color": "white"},
     )
     st.plotly_chart(fig, width="stretch")
