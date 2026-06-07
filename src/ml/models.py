@@ -1,22 +1,16 @@
 import numpy as np
 import pandas as pd
 from typing import Dict, Optional, Tuple
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import TimeSeriesSplit
-from sklearn.metrics import accuracy_score, classification_report
 import streamlit as st
-
-try:
-    import xgboost as xgb
-    XGBOOST_AVAILABLE = True
-except ImportError:
-    XGBOOST_AVAILABLE = False
 
 from .features import prepare_training_data, prepare_prediction_features, FEATURE_COLS
 
 
 def train_random_forest(X: np.ndarray, y: np.ndarray) -> Tuple:
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.metrics import accuracy_score
+    from sklearn.preprocessing import StandardScaler
+
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
@@ -35,8 +29,13 @@ def train_random_forest(X: np.ndarray, y: np.ndarray) -> Tuple:
 
 
 def train_xgboost(X: np.ndarray, y: np.ndarray) -> Tuple:
-    if not XGBOOST_AVAILABLE:
+    try:
+        import xgboost as xgb
+    except ImportError:
         return None, None, {"error": "XGBoost not available"}
+
+    from sklearn.metrics import accuracy_score
+    from sklearn.preprocessing import StandardScaler
 
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
@@ -58,6 +57,17 @@ def train_xgboost(X: np.ndarray, y: np.ndarray) -> Tuple:
 
 
 def cross_validate_model(model_type: str, X: np.ndarray, y: np.ndarray, n_splits: int = 5) -> Dict:
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.metrics import accuracy_score
+    from sklearn.model_selection import TimeSeriesSplit
+    from sklearn.preprocessing import StandardScaler
+
+    try:
+        import xgboost as xgb
+        xgboost_available = True
+    except ImportError:
+        xgboost_available = False
+
     tscv = TimeSeriesSplit(n_splits=n_splits)
     accuracies = []
 
@@ -71,7 +81,7 @@ def cross_validate_model(model_type: str, X: np.ndarray, y: np.ndarray, n_splits
 
         if model_type == "rf":
             m = RandomForestClassifier(n_estimators=100, max_depth=6, random_state=42, n_jobs=-1)
-        elif model_type == "xgb" and XGBOOST_AVAILABLE:
+        elif model_type == "xgb" and xgboost_available:
             m = xgb.XGBClassifier(n_estimators=100, max_depth=4, random_state=42, verbosity=0)
         else:
             continue
@@ -91,6 +101,8 @@ def cross_validate_model(model_type: str, X: np.ndarray, y: np.ndarray, n_splits
 def train_and_predict(_df_hash: str, df_serialized: str, symbol: str) -> Dict:
     import json
     from io import StringIO
+    from sklearn.metrics import accuracy_score
+
     df = pd.read_json(StringIO(df_serialized))
 
     X, y, _ = prepare_training_data(df, horizon=5)
@@ -116,7 +128,7 @@ def train_and_predict(_df_hash: str, df_serialized: str, symbol: str) -> Dict:
     xgb_pred, xgb_prob = None, None
 
     if X_latest is not None and len(X_latest) > 0:
-        X_last = X_latest[-1:] 
+        X_last = X_latest[-1:]
         X_last_rf = rf_scaler.transform(X_last)
         rf_pred = int(rf_model.predict(X_last_rf)[0])
         rf_prob = float(rf_model.predict_proba(X_last_rf)[0][1])
