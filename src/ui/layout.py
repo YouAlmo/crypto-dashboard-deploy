@@ -1,4 +1,8 @@
 import streamlit as st
+from src.ui_states import install_streamlit_state_patches
+
+install_streamlit_state_patches(st)
+
 def get_theme_css():
     return """
     <style>
