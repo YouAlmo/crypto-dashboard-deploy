@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 from typing import List, Optional
+from functools import lru_cache
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 SYMBOLS = [
@@ -33,24 +35,25 @@ TIMEFRAMES = {
 }
 
 
+def _exchange_config(default_type: str = "spot") -> dict:
+    return {
+        "enableRateLimit": True,
+        "timeout": 6000,
+        "options": {"defaultType": default_type},
+    }
+
+
+@lru_cache(maxsize=1)
 def get_exchange():
     exchanges = [
-        ccxt.binance({
-            "enableRateLimit": True,
-            "options": {"defaultType": "spot"},
-        }),
-        ccxt.bybit({
-            "enableRateLimit": True,
-        }),
-        ccxt.okx({
-            "enableRateLimit": True,
-        }),
+        ccxt.binance(_exchange_config()),
+        ccxt.bybit(_exchange_config()),
+        ccxt.okx(_exchange_config()),
     ]
 
     for ex in exchanges:
         try:
             ex.load_markets()
-            print(f"Connected to {ex.id}")
             return ex
         except Exception as e:
             print(f"{ex.id} failed: {e}")
@@ -98,24 +101,27 @@ def fetch_ohlcv(
         return pd.DataFrame()
 
 
+def _normalize_ticker(symbol: str, ticker: dict) -> dict:
+    return {
+        "symbol": symbol,
+        "last": ticker.get("last", 0),
+        "bid": ticker.get("bid", 0),
+        "ask": ticker.get("ask", 0),
+        "change": ticker.get("change", 0),
+        "percentage": ticker.get("percentage", 0),
+        "high": ticker.get("high", 0),
+        "low": ticker.get("low", 0),
+        "volume": ticker.get("baseVolume", 0),
+        "quoteVolume": ticker.get("quoteVolume", 0),
+        "timestamp": datetime.now(),
+    }
+
+
 def fetch_ticker(symbol: str, exchange: Optional[ccxt.Exchange] = None) -> dict:
     if exchange is None:
         exchange = get_exchange()
     try:
-        ticker = exchange.fetch_ticker(symbol)
-        return {
-            "symbol": symbol,
-            "last": ticker.get("last", 0),
-            "bid": ticker.get("bid", 0),
-            "ask": ticker.get("ask", 0),
-            "change": ticker.get("change", 0),
-            "percentage": ticker.get("percentage", 0),
-            "high": ticker.get("high", 0),
-            "low": ticker.get("low", 0),
-            "volume": ticker.get("baseVolume", 0),
-            "quoteVolume": ticker.get("quoteVolume", 0),
-            "timestamp": datetime.now(),
-        }
+        return _normalize_ticker(symbol, exchange.fetch_ticker(symbol))
     except Exception as e:
         print(f"Ticker Error: {e}")
 
@@ -135,16 +141,37 @@ def fetch_ticker(symbol: str, exchange: Optional[ccxt.Exchange] = None) -> dict:
 
 
 def fetch_all_tickers(exchange: Optional[ccxt.Exchange] = None) -> dict:
-    if exchange is None:
-        exchange = get_exchange()
-    return {s: fetch_ticker(s, exchange) for s in SYMBOLS}
+    return fetch_tickers_for(SYMBOLS, exchange)
 
 
 def fetch_tickers_for(symbols: List[str], exchange: Optional[ccxt.Exchange] = None) -> dict:
     """Fetch live tickers for an arbitrary list of symbols."""
+    symbols = list(dict.fromkeys(symbols))
     if exchange is None:
         exchange = get_exchange()
-    return {s: fetch_ticker(s, exchange) for s in symbols}
+
+    try:
+        if getattr(exchange, "has", {}).get("fetchTickers"):
+            batch = exchange.fetch_tickers(symbols)
+            return {
+                symbol: _normalize_ticker(symbol, batch.get(symbol, {}))
+                if symbol in batch else fetch_ticker(symbol, exchange)
+                for symbol in symbols
+            }
+    except Exception as e:
+        print(f"Batch ticker fetch failed: {e}")
+
+    tickers = {}
+    max_workers = min(8, max(1, len(symbols)))
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_map = {executor.submit(fetch_ticker, symbol, exchange): symbol for symbol in symbols}
+        for future in as_completed(future_map):
+            symbol = future_map[future]
+            try:
+                tickers[symbol] = future.result()
+            except Exception:
+                tickers[symbol] = _synthetic_ticker(symbol)
+    return tickers
 
 
 def _generate_synthetic_data(symbol: str, timeframe: str, limit: int) -> pd.DataFrame:
