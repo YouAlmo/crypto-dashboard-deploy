@@ -190,13 +190,10 @@ def get_theme_css(theme_name: str) -> str:
       box-shadow: 0 14px 30px color-mix(in srgb, var(--accent) 14%, transparent);
     }}
 
-    section[data-testid="stSidebar"], .sidebar .css-1lcbmhc, .stSidebar {{
+    section[data-testid="stSidebar"] {{
       background: var(--sidebar) !important;
       border-right: 1px solid var(--card-border);
       box-shadow: 12px 0 36px rgba(2,6,23,0.08);
-      min-width: 285px !important;
-      max-width: 330px !important;
-      visibility: visible !important;
     }}
     section[data-testid="stSidebar"] .block-container {{ padding-top: 0.75rem !important; padding-inline: 0.85rem !important; }}
     .sidebar-block {{
@@ -317,7 +314,7 @@ def get_theme_css(theme_name: str) -> str:
     .mover-card .metric-label {{ font-size: 0.64rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
     .mover-card .metric-val {{ font-size: clamp(1rem,1.25vw,1.22rem) !important; margin-top: 2px !important; }}
     .mover-card .metric-subtext {{ color: var(--muted); font-size: 0.74rem; text-align: right; font-weight: 650; }}
-    div[data-testid="stToolbar"], div[data-testid="stDecoration"], button[title="View fullscreen"] {{ display: none !important; }}
+    div[data-testid="stDecoration"], button[title="View fullscreen"] {{ display: none !important; }}
     div[data-testid="stVerticalBlock"] {{ gap: var(--vertical-block-gap, 0.45rem) !important; }}
     div[data-testid="column"] {{ min-width: 0 !important; }}
     hr {{ margin: 0.65rem 0 !important; border-color: var(--card-border) !important; }}
