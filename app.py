@@ -139,6 +139,7 @@ def get_theme_css(theme_name: str) -> str:
       --dashboard-grid-margin: 0.5rem 0 0.7rem;
       --dashboard-card-padding: 11px 13px;
       --dashboard-card-min-height: 90px;
+      --dashboard-card-overflow: visible;
       --terminal-card-min-height: 78px;
       --section-subtitle-margin: 0.58rem;
       --section-subtitle-size: 0.84rem;
@@ -153,7 +154,7 @@ def get_theme_css(theme_name: str) -> str:
     .block-container {{
       background: transparent !important;
       color: var(--text) !important;
-      padding-top: 1.1rem !important;
+      padding-top: 1.35rem !important;
       padding-left: clamp(0.85rem, 1.6vw, 1.55rem) !important;
       padding-right: clamp(0.85rem, 1.6vw, 1.55rem) !important;
       padding-bottom: 1rem !important;
@@ -167,12 +168,12 @@ def get_theme_css(theme_name: str) -> str:
     .app-header {{
       display: flex;
       align-items: center;
-      gap: 13px;
-      margin: 0 0 0.9rem;
-      padding-bottom: 0.9rem;
+      gap: 14px;
+      margin: 0 0 1rem;
+      padding: 0.15rem 0 0.95rem;
       border-bottom: 1px solid var(--card-border);
     }}
-    .app-header h1, .app-title, .hero-title {{ margin: 0 !important; font-size: clamp(1.95rem, 2.6vw, 2.3rem) !important; line-height: 1.1 !important; }}
+    .app-header h1, .app-title, .hero-title {{ margin: 0 !important; font-size: clamp(2rem, 2.75vw, 2.35rem) !important; line-height: 1.12 !important; }}
     .app-header p {{ margin: 0.3rem 0 0; color: var(--muted) !important; font-size: 0.92rem; }}
     .brand-mark {{
       display: inline-flex;
@@ -193,6 +194,9 @@ def get_theme_css(theme_name: str) -> str:
       background: var(--sidebar) !important;
       border-right: 1px solid var(--card-border);
       box-shadow: 12px 0 36px rgba(2,6,23,0.08);
+      min-width: 285px !important;
+      max-width: 330px !important;
+      visibility: visible !important;
     }}
     section[data-testid="stSidebar"] .block-container {{ padding-top: 0.75rem !important; padding-inline: 0.85rem !important; }}
     .sidebar-block {{
@@ -246,7 +250,7 @@ def get_theme_css(theme_name: str) -> str:
       border-radius: var(--radius-lg);
       box-sizing: border-box;
       height: auto !important;
-      overflow: hidden !important;
+      overflow: var(--dashboard-card-overflow) !important;
       padding: var(--dashboard-card-padding);
       min-height: var(--dashboard-card-min-height);
       transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
@@ -257,7 +261,7 @@ def get_theme_css(theme_name: str) -> str:
       border-color: color-mix(in srgb, var(--accent) 34%, var(--card-border));
       box-shadow: 0 20px 48px rgba(2,6,23,0.18);
     }}
-    .dashboard-tile h4 {{ margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.88rem; color: var(--muted); }}
+    .dashboard-tile h4 {{ margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.88rem; color: var(--muted); overflow-wrap: break-word; }}
     .dashboard-tile p {{ margin: 0.32rem 0 0; color: var(--muted) !important; font-size: 0.78rem; line-height: 1.25; }}
     .terminal-card {{ min-height: var(--terminal-card-min-height); }}
     .metric-label {{ color: var(--muted); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; overflow-wrap: break-word; }}
@@ -294,6 +298,25 @@ def get_theme_css(theme_name: str) -> str:
     div[data-testid="stMetric"] label, div[data-testid="stMetric"] [data-testid="stMetricLabel"] {{ color: var(--muted) !important; }}
     div[data-testid="stMetricValue"] {{ color: var(--text) !important; font-size: clamp(1.15rem, 1.6vw, 1.55rem) !important; font-weight: 800 !important; }}
     .stDataFrame, [data-testid="stDataFrame"] {{ border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--card-border); box-shadow: var(--shadow); }}
+    .mover-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 0.45rem 0 0.8rem;
+    }}
+    .mover-card {{
+      min-height: 0 !important;
+      padding: 10px 12px !important;
+      border-radius: var(--radius-md) !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      overflow: hidden !important;
+    }}
+    .mover-card .metric-label {{ font-size: 0.64rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .mover-card .metric-val {{ font-size: clamp(1rem,1.25vw,1.22rem) !important; margin-top: 2px !important; }}
+    .mover-card .metric-subtext {{ color: var(--muted); font-size: 0.74rem; text-align: right; font-weight: 650; }}
     div[data-testid="stToolbar"], div[data-testid="stDecoration"], button[title="View fullscreen"] {{ display: none !important; }}
     div[data-testid="stVerticalBlock"] {{ gap: var(--vertical-block-gap, 0.45rem) !important; }}
     div[data-testid="column"] {{ min-width: 0 !important; }}
@@ -570,9 +593,10 @@ def render_tab_density_css(active_tab: str) -> None:
             "grid_min": "260px",
             "grid_gap": "14px",
             "grid_margin": "0.7rem 0 0.95rem",
-            "card_padding": "16px",
-            "card_min": "120px",
-            "terminal_min": "104px",
+            "card_padding": "15px",
+            "card_min": "108px",
+            "overflow": "visible",
+            "terminal_min": "96px",
             "subtitle_margin": "0.78rem",
             "subtitle_size": "0.88rem",
             "metric_value": "clamp(1.25rem,1.75vw,1.7rem)",
@@ -586,6 +610,7 @@ def render_tab_density_css(active_tab: str) -> None:
             "grid_margin": "0.5rem 0 0.7rem",
             "card_padding": "12px",
             "card_min": "90px",
+            "overflow": "hidden",
             "terminal_min": "78px",
             "subtitle_margin": "0.58rem",
             "subtitle_size": "0.84rem",
@@ -602,6 +627,7 @@ def render_tab_density_css(active_tab: str) -> None:
           --dashboard-grid-margin: {density['grid_margin']};
           --dashboard-card-padding: {density['card_padding']};
           --dashboard-card-min-height: {density['card_min']};
+          --dashboard-card-overflow: {density['overflow']};
           --terminal-card-min-height: {density['terminal_min']};
           --section-subtitle-margin: {density['subtitle_margin']};
           --section-subtitle-size: {density['subtitle_size']};
@@ -1296,26 +1322,24 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
             accent=fg_c
         ), unsafe_allow_html=True)
 
-    st.markdown("<div class='dashboard-grid'>", unsafe_allow_html=True)
+    mover_cards = []
     for sym, pct, price in top_gainers:
-        label = "Gainer"
-        color = "#26a69a"
-        st.markdown(render_dashboard_card(
-            f"{sym} Top Gainer",
-            f"{pct:+.2f}%",
-            f"{fmt_price(price, sym)}",
-            accent=color
-        ), unsafe_allow_html=True)
+        mover_cards.append(
+            f"<div class='dashboard-card mover-card'>"
+            f"<div><div class='metric-label'>{sym} Gainer</div>"
+            f"<div class='metric-val' style='color:var(--success)'>{pct:+.2f}%</div></div>"
+            f"<div class='metric-subtext'>{fmt_price(price, sym)}</div>"
+            f"</div>"
+        )
     for sym, pct, price in top_losers:
-        label = "Loser"
-        color = "#ef5350"
-        st.markdown(render_dashboard_card(
-            f"{sym} Top Loser",
-            f"{pct:+.2f}%",
-            f"{fmt_price(price, sym)}",
-            accent=color
-        ), unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+        mover_cards.append(
+            f"<div class='dashboard-card mover-card'>"
+            f"<div><div class='metric-label'>{sym} Loser</div>"
+            f"<div class='metric-val' style='color:var(--danger)'>{pct:+.2f}%</div></div>"
+            f"<div class='metric-subtext'>{fmt_price(price, sym)}</div>"
+            f"</div>"
+        )
+    st.markdown(f"<div class='mover-grid'>{''.join(mover_cards)}</div>", unsafe_allow_html=True)
 
     st.markdown("### 📋 Market Scanner")
     st.caption(f"{len(watchlist_symbols)} coins · sorted by Market Cap · indicators on 200-candle 1h OHLCV")
