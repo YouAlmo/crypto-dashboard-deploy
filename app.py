@@ -1,6 +1,7 @@
 # SuperSignal AI Engine
 import sys
 import os
+import hashlib
 sys.path.insert(0, os.path.dirname(__file__))
 
 import streamlit as st
@@ -250,6 +251,18 @@ def render_empty_state(message: str = "Data unavailable.", icon: str = "⚠️")
         unsafe_allow_html=True,
     )
 
+def render_ml_prediction_state(ml_result: dict) -> bool:
+    if not isinstance(ml_result, dict) or not ml_result:
+        render_empty_state("ML predictions are unavailable for the current market dataset.", icon="ℹ️")
+        return False
+    if ml_result.get("error"):
+        render_notice_badge(f"ML predictions unavailable: {ml_result['error']}", kind="warning")
+        return False
+    if ml_result.get("combined_probability") is None:
+        render_notice_badge("ML models trained, but no current prediction probability is available.", kind="warning")
+        return False
+    return True
+
 def verdict_color(v: str) -> str:
     return {
         "Strong Buy":  "#1a7f37",
@@ -374,6 +387,34 @@ def load_orderbook(symbol: str):
         "asks": [{"price": 0, "size": 0, "cumulative": 0, "value": 0}],
         "source": "synthetic",
     }
+
+
+def load_ml_prediction(df: pd.DataFrame, symbol: str) -> dict:
+    """Run the cached ML prediction path for the active market dataset."""
+    if df is None or not isinstance(df, pd.DataFrame) or df.empty:
+        return {"error": "market dataset is empty"}
+    try:
+        df_serialized = df.to_json(date_format="iso")
+        df_hash = hashlib.sha256(df_serialized.encode("utf-8")).hexdigest()
+        return train_and_predict(df_hash, df_serialized, symbol)
+    except Exception as exc:
+        return {"error": str(exc)}
+
+
+def orderbook_source_label(ob: dict) -> str:
+    source = str((ob or {}).get("source", "live")).lower()
+    return {"live": "Live", "cached": "Cached", "synthetic": "Synthetic"}.get(source, source.title() or "Live")
+
+
+def orderbook_source_message(ob: dict) -> tuple[str, str] | None:
+    label = orderbook_source_label(ob)
+    if label == "Live":
+        return None
+    if label == "Cached":
+        return "Displaying the most recent cached order book snapshot.", "info"
+    if label == "Synthetic":
+        return "Displaying synthetic order book data because a live snapshot is not currently available.", "warning"
+    return f"Displaying {label.lower()} order book data.", "info"
 
 
 def _default_mtf() -> dict:
@@ -1440,17 +1481,13 @@ def render_orderbook(ob: dict, symbol: str):
         render_empty_state("Order book data unavailable.")
         return
     
-    if ob.get("source") in {"unavailable", "synthetic"}:
-        render_notice_badge(
-            "Live order book unavailable. Showing fallback synthetic order book data.",
-            kind="warning",
-        )
+    source_notice = orderbook_source_message(ob)
+    if source_notice:
+        message, kind = source_notice
+        render_notice_badge(message, kind=kind)
 
-    src = ob.get("source", "")
-    if src == "synthetic":
-        st.caption("⚠️ Showing synthetic order book (Binance rate-limited)")
-
-    st.markdown(render_section_header(f"Live Order Book — {symbol}", f"Source: {src or 'Live'}"), unsafe_allow_html=True)
+    src_label = orderbook_source_label(ob)
+    st.markdown(render_section_header(f"Order Book — {symbol}", f"Source: {src_label}"), unsafe_allow_html=True)
 
     imb = ob["imbalance"]
     imb_label = "Bid dominant" if imb > 0 else "Ask dominant"
@@ -1759,9 +1796,7 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
 
     st.divider()
     st.subheader("🤖 ML Predictions")
-    if ml_result is None:
-        st.warning("ML: No predictions available")
-    else:
+    if render_ml_prediction_state(ml_result):
         direction = ml_result.get("direction", "?")
         prob      = ml_result.get("combined_probability", 0.5)
         dir_c     = "#26a69a" if direction == "UP" else "#ef5350"
@@ -2099,9 +2134,12 @@ def main():
         render_smart_money(df, st.session_state.smc, symbol)
 
     with tab4:
-        if "ob" not in st.session_state:
+        if "ob" not in st.session_state or st.session_state.get("ob_symbol") != symbol:
             with st.spinner("Fetching order book…"):
                 st.session_state.ob = load_orderbook(symbol)
+                st.session_state.ob_symbol = symbol
+        elif st.session_state.ob.get("source") == "live":
+            st.session_state.ob = {**st.session_state.ob, "source": "cached"}
         render_orderbook(st.session_state.ob, symbol)
 
     with tab5:
@@ -2111,18 +2149,9 @@ def main():
         render_mtf(st.session_state.mtf, symbol, cfg["theme"])
 
     with tab6:
-        # PERF: Lazy load AI Signals - only compute when tab opened
         if not is_tab_rendered("ai_signals"):
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.markdown("**🤖 Analyzing...**")
-                render_skeleton_loader("60px", 1)
-            with col2:
-                render_skeleton_loader("240px", 1)
-            with col3:
-                render_skeleton_loader("80px", 1)
             mark_tab_rendered("ai_signals")
-        
+
         with st.spinner("Loading sentiment…"):
             sentiment = load_news_sentiment(symbol)
         sentiment_score = sentiment.get("score", 0.0)
@@ -2145,7 +2174,8 @@ def main():
             cfg["risk_tolerance"],
         )
         risk["risk_reward"] = cfg["risk_reward"]
-        ml_result = None
+        with st.spinner("Loading ML prediction…"):
+            ml_result = load_ml_prediction(df, symbol)
 
         # persist for Portfolio tab
         st.session_state["signal_result"] = signal_result
@@ -2153,24 +2183,14 @@ def main():
                   signal_result, ml_result, risk, symbol, cfg)
 
     with tab7:
-        # PERF: Lazy load Backtest - expensive computation only when tab opened
         if not is_tab_rendered("backtest"):
-            col1, col2 = st.columns([1, 1])
-            with col1:
-                st.markdown("**🔬 Running Backtest...**")
-                render_skeleton_loader("150px", 2)
-            with col2:
-                render_skeleton_loader("360px", 1)
             mark_tab_rendered("backtest")
         render_backtest(df, cfg, symbol)
 
     with tab8:
-        # PERF: Lazy load Portfolio - only compute when tab opened
         if not is_tab_rendered("portfolio"):
-            st.markdown("**📋 Loading Portfolio...**")
-            render_skeleton_loader("200px", 2)
             mark_tab_rendered("portfolio")
-        
+
         if "signal_result" in st.session_state:
             signal_result = st.session_state.get("signal_result")
             risk = assess_risk(cfg["capital"], ind["close"],
