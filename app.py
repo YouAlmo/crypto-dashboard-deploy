@@ -134,6 +134,16 @@ def get_theme_css(theme_name: str) -> str:
       --radius-sm: 8px;
       --radius-md: 10px;
       --radius-lg: 12px;
+      --dashboard-grid-min: 170px;
+      --dashboard-grid-gap: 10px;
+      --dashboard-grid-margin: 0.5rem 0 0.7rem;
+      --dashboard-card-padding: 11px 13px;
+      --dashboard-card-min-height: 90px;
+      --terminal-card-min-height: 78px;
+      --section-subtitle-margin: 0.58rem;
+      --section-subtitle-size: 0.84rem;
+      --metric-value-size: clamp(1.12rem,1.55vw,1.52rem);
+      --metric-tile-value-size: clamp(1rem,1.3vw,1.22rem);
     }}
     body, .stApp {{
       background: linear-gradient(180deg, var(--app-bg) 0%, var(--app-bg-alt) 100%) !important;
@@ -143,7 +153,7 @@ def get_theme_css(theme_name: str) -> str:
     .block-container {{
       background: transparent !important;
       color: var(--text) !important;
-      padding-top: 0.85rem !important;
+      padding-top: 1.1rem !important;
       padding-left: clamp(0.85rem, 1.6vw, 1.55rem) !important;
       padding-right: clamp(0.85rem, 1.6vw, 1.55rem) !important;
       padding-bottom: 1rem !important;
@@ -157,19 +167,19 @@ def get_theme_css(theme_name: str) -> str:
     .app-header {{
       display: flex;
       align-items: center;
-      gap: 11px;
-      margin: 0 0 0.65rem;
-      padding-bottom: 0.7rem;
+      gap: 13px;
+      margin: 0 0 0.9rem;
+      padding-bottom: 0.9rem;
       border-bottom: 1px solid var(--card-border);
     }}
-    .app-header h1 {{ margin: 0 !important; font-size: clamp(1.6rem, 2.1vw, 2.05rem) !important; }}
-    .app-header p {{ margin: 0.18rem 0 0; color: var(--muted) !important; font-size: 0.88rem; }}
+    .app-header h1, .app-title, .hero-title {{ margin: 0 !important; font-size: clamp(1.95rem, 2.6vw, 2.3rem) !important; line-height: 1.1 !important; }}
+    .app-header p {{ margin: 0.3rem 0 0; color: var(--muted) !important; font-size: 0.92rem; }}
     .brand-mark {{
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
+      width: 42px;
+      height: 42px;
       border-radius: var(--radius-lg);
       background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 28%, transparent), color-mix(in srgb, var(--accent-alt) 20%, transparent));
       border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--card-border));
@@ -223,10 +233,10 @@ def get_theme_css(theme_name: str) -> str:
 
     .dashboard-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(var(--dashboard-grid-min), 1fr));
+      gap: var(--dashboard-grid-gap);
       align-items: stretch;
-      margin: 0.5rem 0 0.7rem;
+      margin: var(--dashboard-grid-margin);
     }}
     .dashboard-card, .dashboard-tile, .table-card, .terminal-card, .signal-card {{
       background: linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 88%, var(--panel-bg)));
@@ -234,8 +244,11 @@ def get_theme_css(theme_name: str) -> str:
       box-shadow: var(--shadow);
       color: var(--text);
       border-radius: var(--radius-lg);
-      padding: 11px 13px;
-      min-height: 78px;
+      box-sizing: border-box;
+      height: auto !important;
+      overflow: hidden !important;
+      padding: var(--dashboard-card-padding);
+      min-height: var(--dashboard-card-min-height);
       transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
     }}
     .dashboard-card:hover, .dashboard-tile:hover, .signal-card:hover {{
@@ -246,9 +259,9 @@ def get_theme_css(theme_name: str) -> str:
     }}
     .dashboard-tile h4 {{ margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.88rem; color: var(--muted); }}
     .dashboard-tile p {{ margin: 0.32rem 0 0; color: var(--muted) !important; font-size: 0.78rem; line-height: 1.25; }}
-    .terminal-card {{ min-height: 72px; }}
-    .metric-label {{ color: var(--muted); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; }}
-    .metric-val {{ color: var(--text); font-weight: 800; }}
+    .terminal-card {{ min-height: var(--terminal-card-min-height); }}
+    .metric-label {{ color: var(--muted); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; overflow-wrap: break-word; }}
+    .metric-val, .metric-value, .metric-subtext {{ color: var(--text); font-weight: 800; overflow-wrap: break-word; word-break: normal; }}
     .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); }}
     .metric-pill.buy {{ background: color-mix(in srgb, var(--success) 15%, transparent); color: var(--success); }}
     .metric-pill.sell {{ background: color-mix(in srgb, var(--danger) 15%, transparent); color: var(--danger); }}
@@ -269,7 +282,7 @@ def get_theme_css(theme_name: str) -> str:
     .risk-high {{ background: color-mix(in srgb, var(--danger) 24%, transparent); color: var(--danger); }}
 
     .section-title {{ color: var(--text); font-size: clamp(1.08rem, 1.45vw, 1.34rem); font-weight: 800; margin-bottom: 0.1rem; }}
-    .section-subtitle {{ color: var(--muted); margin-bottom: 0.58rem; font-size: 0.84rem; max-width: 980px; }}
+    .section-subtitle {{ color: var(--muted); margin-bottom: var(--section-subtitle-margin); font-size: var(--section-subtitle-size); max-width: 980px; }}
     .table-card h5 {{ color: var(--text); }}
     div[data-testid="stMetric"] {{
       background: var(--card-bg) !important;
@@ -282,7 +295,8 @@ def get_theme_css(theme_name: str) -> str:
     div[data-testid="stMetricValue"] {{ color: var(--text) !important; font-size: clamp(1.15rem, 1.6vw, 1.55rem) !important; font-weight: 800 !important; }}
     .stDataFrame, [data-testid="stDataFrame"] {{ border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--card-border); box-shadow: var(--shadow); }}
     div[data-testid="stToolbar"], div[data-testid="stDecoration"], button[title="View fullscreen"] {{ display: none !important; }}
-    div[data-testid="stVerticalBlock"] {{ gap: 0.45rem !important; }}
+    div[data-testid="stVerticalBlock"] {{ gap: var(--vertical-block-gap, 0.45rem) !important; }}
+    div[data-testid="column"] {{ min-width: 0 !important; }}
     hr {{ margin: 0.65rem 0 !important; border-color: var(--card-border) !important; }}
     [data-testid="stExpander"] {{ border-color: var(--card-border) !important; border-radius: var(--radius-lg) !important; }}
 
@@ -337,9 +351,8 @@ def get_theme_css(theme_name: str) -> str:
       0%, 100% {{ opacity: 0.72; }}
       50% {{ opacity: 1; }}
     }}
-    @media (max-width: 1180px) {{
-      .dashboard-grid {{ grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 9px; }}
-      .dashboard-card, .dashboard-tile, .terminal-card, .signal-card {{ padding: 10px 12px; min-height: 72px; }}
+    @media (max-width: 1400px) {{
+      .dashboard-grid {{ grid-template-columns: repeat(auto-fit, minmax(min(var(--dashboard-grid-min), 100%), 1fr)); }}
       div[role="radiogroup"] label {{ padding: 5px 8px; font-size: 0.84rem; }}
     }}
     @media (max-width: 760px) {{
@@ -387,7 +400,7 @@ def render_dashboard_card(title: str, value: str, subtitle: str = "", accent: st
     return (
         f"<div class='dashboard-card'>"
         f"<div class='metric-label'>{title}</div>"
-        f"<div class='metric-val' style='font-size:clamp(1.12rem,1.55vw,1.52rem);color:{accent};line-height:1.05;margin-top:5px'>{value}</div>"
+        f"<div class='metric-val' style='font-size:var(--metric-value-size);color:{accent};line-height:1.08;margin-top:6px'>{value}</div>"
         f"<div style='font-size:.76rem;color:var(--muted);margin-top:4px;line-height:1.25'>{subtitle}</div>"
         f"</div>"
     )
@@ -397,7 +410,7 @@ def render_metric_tile(title: str, value: str, detail: str = "", badge: str = ""
     return (
         f"<div class='dashboard-tile'>"
         f"<h4>{title}{badge_html}</h4>"
-        f"<div class='metric-val' style='font-size:clamp(1rem,1.3vw,1.22rem);line-height:1.06;margin-top:6px;color:var(--text)'>{value}</div>"
+        f"<div class='metric-val' style='font-size:var(--metric-tile-value-size);line-height:1.08;margin-top:6px;color:var(--text)'>{value}</div>"
         f"<p>{detail}</p>"
         f"</div>"
     )
@@ -548,6 +561,59 @@ def render_persistent_tabs() -> str:
 def sync_overlay_query(show: dict) -> None:
     for key, value in show.items():
         qp_set(f"show_{key}", int(bool(value)))
+
+
+def render_tab_density_css(active_tab: str) -> None:
+    heavy_tabs = {"overview", "technical", "smart_money"}
+    if active_tab in heavy_tabs:
+        density = {
+            "grid_min": "260px",
+            "grid_gap": "14px",
+            "grid_margin": "0.7rem 0 0.95rem",
+            "card_padding": "16px",
+            "card_min": "120px",
+            "terminal_min": "104px",
+            "subtitle_margin": "0.78rem",
+            "subtitle_size": "0.88rem",
+            "metric_value": "clamp(1.25rem,1.75vw,1.7rem)",
+            "metric_tile_value": "clamp(1.08rem,1.45vw,1.35rem)",
+            "vertical_gap": "0.62rem",
+        }
+    else:
+        density = {
+            "grid_min": "170px",
+            "grid_gap": "10px",
+            "grid_margin": "0.5rem 0 0.7rem",
+            "card_padding": "12px",
+            "card_min": "90px",
+            "terminal_min": "78px",
+            "subtitle_margin": "0.58rem",
+            "subtitle_size": "0.84rem",
+            "metric_value": "clamp(1.12rem,1.55vw,1.52rem)",
+            "metric_tile_value": "clamp(1rem,1.3vw,1.22rem)",
+            "vertical_gap": "0.45rem",
+        }
+    st.markdown(
+        f"""
+        <style>
+        :root {{
+          --dashboard-grid-min: {density['grid_min']};
+          --dashboard-grid-gap: {density['grid_gap']};
+          --dashboard-grid-margin: {density['grid_margin']};
+          --dashboard-card-padding: {density['card_padding']};
+          --dashboard-card-min-height: {density['card_min']};
+          --terminal-card-min-height: {density['terminal_min']};
+          --section-subtitle-margin: {density['subtitle_margin']};
+          --section-subtitle-size: {density['subtitle_size']};
+          --metric-value-size: {density['metric_value']};
+          --metric-tile-value-size: {density['metric_tile_value']};
+          --vertical-block-gap: {density['vertical_gap']};
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
 def verdict_color(v: str) -> str:
     return {
@@ -2542,6 +2608,7 @@ def main():
 
     render_header()
     active_tab = render_persistent_tabs()
+    render_tab_density_css(active_tab)
 
     if active_tab == "overview":
         render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg)

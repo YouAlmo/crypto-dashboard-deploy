@@ -11,9 +11,9 @@ def get_theme_css():
         color: inherit;
     }
     .block-container {
-        padding-top: 0.85rem;
-        padding-left: 1.55rem;
-        padding-right: 1.55rem;
+        padding-top: 1.1rem;
+        padding-left: 1.6rem;
+        padding-right: 1.6rem;
         max-width: 1600px;
     }
     h1, h2, h3 {
