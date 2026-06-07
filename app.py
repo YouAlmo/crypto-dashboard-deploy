@@ -39,7 +39,6 @@ from src.data.news_sentiment import get_news_sentiment
 from src.risk.risk_manager import assess_risk, calculate_position_size
 from src.ui.layout import (
     render_header,
-    render_tabs,
     get_theme_css
 )
 from src.ui.charts import render_price_chart
@@ -273,6 +272,101 @@ def render_ml_prediction_state(ml_result: dict) -> bool:
         render_notice_badge("ML models trained, but no current prediction probability is available.", kind="warning")
         return False
     return True
+
+TAB_OPTIONS = [
+    ("overview", "📊 Overview"),
+    ("technical", "📈 Technical"),
+    ("smart_money", "💰 Smart Money"),
+    ("order_book", "📖 Order Book"),
+    ("multi_tf", "⏰ Multi-TF"),
+    ("ai_signals", "🤖 AI Signals"),
+    ("backtest", "🧪 Backtest"),
+    ("portfolio", "📋 Portfolio"),
+]
+TAB_LABEL_BY_ID = dict(TAB_OPTIONS)
+TAB_ID_BY_LABEL = {label: tab_id for tab_id, label in TAB_OPTIONS}
+
+
+def qp_get(name: str, default=None):
+    value = st.query_params.get(name, default)
+    if isinstance(value, list):
+        return value[0] if value else default
+    return value
+
+
+def qp_set(name: str, value) -> None:
+    text = str(value)
+    if qp_get(name) != text:
+        st.query_params[name] = text
+
+
+def qp_choice(name: str, choices: list, default):
+    value = qp_get(name, default)
+    return value if value in choices else default
+
+
+def qp_float(name: str, default: float, min_value: float | None = None, max_value: float | None = None) -> float:
+    try:
+        value = float(qp_get(name, default))
+    except (TypeError, ValueError):
+        value = float(default)
+    if min_value is not None:
+        value = max(float(min_value), value)
+    if max_value is not None:
+        value = min(float(max_value), value)
+    return value
+
+
+def qp_int(name: str, default: int, min_value: int | None = None, max_value: int | None = None, step: int | None = None) -> int:
+    try:
+        value = int(float(qp_get(name, default)))
+    except (TypeError, ValueError):
+        value = int(default)
+    if step:
+        value = int(round(value / step) * step)
+    if min_value is not None:
+        value = max(int(min_value), value)
+    if max_value is not None:
+        value = min(int(max_value), value)
+    return value
+
+
+def qp_bool(name: str, default: bool) -> bool:
+    value = str(qp_get(name, "1" if default else "0")).lower()
+    return value in {"1", "true", "yes", "on"}
+
+
+def init_widget_from_query(widget_key: str, query_key: str, default, cast=str):
+    if widget_key in st.session_state:
+        return
+    value = qp_get(query_key, default)
+    try:
+        st.session_state[widget_key] = cast(value)
+    except (TypeError, ValueError):
+        st.session_state[widget_key] = default
+
+
+def render_persistent_tabs() -> str:
+    initial_tab = qp_choice("tab", [tab_id for tab_id, _ in TAB_OPTIONS], "overview")
+    if "active_tab_label" not in st.session_state:
+        st.session_state.active_tab_label = TAB_LABEL_BY_ID[initial_tab]
+
+    selected_label = st.radio(
+        "Navigation",
+        [label for _, label in TAB_OPTIONS],
+        key="active_tab_label",
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+    active_tab = TAB_ID_BY_LABEL.get(selected_label, "overview")
+    st.session_state.active_tab = active_tab
+    qp_set("tab", active_tab)
+    return active_tab
+
+
+def sync_overlay_query(show: dict) -> None:
+    for key, value in show.items():
+        qp_set(f"show_{key}", int(bool(value)))
 
 def verdict_color(v: str) -> str:
     return {
@@ -707,162 +801,171 @@ def render_sidebar(watchlist_symbols: list):
     )
     st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
 
-    theme_default = st.session_state.get("theme", THEME_OPTIONS[0])
+    init_widget_from_query("theme", "theme", THEME_OPTIONS[0], str)
+    if st.session_state.theme not in THEME_OPTIONS:
+        st.session_state.theme = THEME_OPTIONS[0]
     theme = st.sidebar.selectbox(
         "Theme",
         THEME_OPTIONS,
-        index=THEME_OPTIONS.index(theme_default) if theme_default in THEME_OPTIONS else 0,
+        index=THEME_OPTIONS.index(st.session_state.theme) if st.session_state.theme in THEME_OPTIONS else 0,
         help="Choose the interface theme for the dashboard.",
+        key="theme",
     )
-    st.session_state.theme = theme
+    qp_set("theme", theme)
 
     st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
     st.sidebar.subheader("Market")
 
-    symbol_default = st.query_params.get(
-        "symbol",
-        st.session_state.get("selected_symbol", watchlist_symbols[0])
-    )
-
-    if isinstance(symbol_default, list):
-        symbol_default = symbol_default[0]
-    if "/" not in symbol_default and symbol_default.endswith("USDT"):
-        base = symbol_default.replace("USDT", "")
-        symbol_default = f"{base}/USDT"
+    raw_symbol_default = qp_get("symbol", st.session_state.get("selected_symbol", watchlist_symbols[0]))
+    if "/" not in str(raw_symbol_default) and str(raw_symbol_default).endswith("USDT"):
+        base = str(raw_symbol_default).replace("USDT", "")
+        raw_symbol_default = f"{base}/USDT"
+    symbol_default = raw_symbol_default if raw_symbol_default in watchlist_symbols else watchlist_symbols[0]
+    st.session_state.setdefault("selected_symbol", symbol_default)
+    if st.session_state.selected_symbol not in watchlist_symbols:
+        st.session_state.selected_symbol = symbol_default
 
     symbol = st.sidebar.selectbox(
         "Symbol",
         watchlist_symbols,
-        index=watchlist_symbols.index(symbol_default) if symbol_default in watchlist_symbols else 0,
+        index=watchlist_symbols.index(st.session_state.selected_symbol)
+        if st.session_state.selected_symbol in watchlist_symbols else 0,
+        key="selected_symbol",
     )
+    qp_set("symbol", symbol)
 
-    st.session_state.selected_symbol = symbol
-    st.query_params["symbol"] = symbol
-
-    timeframe_default = st.query_params.get(
-        "timeframe",
-        st.session_state.get("selected_timeframe", list(TIMEFRAMES)[0])
+    timeframe_options = list(TIMEFRAMES)
+    timeframe_default = qp_choice(
+        "timeframe", timeframe_options,
+        st.session_state.get("selected_timeframe", timeframe_options[0]),
     )
-
-    if isinstance(timeframe_default, list):
-        timeframe_default = timeframe_default[0]
+    st.session_state.setdefault("selected_timeframe", timeframe_default)
+    if st.session_state.selected_timeframe not in timeframe_options:
+        st.session_state.selected_timeframe = timeframe_options[0]
 
     timeframe = st.sidebar.selectbox(
         "Timeframe",
-        list(TIMEFRAMES),
-        index=list(TIMEFRAMES).index(timeframe_default),
+        timeframe_options,
+        index=timeframe_options.index(st.session_state.selected_timeframe)
+        if st.session_state.selected_timeframe in timeframe_options else 0,
+        key="selected_timeframe",
     )
+    qp_set("timeframe", timeframe)
 
-    st.session_state.selected_timeframe = timeframe
-    st.query_params["timeframe"] = timeframe
-    limit     = st.sidebar.slider("Candle Limit", 100, 1000, 500, 50)
+    init_widget_from_query("candle_limit", "limit", 500, lambda v: qp_int("limit", 500, 100, 1000, 50))
+    limit = st.sidebar.slider("Candle Limit", 100, 1000, 500, 50, key="candle_limit")
+    qp_set("limit", limit)
 
     st.sidebar.subheader("Auto-Refresh")
+    refresh_options = ["Off", "30s", "1m", "5m"]
+    refresh_default = qp_choice("refresh", refresh_options, "Off")
+    st.session_state.setdefault("refresh_option", refresh_default)
+    if st.session_state.refresh_option not in refresh_options:
+        st.session_state.refresh_option = "Off"
     refresh_option = st.sidebar.select_slider(
-        "Interval", options=["Off", "30s", "1m", "5m"], value="Off"
+        "Interval", options=refresh_options, value=st.session_state.refresh_option, key="refresh_option"
     )
+    qp_set("refresh", refresh_option)
     ms_map    = {"Off": None, "30s": 30_000, "1m": 60_000, "5m": 300_000}
     refresh_ms = ms_map[refresh_option]
 
     st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
     st.sidebar.subheader("Chart Overlays")
+    show_defaults = {
+        "ema_9": True, "ema_21": True, "ema_50": True, "ema_200": True,
+        "sma_20": False, "sma_50": False, "sma_200": False, "vwap": False,
+        "supertrend": False, "ichimoku": False, "psar": False, "bb": True,
+        "keltner": False, "donchian": False, "fvg": True, "ob": True, "sr_lines": True,
+    }
+    overlay_widget_keys = {
+        "ema_9": "s_e9", "ema_21": "s_e21", "ema_50": "s_e50", "ema_200": "s_e200",
+        "sma_20": "s_s20", "sma_50": "s_s50", "sma_200": "s_s200", "vwap": "s_vwap",
+        "supertrend": "s_st", "ichimoku": "s_ich", "psar": "s_psar", "bb": "s_bb",
+        "keltner": "s_kc", "donchian": "s_dc", "fvg": "s_fvg", "ob": "s_ob", "sr_lines": "s_sr",
+    }
+    for overlay_key, widget_key in overlay_widget_keys.items():
+        if widget_key not in st.session_state:
+            st.session_state[widget_key] = qp_bool(f"show_{overlay_key}", show_defaults[overlay_key])
+
     show = {}
     with st.sidebar.expander("Trend", expanded=False):
-        show["ema_9"]      = st.checkbox("EMA 9",    True,  key="s_e9")
-        show["ema_21"]     = st.checkbox("EMA 21",   True,  key="s_e21")
-        show["ema_50"]     = st.checkbox("EMA 50",   True,  key="s_e50")
-        show["ema_200"]    = st.checkbox("EMA 200",  True,  key="s_e200")
-        show["sma_20"]     = st.checkbox("SMA 20",   False, key="s_s20")
-        show["sma_50"]     = st.checkbox("SMA 50",   False, key="s_s50")
-        show["sma_200"]    = st.checkbox("SMA 200",  False, key="s_s200")
-        show["vwap"]       = st.checkbox("VWAP",     False, key="s_vwap")
-        show["supertrend"] = st.checkbox("Supertrend", False, key="s_st")
-        show["ichimoku"]   = st.checkbox("Ichimoku", False, key="s_ich")
-        show["psar"]       = st.checkbox("Parabolic SAR", False, key="s_psar")
+        show["ema_9"]      = st.checkbox("EMA 9",    key="s_e9")
+        show["ema_21"]     = st.checkbox("EMA 21",   key="s_e21")
+        show["ema_50"]     = st.checkbox("EMA 50",   key="s_e50")
+        show["ema_200"]    = st.checkbox("EMA 200",  key="s_e200")
+        show["sma_20"]     = st.checkbox("SMA 20",   key="s_s20")
+        show["sma_50"]     = st.checkbox("SMA 50",   key="s_s50")
+        show["sma_200"]    = st.checkbox("SMA 200",  key="s_s200")
+        show["vwap"]       = st.checkbox("VWAP",     key="s_vwap")
+        show["supertrend"] = st.checkbox("Supertrend", key="s_st")
+        show["ichimoku"]   = st.checkbox("Ichimoku", key="s_ich")
+        show["psar"]       = st.checkbox("Parabolic SAR", key="s_psar")
     with st.sidebar.expander("Volatility", expanded=False):
-        show["bb"]       = st.checkbox("Bollinger Bands",  True,  key="s_bb")
-        show["keltner"]  = st.checkbox("Keltner Channel",  False, key="s_kc")
-        show["donchian"] = st.checkbox("Donchian Channel", False, key="s_dc")
+        show["bb"]       = st.checkbox("Bollinger Bands",  key="s_bb")
+        show["keltner"]  = st.checkbox("Keltner Channel",  key="s_kc")
+        show["donchian"] = st.checkbox("Donchian Channel", key="s_dc")
     with st.sidebar.expander("Smart Money", expanded=False):
-        show["fvg"]      = st.checkbox("Fair Value Gaps",  True, key="s_fvg")
-        show["ob"]       = st.checkbox("Order Blocks",     True, key="s_ob")
-        show["sr_lines"] = st.checkbox("Support/Resistance", True, key="s_sr")
+        show["fvg"]      = st.checkbox("Fair Value Gaps",  key="s_fvg")
+        show["ob"]       = st.checkbox("Order Blocks",     key="s_ob")
+        show["sr_lines"] = st.checkbox("Support/Resistance", key="s_sr")
+    sync_overlay_query(show)
 
     st.sidebar.subheader("Risk Management")
 
-    # Paper Capital
-    capital_default = st.query_params.get("capital", "100")
-
-    if isinstance(capital_default, list):
-        capital_default = capital_default[0]
-
+    init_widget_from_query("paper_capital", "capital", 100.0, lambda v: qp_float("capital", 100.0, 5.0, 1_000_000.0))
     capital = st.sidebar.number_input(
         "Paper Capital ($)",
         5.0,
         1_000_000.0,
-        value=float(capital_default),
         step=1.0,
-        format="%.2f"
+        format="%.2f",
+        key="paper_capital",
     )
+    qp_set("capital", capital)
 
-    st.query_params["capital"] = str(capital)
-
-    # Risk Tolerance
-    risk_default = st.query_params.get("risk", "moderate")
-
-    if isinstance(risk_default, list):
-        risk_default = risk_default[0]
-
+    risk_options = ["conservative", "moderate", "aggressive"]
+    risk_default = qp_choice("risk", risk_options, "moderate")
+    st.session_state.setdefault("risk_tolerance", risk_default)
+    if st.session_state.risk_tolerance not in risk_options:
+        st.session_state.risk_tolerance = "moderate"
     risk_tolerance = st.sidebar.select_slider(
         "Risk Tolerance",
-        ["conservative", "moderate", "aggressive"],
-        value=risk_default
+        risk_options,
+        value=st.session_state.risk_tolerance,
+        key="risk_tolerance",
     )
+    qp_set("risk", risk_tolerance)
 
-    st.query_params["risk"] = risk_tolerance
-
-    # Stop Loss
-    sl_default = st.query_params.get("sl", "2.0")
-
-    if isinstance(sl_default, list):
-        sl_default = sl_default[0]
-
+    init_widget_from_query("stop_loss_pct_input", "sl", 2.0, lambda v: qp_float("sl", 2.0, 0.5, 10.0))
     sl_pct = st.sidebar.slider(
         "Stop Loss %",
         0.5,
         10.0,
-        value=float(sl_default),
-        step=0.5
+        step=0.5,
+        key="stop_loss_pct_input",
     )
-
-    st.query_params["sl"] = str(sl_pct)
-
+    qp_set("sl", sl_pct)
     stop_loss_pct = sl_pct / 100
 
-    # Take Profit
-    tp_default = st.query_params.get("tp", "4.0")
-
-    if isinstance(tp_default, list):
-        tp_default = tp_default[0]
-
+    init_widget_from_query("take_profit_pct_input", "tp", 4.0, lambda v: qp_float("tp", 4.0, 1.0, 20.0))
     tp_pct = st.sidebar.slider(
         "Take Profit %",
         1.0,
         20.0,
-        value=float(tp_default),
-        step=0.5
+        step=0.5,
+        key="take_profit_pct_input",
     )
-
-    st.query_params["tp"] = str(tp_pct)
-
+    qp_set("tp", tp_pct)
     take_profit_pct = tp_pct / 100
 
     rr = take_profit_pct / stop_loss_pct if stop_loss_pct else 2.0
-
     st.sidebar.markdown(f"**R/R:** 1:{rr:.1f}")
 
     st.sidebar.subheader("Backtesting")
-    bt_pos_size = st.sidebar.slider("Position Size %", 5, 50, 10, 5) / 100
+    init_widget_from_query("bt_pos_size_pct", "bt_pos", 10, lambda v: qp_int("bt_pos", 10, 5, 50, 5))
+    bt_pos_size_pct = st.sidebar.slider("Position Size %", 5, 50, 10, 5, key="bt_pos_size_pct")
+    qp_set("bt_pos", bt_pos_size_pct)
+    bt_pos_size = bt_pos_size_pct / 100
 
     st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
     st.sidebar.info("🔒 **Paper Trading Only** — no real funds.")
@@ -877,6 +980,7 @@ def render_sidebar(watchlist_symbols: list):
         risk_reward=rr, bt_pos_size=bt_pos_size,
         theme=theme,
     )
+
 
 # ── Tab 1: Overview ───────────────────────────────────────────────────────────
 
@@ -1924,16 +2028,29 @@ def render_backtest(df, cfg, symbol):
         render_empty_state("Backtest requires market data. Select a valid symbol and timeframe.")
         return
     st.markdown(render_section_header("Strategy Backtester", "Simulate trade performance with premium risk controls"), unsafe_allow_html=True)
+    init_widget_from_query("bt_run_sl", "bt_run_sl", cfg["stop_loss_pct"] * 100, lambda v: qp_float("bt_run_sl", cfg["stop_loss_pct"] * 100, 0.5, 10.0))
+    init_widget_from_query("bt_run_tp", "bt_run_tp", cfg["take_profit_pct"] * 100, lambda v: qp_float("bt_run_tp", cfg["take_profit_pct"] * 100, 1.0, 20.0))
+    init_widget_from_query("bt_run_cap", "bt_run_cap", float(cfg["capital"]), lambda v: qp_float("bt_run_cap", float(cfg["capital"]), 5.0, 1_000_000.0))
+    init_widget_from_query("bt_run_pos", "bt_run_pos", int(cfg["bt_pos_size"] * 100), lambda v: qp_int("bt_run_pos", int(cfg["bt_pos_size"] * 100), 5, 50, 5))
+
     bc1, bc2 = st.columns(2)
     with bc1:
-        bt_sl  = st.slider("Stop Loss %",   0.5, 10.0, cfg["stop_loss_pct"]*100,  0.5) / 100
-        bt_tp  = st.slider("Take Profit %", 1.0, 20.0, cfg["take_profit_pct"]*100, 0.5) / 100
+        bt_sl_pct = st.slider("Stop Loss %", 0.5, 10.0, step=0.5, key="bt_run_sl")
+        bt_tp_pct = st.slider("Take Profit %", 1.0, 20.0, step=0.5, key="bt_run_tp")
     with bc2:
-        bt_cap = st.number_input("Starting Capital ($)", 5.0, 1_000_000.0, float(cfg["capital"]), 1.0, format="%.2f")
+        bt_cap = st.number_input("Starting Capital ($)", 5.0, 1_000_000.0, step=1.0, format="%.2f", key="bt_run_cap")
         if bt_cap < 5:
             st.error("⚠️ Minimum capital is $5.00")
             bt_cap = 5.0
-        bt_pos = st.slider("Position Size %", 5, 50, int(cfg["bt_pos_size"]*100), 5) / 100
+        bt_pos_pct = st.slider("Position Size %", 5, 50, step=5, key="bt_run_pos")
+
+    qp_set("bt_run_sl", bt_sl_pct)
+    qp_set("bt_run_tp", bt_tp_pct)
+    qp_set("bt_run_cap", bt_cap)
+    qp_set("bt_run_pos", bt_pos_pct)
+    bt_sl = bt_sl_pct / 100
+    bt_tp = bt_tp_pct / 100
+    bt_pos = bt_pos_pct / 100
 
     bt_key = backtest_cache_key(symbol, cfg.get("timeframe", "1h"), cfg["limit"], bt_cap, bt_sl, bt_tp, bt_pos)
     bt_cache = st.session_state.setdefault("bt_result_cache", {})
@@ -2081,21 +2198,34 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
 
     st.divider()
     st.subheader("Position Sizing Calculator")
+    init_widget_from_query("rc", "pf_cap", float(capital), lambda v: qp_float("pf_cap", float(capital), 5.0, 1_000_000.0))
+    init_widget_from_query("re", "pf_entry", float(close), lambda v: qp_float("pf_entry", float(close), 0.000001, 1_000_000.0))
+    init_widget_from_query("rsl", "pf_sl", float(risk["stop_loss"]), lambda v: qp_float("pf_sl", float(risk["stop_loss"]), 0.000001, 1_000_000.0))
+    init_widget_from_query("rtp", "pf_tp", float(risk["take_profit"]), lambda v: qp_float("pf_tp", float(risk["take_profit"]), 0.000001, 1_000_000.0))
+    init_widget_from_query("rrp", "pf_risk", 1.0, lambda v: qp_float("pf_risk", 1.0, 0.1, 5.0))
+    init_widget_from_query("rmp", "pf_max", 25, lambda v: qp_int("pf_max", 25, 5, 50, 5))
+
     r1, r2 = st.columns(2)
     with r1:
-        custom_cap   = st.number_input("Capital ($)", 5.0, 1_000_000.0, float(capital), 1.0, format="%.2f", key="rc")
+        custom_cap   = st.number_input("Capital ($)", 5.0, 1_000_000.0, step=1.0, format="%.2f", key="rc")
         if custom_cap < 5:
             st.error("⚠️ Minimum capital is $5.00")
             custom_cap = 5.0
-        custom_entry = st.number_input("Entry Price", 0.000001, 1_000_000.0, float(close), key="re",
-                                       format="%.6f")
-        custom_sl    = st.number_input("Stop Loss", 0.000001, 1_000_000.0, float(risk["stop_loss"]),
-                                       key="rsl", format="%.6f")
+        custom_entry = st.number_input("Entry Price", 0.000001, 1_000_000.0, key="re", format="%.6f")
+        custom_sl    = st.number_input("Stop Loss", 0.000001, 1_000_000.0, key="rsl", format="%.6f")
     with r2:
-        custom_tp    = st.number_input("Take Profit", 0.000001, 1_000_000.0, float(risk["take_profit"]),
-                                       key="rtp", format="%.6f")
-        custom_risk  = st.slider("Risk per Trade %", 0.1, 5.0, 1.0, 0.1, key="rrp") / 100
-        custom_maxp  = st.slider("Max Position %",   5,   50,  25,  5,   key="rmp") / 100
+        custom_tp    = st.number_input("Take Profit", 0.000001, 1_000_000.0, key="rtp", format="%.6f")
+        custom_risk_pct = st.slider("Risk per Trade %", 0.1, 5.0, step=0.1, key="rrp")
+        custom_maxp_pct = st.slider("Max Position %", 5, 50, step=5, key="rmp")
+
+    qp_set("pf_cap", custom_cap)
+    qp_set("pf_entry", custom_entry)
+    qp_set("pf_sl", custom_sl)
+    qp_set("pf_tp", custom_tp)
+    qp_set("pf_risk", custom_risk_pct)
+    qp_set("pf_max", custom_maxp_pct)
+    custom_risk = custom_risk_pct / 100
+    custom_maxp = custom_maxp_pct / 100
 
     sz     = load_position_size_cached(custom_cap, custom_entry, custom_sl, custom_risk, custom_maxp)
     rr_c   = abs(custom_tp - custom_entry) / abs(custom_entry - custom_sl) if abs(custom_entry - custom_sl) > 0 else 0
@@ -2230,22 +2360,21 @@ def main():
     # ── Tabs ────────────────────────────────────────────────────────────────
 
     render_header()
+    active_tab = render_persistent_tabs()
 
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = render_tabs()
-
-    with tab1:
+    if active_tab == "overview":
         render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg)
 
-    with tab2:
+    elif active_tab == "technical":
         render_technical(df, ind, adv, symbol, sr, cfg, fg)
 
-    with tab3:
+    elif active_tab == "smart_money":
         if "smc" not in st.session_state:
             with st.spinner("Loading Smart Money data…"):
                 st.session_state.smc = load_smc(symbol, timeframe, cfg["limit"])
         render_smart_money(df, st.session_state.smc, symbol)
 
-    with tab4:
+    elif active_tab == "order_book":
         if "ob" not in st.session_state or st.session_state.get("ob_symbol") != symbol:
             with st.spinner("Fetching order book…"):
                 st.session_state.ob = load_orderbook(symbol)
@@ -2254,13 +2383,15 @@ def main():
             st.session_state.ob = {**st.session_state.ob, "source": "cached"}
         render_orderbook(st.session_state.ob, symbol)
 
-    with tab5:
-        if "mtf" not in st.session_state:
+    elif active_tab == "multi_tf":
+        if "mtf" not in st.session_state or st.session_state.get("mtf_symbol") != symbol or st.session_state.get("mtf_timeframe") != timeframe:
             with st.spinner("Loading multi-timeframe analysis…"):
                 st.session_state.mtf = load_mtf_data(symbol, timeframe)
+                st.session_state.mtf_symbol = symbol
+                st.session_state.mtf_timeframe = timeframe
         render_mtf(st.session_state.mtf, symbol, cfg["theme"])
 
-    with tab6:
+    elif active_tab == "ai_signals":
         if not is_tab_rendered("ai_signals"):
             mark_tab_rendered("ai_signals")
 
@@ -2268,7 +2399,6 @@ def main():
             sentiment = load_news_sentiment(symbol)
         sentiment_score = sentiment.get("score", 0.0)
         fg_val = fg.get("value", 50)
-        # Use session-state heavy loaders if available (loaded when user opened those tabs)
         smc_used = st.session_state.get("smc", smc)
         ob_used = st.session_state.get("ob", ob)
         mtf_used = st.session_state.get("mtf", mtf)
@@ -2294,17 +2424,16 @@ def main():
         ml_result = get_cached_ml_prediction(df, symbol, timeframe, cfg["limit"])
         ml_status.empty()
 
-        # persist for Portfolio tab
         st.session_state["signal_result"] = signal_result
         render_ai_signals(ind, adv, smc_used, mtf_used, ob_used, sentiment, fg,
                   signal_result, ml_result, risk, symbol, cfg)
 
-    with tab7:
+    elif active_tab == "backtest":
         if not is_tab_rendered("backtest"):
             mark_tab_rendered("backtest")
         render_backtest(df, cfg, symbol)
 
-    with tab8:
+    elif active_tab == "portfolio":
         if not is_tab_rendered("portfolio"):
             mark_tab_rendered("portfolio")
 
