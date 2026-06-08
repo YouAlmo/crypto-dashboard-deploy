@@ -67,7 +67,7 @@ THEME_TOKENS = {
         "success": "#2dd4bf",
         "danger": "#fb7185",
         "warning": "#fbbf24",
-        "shadow": "0 18px 44px rgba(2,6,23,0.34)",
+        "shadow": "0 12px 28px rgba(2,6,23,0.26)",
         "sidebar": "rgba(15,23,42,0.98)",
         "sidebar_panel": "rgba(30,41,59,0.72)",
         "tab_bg": "rgba(30,41,59,0.68)",
@@ -92,7 +92,7 @@ THEME_TOKENS = {
         "success": "#047857",
         "danger": "#be123c",
         "warning": "#b45309",
-        "shadow": "0 16px 38px rgba(15,23,42,0.08)",
+        "shadow": "0 10px 24px rgba(15,23,42,0.08)",
         "sidebar": "rgba(248,250,252,0.98)",
         "sidebar_panel": "rgba(255,255,255,0.86)",
         "tab_bg": "rgba(255,255,255,0.74)",
@@ -131,20 +131,20 @@ def get_theme_css(theme_name: str) -> str:
       --input-bg: {t['input_bg']};
       --heat-bull: {t['heat_bull']};
       --heat-bear: {t['heat_bear']};
-      --radius-sm: 8px;
-      --radius-md: 10px;
-      --radius-lg: 12px;
-      --dashboard-grid-min: 170px;
-      --dashboard-grid-gap: 10px;
-      --dashboard-grid-margin: 0.5rem 0 0.7rem;
-      --dashboard-card-padding: 11px 13px;
-      --dashboard-card-min-height: 90px;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 10px;
+      --dashboard-grid-min: 190px;
+      --dashboard-grid-gap: 16px;
+      --dashboard-grid-margin: 0.7rem 0 1rem;
+      --dashboard-card-padding: 14px 16px;
+      --dashboard-card-min-height: 104px;
       --dashboard-card-overflow: visible;
-      --terminal-card-min-height: 78px;
-      --section-subtitle-margin: 0.58rem;
+      --terminal-card-min-height: 76px;
+      --section-subtitle-margin: 0.65rem;
       --section-subtitle-size: 0.84rem;
-      --metric-value-size: clamp(1.12rem,1.55vw,1.52rem);
-      --metric-tile-value-size: clamp(1rem,1.3vw,1.22rem);
+      --metric-value-size: clamp(1.08rem,1.22vw,1.38rem);
+      --metric-tile-value-size: clamp(1rem,1.16vw,1.18rem);
     }}
     body, .stApp {{
       background: linear-gradient(180deg, var(--app-bg) 0%, var(--app-bg-alt) 100%) !important;
@@ -154,23 +154,27 @@ def get_theme_css(theme_name: str) -> str:
     .block-container {{
       background: transparent !important;
       color: var(--text) !important;
-      padding-top: 1.35rem !important;
+      padding-top: 1.05rem !important;
       padding-left: clamp(0.85rem, 1.6vw, 1.55rem) !important;
       padding-right: clamp(0.85rem, 1.6vw, 1.55rem) !important;
-      padding-bottom: 1rem !important;
-      max-width: 1580px;
+      padding-bottom: 1.1rem !important;
+      width: 100%;
+      max-width: 1480px;
+      margin-left: auto;
+      margin-right: auto;
     }}
     h1, h2, h3, h4, h5, h6, p, label, span, div {{ letter-spacing: 0 !important; }}
     h1 {{ font-size: clamp(2rem, 3vw, 2.75rem) !important; line-height: 1.08 !important; }}
     h2 {{ font-size: clamp(1.45rem, 2vw, 1.9rem) !important; }}
-    h3 {{ font-size: clamp(1.08rem, 1.5vw, 1.35rem) !important; }}
+    h3 {{ font-size: clamp(1.08rem, 1.5vw, 1.35rem) !important; margin: 0.55rem 0 0.25rem !important; }}
+    h4, h5 {{ margin: 0.45rem 0 0.25rem !important; }}
     p, .stCaption, [data-testid="stCaptionContainer"] {{ color: var(--muted) !important; }}
     .app-header {{
       display: flex;
       align-items: center;
       gap: 14px;
-      margin: 0 0 1rem;
-      padding: 0.15rem 0 0.95rem;
+      margin: 0 0 0.75rem;
+      padding: 0.05rem 0 0.75rem;
       border-bottom: 1px solid var(--card-border);
     }}
     .app-header h1, .app-title, .hero-title {{ margin: 0 !important; font-size: clamp(2rem, 2.75vw, 2.35rem) !important; line-height: 1.12 !important; }}
@@ -181,13 +185,13 @@ def get_theme_css(theme_name: str) -> str:
       justify-content: center;
       width: 42px;
       height: 42px;
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius-md);
       background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 28%, transparent), color-mix(in srgb, var(--accent-alt) 20%, transparent));
       border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--card-border));
       color: var(--text);
       font-weight: 900;
       font-size: 0.88rem;
-      box-shadow: 0 14px 30px color-mix(in srgb, var(--accent) 14%, transparent);
+      box-shadow: 0 10px 22px color-mix(in srgb, var(--accent) 12%, transparent);
     }}
 
     section[data-testid="stSidebar"] {{
@@ -200,17 +204,18 @@ def get_theme_css(theme_name: str) -> str:
       background: var(--sidebar-panel);
       border: 1px solid var(--card-border);
       color: var(--text);
-      padding: 10px 12px;
-      border-radius: var(--radius-lg);
-      box-shadow: 0 12px 28px rgba(2,6,23,0.10);
+      padding: 10px 12px 11px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 24px rgba(2,6,23,0.10);
     }}
     .sidebar-block h3 {{ color: var(--text); margin: 0 0 4px 0; font-size: 1rem; }}
     .sidebar-block p {{ color: var(--muted); margin-bottom: 0; }}
-    .sidebar-divider {{ height: 1px; background: var(--card-border); margin: 9px 0; }}
-    .stSidebar .element-container {{ background: transparent !important; margin-bottom: 0.26rem !important; }}
+    .sidebar-divider {{ height: 1px; background: var(--card-border); margin: 10px 0 9px; }}
+    .stSidebar .element-container {{ background: transparent !important; margin-bottom: 0.34rem !important; }}
     .stSidebar [data-testid="stMarkdownContainer"] p {{ margin-bottom: 0.15rem; }}
-    .stSidebar h3 {{ font-size: 0.72rem !important; text-transform: uppercase; color: var(--subtle) !important; margin: 0.55rem 0 0.25rem 0 !important; }}
-    .stSidebar label {{ color: var(--text) !important; font-weight: 650 !important; font-size: 0.84rem !important; }}
+    .stSidebar h3 {{ font-size: 0.72rem !important; text-transform: uppercase; color: var(--subtle) !important; margin: 0.62rem 0 0.3rem 0 !important; }}
+    .stSidebar label {{ color: var(--text) !important; font-weight: 650 !important; font-size: 0.82rem !important; }}
+    .stSidebar [data-testid="stWidgetLabel"] {{ margin-bottom: 0.18rem !important; }}
     .stSidebar .stSelectbox > div > div,
     .stSidebar .stNumberInput input,
     .stSidebar [data-baseweb="select"] > div,
@@ -218,7 +223,7 @@ def get_theme_css(theme_name: str) -> str:
       background: var(--input-bg) !important;
       border: 1px solid var(--card-border) !important;
       border-radius: var(--radius-md) !important;
-      min-height: 34px !important;
+      min-height: 36px !important;
       color: var(--text) !important;
       transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
     }}
@@ -226,21 +231,22 @@ def get_theme_css(theme_name: str) -> str:
     .stSidebar .stNumberInput input:hover,
     .stSidebar [data-baseweb="select"] > div:hover {{ border-color: color-mix(in srgb, var(--accent) 52%, var(--card-border)) !important; }}
     .stSidebar .stCheckbox {{ padding-block: 1px; }}
-    .stSidebar .stSlider {{ padding-top: 0.05rem; }}
+    .stSidebar .stSlider {{ padding-top: 0.05rem; padding-bottom: 0.18rem; }}
     .stSidebar .stSlider [role="slider"] {{ border: 2px solid var(--accent) !important; box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent); }}
     .stSidebar [data-baseweb="slider"] div {{ transition: background .16s ease, box-shadow .16s ease; }}
-    .stSidebar details {{ border: 1px solid var(--card-border); border-radius: var(--radius-lg); background: color-mix(in srgb, var(--sidebar-panel) 68%, transparent); padding: 2px 8px 6px; }}
+    .stSidebar details {{ border: 1px solid var(--card-border); border-radius: var(--radius-md); background: color-mix(in srgb, var(--sidebar-panel) 68%, transparent); padding: 2px 8px 6px; margin: 0.28rem 0; }}
     .stSidebar summary {{ color: var(--text); font-weight: 650; }}
 
     .dashboard-grid {{
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(var(--dashboard-grid-min), 1fr));
       gap: var(--dashboard-grid-gap);
+      row-gap: var(--dashboard-grid-gap);
       align-items: stretch;
       margin: var(--dashboard-grid-margin);
     }}
     .dashboard-card, .dashboard-tile, .table-card, .terminal-card, .signal-card {{
-      background: linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 88%, var(--panel-bg)));
+      background: linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 92%, var(--panel-bg)));
       border: 1px solid var(--card-border);
       box-shadow: var(--shadow);
       color: var(--text);
@@ -250,20 +256,50 @@ def get_theme_css(theme_name: str) -> str:
       overflow: var(--dashboard-card-overflow) !important;
       padding: var(--dashboard-card-padding);
       min-height: var(--dashboard-card-min-height);
+      min-width: 0;
+      margin: 0;
       transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
     }}
-    .dashboard-card:hover, .dashboard-tile:hover, .signal-card:hover {{
-      transform: translateY(-2px);
-      background: var(--card-bg-hover);
-      border-color: color-mix(in srgb, var(--accent) 34%, var(--card-border));
-      box-shadow: 0 20px 48px rgba(2,6,23,0.18);
+    .dashboard-card {{
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 7px;
+      position: relative;
     }}
-    .dashboard-tile h4 {{ margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.88rem; color: var(--muted); overflow-wrap: break-word; }}
-    .dashboard-tile p {{ margin: 0.32rem 0 0; color: var(--muted) !important; font-size: 0.78rem; line-height: 1.25; }}
-    .terminal-card {{ min-height: var(--terminal-card-min-height); }}
-    .metric-label {{ color: var(--muted); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; overflow-wrap: break-word; }}
-    .metric-val, .metric-value, .metric-subtext {{ color: var(--text); font-weight: 800; overflow-wrap: break-word; word-break: normal; }}
-    .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); }}
+    .dashboard-card::before, .terminal-card::before, .signal-card::before {{
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 2px;
+      border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+      background: color-mix(in srgb, var(--accent) 38%, transparent);
+      opacity: 0.62;
+    }}
+    .dashboard-card:hover, .dashboard-tile:hover, .signal-card:hover {{
+      transform: translateY(-1px);
+      background: var(--card-bg-hover);
+      border-color: color-mix(in srgb, var(--accent) 30%, var(--card-border));
+      box-shadow: 0 14px 34px rgba(2,6,23,0.18);
+    }}
+    .dashboard-tile h4 {{ margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.82rem; color: var(--muted); overflow-wrap: break-word; }}
+    .dashboard-tile p {{ margin: 0.28rem 0 0; color: var(--muted) !important; font-size: 0.76rem; line-height: 1.28; }}
+    .dashboard-tile {{ display: flex; flex-direction: column; gap: 5px; }}
+    .terminal-card, .signal-card {{ min-height: var(--terminal-card-min-height); position: relative; }}
+    .metric-label {{ color: var(--muted); font-size: 0.66rem; font-weight: 760; text-transform: uppercase; line-height: 1.2; overflow-wrap: break-word; }}
+    .metric-val, .metric-value, .metric-subtext {{
+      color: var(--text);
+      font-weight: 800;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      max-width: 100%;
+    }}
+    .metric-val {{ font-variant-numeric: tabular-nums; }}
+    .metric-subtitle {{ font-size: 0.74rem; color: var(--muted); margin-top: 1px; line-height: 1.28; font-weight: 550; }}
+    .overview-summary-grid {{ grid-template-columns: repeat(4, minmax(210px, 1fr)); }}
+    .indicator-grid {{ grid-template-columns: repeat(auto-fit, minmax(188px, 1fr)); gap: 16px; margin-top: 0.7rem; }}
+    .indicator-grid .dashboard-card {{ min-height: 132px; align-items: center; justify-content: center; text-align: center; }}
+    .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); white-space: nowrap; }}
     .metric-pill.buy {{ background: color-mix(in srgb, var(--success) 15%, transparent); color: var(--success); }}
     .metric-pill.sell {{ background: color-mix(in srgb, var(--danger) 15%, transparent); color: var(--danger); }}
     .metric-pill.hold {{ background: color-mix(in srgb, var(--warning) 16%, transparent); color: var(--warning); }}
@@ -275,31 +311,35 @@ def get_theme_css(theme_name: str) -> str:
     .conf-wrap, .dom-wrap {{ background: color-mix(in srgb, var(--panel-bg) 70%, transparent); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 3px; }}
     .conf-bar, .dom-bar {{ background: color-mix(in srgb, var(--muted) 16%, transparent); border-radius: 999px; overflow: hidden; min-height: 8px; }}
     .conf-fill, .dom-bull, .dom-bear {{ min-height: 8px; }}
-    .signal-row {{ display: flex; gap: 12px; align-items: stretch; flex-wrap: wrap; }}
+    .signal-row {{ display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }}
     .signal-meta, .signal-item {{ color: var(--text); background: color-mix(in srgb, var(--panel-bg) 55%, transparent); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 7px 9px; }}
     .risk-badge {{ color: var(--text); border-radius: 999px; padding: 3px 8px; font-size: 0.78rem; font-weight: 800; }}
     .risk-low {{ background: color-mix(in srgb, var(--success) 24%, transparent); color: var(--success); }}
     .risk-medium {{ background: color-mix(in srgb, var(--warning) 24%, transparent); color: var(--warning); }}
     .risk-high {{ background: color-mix(in srgb, var(--danger) 24%, transparent); color: var(--danger); }}
 
-    .section-title {{ color: var(--text); font-size: clamp(1.08rem, 1.45vw, 1.34rem); font-weight: 800; margin-bottom: 0.1rem; }}
-    .section-subtitle {{ color: var(--muted); margin-bottom: var(--section-subtitle-margin); font-size: var(--section-subtitle-size); max-width: 980px; }}
+    .section-title {{ color: var(--text); font-size: clamp(1.08rem, 1.45vw, 1.34rem); font-weight: 800; margin: 0.35rem 0 0.12rem; }}
+    .section-subtitle {{ color: var(--muted); margin-bottom: var(--section-subtitle-margin); font-size: var(--section-subtitle-size); max-width: 980px; line-height: 1.35; }}
+    .table-card {{ min-height: auto !important; padding: 10px 12px !important; }}
     .table-card h5 {{ color: var(--text); }}
     div[data-testid="stMetric"] {{
       background: var(--card-bg) !important;
       border: 1px solid var(--card-border) !important;
       border-radius: var(--radius-lg) !important;
-      padding: 9px 11px !important;
+      padding: 10px 12px !important;
       box-shadow: var(--shadow);
+      min-height: 78px;
+      overflow: hidden;
     }}
-    div[data-testid="stMetric"] label, div[data-testid="stMetric"] [data-testid="stMetricLabel"] {{ color: var(--muted) !important; }}
-    div[data-testid="stMetricValue"] {{ color: var(--text) !important; font-size: clamp(1.15rem, 1.6vw, 1.55rem) !important; font-weight: 800 !important; }}
+    div[data-testid="stMetric"] label, div[data-testid="stMetric"] [data-testid="stMetricLabel"] {{ color: var(--muted) !important; font-size: 0.7rem !important; font-weight: 750 !important; text-transform: uppercase; }}
+    div[data-testid="stMetricValue"] {{ color: var(--text) !important; font-size: clamp(1.02rem, 1.35vw, 1.36rem) !important; font-weight: 800 !important; line-height: 1.08 !important; overflow-wrap: anywhere; }}
+    div[data-testid="stMetricDelta"] {{ font-size: 0.74rem !important; }}
     .stDataFrame, [data-testid="stDataFrame"] {{ border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--card-border); box-shadow: var(--shadow); }}
     .mover-grid {{
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 10px;
-      margin: 0.45rem 0 0.8rem;
+      gap: 16px;
+      margin: 0.55rem 0 1rem;
     }}
     .mover-card {{
       min-height: 0 !important;
@@ -315,27 +355,36 @@ def get_theme_css(theme_name: str) -> str:
     .mover-card .metric-val {{ font-size: clamp(1rem,1.25vw,1.22rem) !important; margin-top: 2px !important; }}
     .mover-card .metric-subtext {{ color: var(--muted); font-size: 0.74rem; text-align: right; font-weight: 650; }}
     div[data-testid="stDecoration"], button[title="View fullscreen"] {{ display: none !important; }}
-    div[data-testid="stVerticalBlock"] {{ gap: var(--vertical-block-gap, 0.45rem) !important; }}
+    div[data-testid="stVerticalBlock"] {{ gap: var(--vertical-block-gap, 0.65rem) !important; }}
     div[data-testid="column"] {{ min-width: 0 !important; }}
-    hr {{ margin: 0.65rem 0 !important; border-color: var(--card-border) !important; }}
+    hr {{ margin: 0.75rem 0 !important; border-color: var(--card-border) !important; }}
     [data-testid="stExpander"] {{ border-color: var(--card-border) !important; border-radius: var(--radius-lg) !important; }}
 
     div[role="radiogroup"] {{
       display: flex;
       gap: 6px;
-      flex-wrap: wrap;
-      padding: 4px;
-      margin: 0.05rem 0 0.65rem;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      padding: 5px;
+      margin: 0.1rem 0 1.05rem;
       background: color-mix(in srgb, var(--panel-bg) 78%, transparent);
       border: 1px solid var(--card-border);
       border-radius: var(--radius-lg);
-      box-shadow: 0 12px 30px rgba(2,6,23,0.10);
+      box-shadow: 0 10px 24px rgba(2,6,23,0.10);
+      width: 100%;
+      max-width: 1180px;
     }}
     div[role="radiogroup"] label {{
       border-radius: var(--radius-md);
       border: 1px solid transparent;
-      padding: 5px 9px;
-      min-height: 30px;
+      padding: 6px 12px;
+      min-height: 32px;
+      flex: 0 0 auto;
+      justify-content: center;
       color: var(--muted) !important;
       background: transparent;
       transition: background .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
@@ -350,9 +399,10 @@ def get_theme_css(theme_name: str) -> str:
       color: var(--text) !important;
       background: var(--tab-active);
       border-color: color-mix(in srgb, var(--accent) 55%, var(--tab-border));
-      box-shadow: inset 0 -2px 0 var(--accent);
+      box-shadow: inset 0 -2px 0 var(--accent), 0 7px 18px color-mix(in srgb, var(--accent) 10%, transparent);
       font-weight: 800;
     }}
+    div[role="radiogroup"] label [data-testid="stMarkdownContainer"] p {{ margin: 0 !important; white-space: nowrap; font-size: 0.84rem; line-height: 1.1; }}
     div[role="radiogroup"] label > div:first-child {{ display: none !important; }}
 
     button[aria-label*="Theme"], button[title*="Theme"], [data-testid="stThemeToggle"] {{ display: none !important; }}
@@ -366,6 +416,7 @@ def get_theme_css(theme_name: str) -> str:
     .stButton>button:hover {{ transform: translateY(-1px); border-color: var(--accent); box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 16%, transparent); }}
     .stSidebar .stButton>button {{ width: 100%; }}
     button:focus-visible, input:focus-visible, [role="button"]:focus-visible, [role="slider"]:focus-visible {{ outline: 2px solid var(--accent) !important; outline-offset: 2px !important; }}
+    .stAlert {{ border-radius: var(--radius-md) !important; border: 1px solid var(--card-border) !important; }}
 
     @keyframes pulse {{
       0%, 100% {{ opacity: 0.72; }}
@@ -373,14 +424,17 @@ def get_theme_css(theme_name: str) -> str:
     }}
     @media (max-width: 1400px) {{
       .dashboard-grid {{ grid-template-columns: repeat(auto-fit, minmax(min(var(--dashboard-grid-min), 100%), 1fr)); }}
-      div[role="radiogroup"] label {{ padding: 5px 8px; font-size: 0.84rem; }}
+      div[role="radiogroup"] {{ max-width: 100%; }}
+      div[role="radiogroup"] label {{ padding: 6px 10px; font-size: 0.8rem; }}
     }}
     @media (max-width: 760px) {{
       .block-container {{ padding-inline: 0.75rem !important; }}
       .dashboard-grid {{ grid-template-columns: 1fr; }}
-      div[role="radiogroup"] {{ gap: 6px; }}
-      div[role="radiogroup"] label {{ flex: 1 1 130px; justify-content: center; }}
+      .overview-summary-grid, .indicator-grid {{ grid-template-columns: 1fr; }}
+      div[role="radiogroup"] {{ gap: 6px; max-width: 100%; }}
+      div[role="radiogroup"] label {{ flex: 0 0 auto; justify-content: center; }}
       .section-subtitle {{ font-size: 0.86rem; }}
+      .app-header {{ align-items: flex-start; }}
     }}
     </style>
     """
@@ -420,8 +474,8 @@ def render_dashboard_card(title: str, value: str, subtitle: str = "", accent: st
     return (
         f"<div class='dashboard-card'>"
         f"<div class='metric-label'>{title}</div>"
-        f"<div class='metric-val' style='font-size:var(--metric-value-size);color:{accent};line-height:1.08;margin-top:6px'>{value}</div>"
-        f"<div style='font-size:.76rem;color:var(--muted);margin-top:4px;line-height:1.25'>{subtitle}</div>"
+        f"<div class='metric-val' style='font-size:var(--metric-value-size);color:{accent};line-height:1.08;margin-top:4px'>{value}</div>"
+        f"<div class='metric-subtitle'>{subtitle}</div>"
         f"</div>"
     )
 
@@ -430,7 +484,7 @@ def render_metric_tile(title: str, value: str, detail: str = "", badge: str = ""
     return (
         f"<div class='dashboard-tile'>"
         f"<h4>{title}{badge_html}</h4>"
-        f"<div class='metric-val' style='font-size:var(--metric-tile-value-size);line-height:1.08;margin-top:6px;color:var(--text)'>{value}</div>"
+        f"<div class='metric-val' style='font-size:var(--metric-tile-value-size);line-height:1.08;margin-top:4px;color:var(--text)'>{value}</div>"
         f"<p>{detail}</p>"
         f"</div>"
     )
@@ -487,14 +541,14 @@ def render_ml_prediction_state(ml_result: dict) -> bool:
     return True
 
 TAB_OPTIONS = [
-    ("overview", "01 Overview"),
-    ("technical", "02 Technical"),
-    ("smart_money", "03 Smart Money"),
-    ("order_book", "04 Order Book"),
-    ("multi_tf", "05 Multi-TF"),
-    ("ai_signals", "06 AI Signals"),
-    ("backtest", "07 Backtest"),
-    ("portfolio", "08 Portfolio"),
+    ("overview", "Overview"),
+    ("technical", "Technical"),
+    ("smart_money", "Smart Money"),
+    ("order_book", "Order Book"),
+    ("multi_tf", "Multi-TF"),
+    ("ai_signals", "AI Signals"),
+    ("backtest", "Backtest"),
+    ("portfolio", "Portfolio"),
 ]
 TAB_LABEL_BY_ID = dict(TAB_OPTIONS)
 TAB_ID_BY_LABEL = {label: tab_id for tab_id, label in TAB_OPTIONS}
@@ -587,33 +641,33 @@ def render_tab_density_css(active_tab: str) -> None:
     heavy_tabs = {"overview", "technical", "smart_money"}
     if active_tab in heavy_tabs:
         density = {
-            "grid_min": "260px",
-            "grid_gap": "14px",
-            "grid_margin": "0.7rem 0 0.95rem",
-            "card_padding": "15px",
-            "card_min": "108px",
+            "grid_min": "220px",
+            "grid_gap": "16px",
+            "grid_margin": "0.7rem 0 1rem",
+            "card_padding": "14px 16px",
+            "card_min": "110px",
             "overflow": "visible",
             "terminal_min": "96px",
             "subtitle_margin": "0.78rem",
             "subtitle_size": "0.88rem",
-            "metric_value": "clamp(1.25rem,1.75vw,1.7rem)",
-            "metric_tile_value": "clamp(1.08rem,1.45vw,1.35rem)",
-            "vertical_gap": "0.62rem",
+            "metric_value": "clamp(1.08rem,1.28vw,1.42rem)",
+            "metric_tile_value": "clamp(1rem,1.16vw,1.18rem)",
+            "vertical_gap": "0.7rem",
         }
     else:
         density = {
             "grid_min": "170px",
-            "grid_gap": "10px",
-            "grid_margin": "0.5rem 0 0.7rem",
-            "card_padding": "12px",
-            "card_min": "90px",
+            "grid_gap": "16px",
+            "grid_margin": "0.65rem 0 0.95rem",
+            "card_padding": "13px 15px",
+            "card_min": "96px",
             "overflow": "hidden",
             "terminal_min": "78px",
             "subtitle_margin": "0.58rem",
             "subtitle_size": "0.84rem",
-            "metric_value": "clamp(1.12rem,1.55vw,1.52rem)",
-            "metric_tile_value": "clamp(1rem,1.3vw,1.22rem)",
-            "vertical_gap": "0.45rem",
+            "metric_value": "clamp(1.04rem,1.2vw,1.3rem)",
+            "metric_tile_value": "clamp(0.98rem,1.12vw,1.1rem)",
+            "vertical_gap": "0.65rem",
         }
     st.markdown(
         f"""
@@ -1289,35 +1343,38 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
     top_gainers = movers[:3]
     top_losers = movers[-3:][::-1]
 
-    with st.container():
-        cols = st.columns(4)
-        cols[0].markdown(render_dashboard_card(
+    fg_val = fg.get("value", 50)
+    fg_c = get_fg_color(fg_val)
+    fg_cl = fg.get("classification", "Neutral")
+    st.markdown(
+        "<div class='dashboard-grid overview-summary-grid'>"
+        + render_dashboard_card(
             "Total Watchlist Market Cap",
             format_large_number(total_mcap),
             "Aggregate value across tracked crypto assets.",
-            accent="#60a5fa"
-        ), unsafe_allow_html=True)
-        cols[1].markdown(render_dashboard_card(
+            accent="#60a5fa",
+        )
+        + render_dashboard_card(
             "Avg 24h Change",
             f"{avg_change:+.2f}%",
             "Weighted performance across selected coins.",
-            accent="#26a69a" if avg_change >= 0 else "#ef5350"
-        ), unsafe_allow_html=True)
-        cols[2].markdown(render_dashboard_card(
+            accent="#26a69a" if avg_change >= 0 else "#ef5350",
+        )
+        + render_dashboard_card(
             "AI Market Pulse",
             f"{buy_count} BUY / {sell_count} SELL",
             f"{hold_count} Neutral · {avg_conf*100:.0f}% avg confidence",
-            accent="#fbbf24"
-        ), unsafe_allow_html=True)
-        fg_val = fg.get("value", 50)
-        fg_c = get_fg_color(fg_val)
-        fg_cl = fg.get("classification", "Neutral")
-        cols[3].markdown(render_dashboard_card(
+            accent="#fbbf24",
+        )
+        + render_dashboard_card(
             "Fear & Greed",
             f"{fg_val}",
             f"{get_fg_emoji(fg_cl)} {fg_cl}",
-            accent=fg_c
-        ), unsafe_allow_html=True)
+            accent=fg_c,
+        )
+        + "</div>",
+        unsafe_allow_html=True,
+    )
 
     mover_cards = []
     for sym, pct, price in top_gainers:
@@ -1427,8 +1484,8 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         return (
             f"<div class='dashboard-card' style='text-align:center'>"
             f"<div class='metric-label'>{label}</div>"
-            f"<div class='metric-val' style='color:{color};font-size:1.35em'>{val_str}</div>"
-            f"<div style='font-size:.78em;color:#8b949e;margin-top:5px'>{sub}</div>"
+            f"<div class='metric-val' style='color:{color};font-size:var(--metric-tile-value-size);line-height:1.08'>{val_str}</div>"
+            f"<div class='metric-subtitle'>{sub}</div>"
             f"</div>"
         )
 
@@ -1438,80 +1495,54 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
     macd_sig = ind["macd_signal"]
     macd_c   = "#26a69a" if macd > macd_sig else "#ef5350"
 
-    cols = st.columns(6)
-    cols[0].markdown(ind_card("RSI (14)", f"{rsi:.1f}",
-        "Overbought" if rsi>70 else "Oversold" if rsi<30 else "Neutral", rsi_c),
-        unsafe_allow_html=True)
-    cols[1].markdown(ind_card("MACD", f"{macd:.4f}", f"Sig {macd_sig:.4f}", macd_c),
-        unsafe_allow_html=True)
     stk  = adv.get("stochrsi_k", 50)
     std  = adv.get("stochrsi_d", 50)
     stk_c = "#ef5350" if stk > 80 else ("#26a69a" if stk < 20 else "#f39c12")
-    cols[2].markdown(ind_card("Stoch RSI K", f"{stk:.1f}", f"D {std:.1f}", stk_c),
-        unsafe_allow_html=True)
     cci = adv.get("cci", 0)
     cci_c = "#ef5350" if cci > 100 else ("#26a69a" if cci < -100 else "#f39c12")
-    cols[3].markdown(ind_card("CCI (20)", f"{cci:.1f}",
-        "Overbought" if cci>100 else "Oversold" if cci<-100 else "Neutral", cci_c),
-        unsafe_allow_html=True)
     adx = adv.get("adx", 25)
     adx_c = "#26a69a" if adx > 30 else "#8b949e"
-    cols[4].markdown(ind_card("ADX (14)", f"{adx:.1f}",
-        "Strong" if adx>30 else "Weak", adx_c), unsafe_allow_html=True)
     roc = adv.get("roc", 0)
     roc_c = "#26a69a" if roc > 0 else "#ef5350"
-    cols[5].markdown(ind_card("ROC (12)", f"{roc:.2f}%", "", roc_c), unsafe_allow_html=True)
-
-    cols2 = st.columns(6)
     ema9  = ind.get("ema_9", close)
     ema21 = ind.get("ema_21", close)
     ema50 = ind.get("ema_50", close)
     ema200 = ind.get("ema_200", close)
-    cols2[0].markdown(ind_card("EMA 9",   fmt_price(ema9, symbol),
-        "🟢 Bull" if ema9>ema21 else "🔴 Bear", "#26a69a" if ema9>ema21 else "#ef5350"),
-        unsafe_allow_html=True)
-    cols2[1].markdown(ind_card("EMA 21",  fmt_price(ema21, symbol),
-        f"Gap {abs(ema9-ema21)/ema21*100:.2f}%" if ema21 else "",
-        "#26a69a" if ema9>ema21 else "#ef5350"), unsafe_allow_html=True)
-    cols2[2].markdown(ind_card("EMA 50",  fmt_price(ema50, symbol),
-        "↑ Bullish" if close>ema50 else "↓ Bearish", "#26a69a" if close>ema50 else "#ef5350"),
-        unsafe_allow_html=True)
-    cols2[3].markdown(ind_card("EMA 200", fmt_price(ema200, symbol),
-        "Above" if close>ema200 else "Below", "#26a69a" if close>ema200 else "#ef5350"),
-        unsafe_allow_html=True)
     vwap = adv.get("vwap", close)
-    cols2[4].markdown(ind_card("VWAP", fmt_price(vwap, symbol),
-        "Above" if close>vwap else "Below", "#26a69a" if close>vwap else "#ef5350"),
-        unsafe_allow_html=True)
     sma20 = adv.get("sma_20", close)
-    cols2[5].markdown(ind_card("SMA 20", fmt_price(sma20, symbol),
-        "Above" if close>sma20 else "Below", "#26a69a" if close>sma20 else "#ef5350"),
-        unsafe_allow_html=True)
-
-    cols3 = st.columns(6)
     mfi = adv.get("mfi", 50)
     mfi_c = "#ef5350" if mfi > 80 else ("#26a69a" if mfi < 20 else "#f39c12")
-    cols3[0].markdown(ind_card("MFI (14)", f"{mfi:.1f}",
-        "Overbought" if mfi>80 else "Oversold" if mfi<20 else "Neutral", mfi_c),
-        unsafe_allow_html=True)
     cmf = adv.get("cmf", 0)
     cmf_c = "#26a69a" if cmf > 0.05 else ("#ef5350" if cmf < -0.05 else "#f39c12")
-    cols3[1].markdown(ind_card("CMF (20)", f"{cmf:.3f}",
-        "Inflow" if cmf>0 else "Outflow", cmf_c), unsafe_allow_html=True)
     obv = adv.get("obv", 0)
-    cols3[2].markdown(ind_card("OBV", format_large_number(abs(obv)).replace("$",""),
-        "↑" if obv>0 else "↓", "#26a69a" if obv>0 else "#ef5350"), unsafe_allow_html=True)
     bb_pct = ind.get("bb_pct", 0.5) * 100
-    bb_c   = "#ef5350" if bb_pct > 80 else ("#26a69a" if bb_pct < 20 else "#f39c12")
-    cols3[3].markdown(ind_card("BB %B",   f"{bb_pct:.1f}%", "", bb_c), unsafe_allow_html=True)
+    bb_c = "#ef5350" if bb_pct > 80 else ("#26a69a" if bb_pct < 20 else "#f39c12")
     st_dir = adv.get("supertrend_dir", 0)
-    st_c   = "#26a69a" if st_dir == 1 else ("#ef5350" if st_dir == -1 else "#8b949e")
+    st_c = "#26a69a" if st_dir == 1 else ("#ef5350" if st_dir == -1 else "#8b949e")
     st_lbl = "Bullish" if st_dir == 1 else ("Bearish" if st_dir == -1 else "N/A")
-    cols3[4].markdown(ind_card("Supertrend", st_lbl, "", st_c), unsafe_allow_html=True)
     psar_bull = adv.get("psar_bull", True)
-    cols3[5].markdown(ind_card("Parabolic SAR",
-        "Bullish" if psar_bull else "Bearish", "", "#26a69a" if psar_bull else "#ef5350"),
-        unsafe_allow_html=True)
+
+    indicator_cards = [
+        ind_card("RSI (14)", f"{rsi:.1f}", "Overbought" if rsi > 70 else "Oversold" if rsi < 30 else "Neutral", rsi_c),
+        ind_card("MACD", f"{macd:.4f}", f"Sig {macd_sig:.4f}", macd_c),
+        ind_card("Stoch RSI K", f"{stk:.1f}", f"D {std:.1f}", stk_c),
+        ind_card("CCI (20)", f"{cci:.1f}", "Overbought" if cci > 100 else "Oversold" if cci < -100 else "Neutral", cci_c),
+        ind_card("ADX (14)", f"{adx:.1f}", "Strong" if adx > 30 else "Weak", adx_c),
+        ind_card("ROC (12)", f"{roc:.2f}%", "", roc_c),
+        ind_card("EMA 9", fmt_price(ema9, symbol), "🟢 Bull" if ema9 > ema21 else "🔴 Bear", "#26a69a" if ema9 > ema21 else "#ef5350"),
+        ind_card("EMA 21", fmt_price(ema21, symbol), f"Gap {abs(ema9-ema21)/ema21*100:.2f}%" if ema21 else "", "#26a69a" if ema9 > ema21 else "#ef5350"),
+        ind_card("EMA 50", fmt_price(ema50, symbol), "↑ Bullish" if close > ema50 else "↓ Bearish", "#26a69a" if close > ema50 else "#ef5350"),
+        ind_card("EMA 200", fmt_price(ema200, symbol), "Above" if close > ema200 else "Below", "#26a69a" if close > ema200 else "#ef5350"),
+        ind_card("VWAP", fmt_price(vwap, symbol), "Above" if close > vwap else "Below", "#26a69a" if close > vwap else "#ef5350"),
+        ind_card("SMA 20", fmt_price(sma20, symbol), "Above" if close > sma20 else "Below", "#26a69a" if close > sma20 else "#ef5350"),
+        ind_card("MFI (14)", f"{mfi:.1f}", "Overbought" if mfi > 80 else "Oversold" if mfi < 20 else "Neutral", mfi_c),
+        ind_card("CMF (20)", f"{cmf:.3f}", "Inflow" if cmf > 0 else "Outflow", cmf_c),
+        ind_card("OBV", format_large_number(abs(obv)).replace("$", ""), "↑" if obv > 0 else "↓", "#26a69a" if obv > 0 else "#ef5350"),
+        ind_card("BB %B", f"{bb_pct:.1f}%", "", bb_c),
+        ind_card("Supertrend", st_lbl, "", st_c),
+        ind_card("Parabolic SAR", "Bullish" if psar_bull else "Bearish", "", "#26a69a" if psar_bull else "#ef5350"),
+    ]
+    st.markdown(f"<div class='dashboard-grid indicator-grid'>{''.join(indicator_cards)}</div>", unsafe_allow_html=True)
 
     st.divider()
 
@@ -1967,7 +1998,7 @@ def render_orderbook(ob: dict, symbol: str):
     # ── Bid / Ask tables side by side ──────────────────────────────────────
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown("<div class='table-card'><h5 style='margin:0 0 12px;color:#e2e8f0'>🟢 Top Bids</h5></div>", unsafe_allow_html=True)
+        st.markdown("<div class='table-card'><h5 style='margin:0 0 10px;color:var(--text)'>🟢 Top Bids</h5></div>", unsafe_allow_html=True)
         bids_df = pd.DataFrame(ob["bids"]).rename(
             columns={"price":"Price","size":"Size","cumulative":"Cumulative","value":"Value ($)"})
         bids_df["Price"]      = bids_df["Price"].apply(lambda x: fmt_price(x, symbol))
@@ -1978,7 +2009,7 @@ def render_orderbook(ob: dict, symbol: str):
                      width="stretch", hide_index=True)
 
     with col2:
-        st.markdown("<div class='table-card'><h5 style='margin:0 0 12px;color:#e2e8f0'>🔴 Top Asks</h5></div>", unsafe_allow_html=True)
+        st.markdown("<div class='table-card'><h5 style='margin:0 0 10px;color:var(--text)'>🔴 Top Asks</h5></div>", unsafe_allow_html=True)
         asks_df = pd.DataFrame(ob["asks"]).rename(
             columns={"price":"Price","size":"Size","cumulative":"Cumulative","value":"Value ($)"})
         asks_df["Price"]      = asks_df["Price"].apply(lambda x: fmt_price(x, symbol))
