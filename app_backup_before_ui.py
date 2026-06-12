@@ -2,7 +2,6 @@
 import sys
 import os
 import hashlib
-import html
 import time
 sys.path.insert(0, os.path.dirname(__file__))
 
@@ -51,52 +50,32 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 st.markdown(get_theme_css(), unsafe_allow_html=True)
-THEME_OPTIONS = ["Default", "Dark", "Light"]
-THEME_ALIASES = {
-    "Institutional Dark": "Dark",
-    "Premium Light": "Light",
-    "System": "Default",
-    "system": "Default",
-    "dark": "Dark",
-    "light": "Light",
-    "default": "Default",
-}
-THEME_TOKEN_MAP = {
-    "Default": "Institutional Dark",
-    "Dark": "Institutional Dark",
-    "Light": "Premium Light",
-}
-
-def normalize_theme_name(theme_name: str) -> str:
-    raw = str(theme_name or THEME_OPTIONS[0]).strip()
-    return THEME_ALIASES.get(raw, raw if raw in THEME_OPTIONS else THEME_OPTIONS[0])
+THEME_OPTIONS = ["Institutional Dark", "Premium Light"]
 THEME_TOKENS = {
     "Institutional Dark": {
-        "app_bg": "#05070B",
-        "app_bg_alt": "#070B12",
-        "panel_bg": "#0A1018",
-        "card_bg": "#070B12",
-        "card_bg_hover": "#0A1018",
-        "card_border": "rgba(255,255,255,0.08)",
-        "text": "#F3F5F7",
-        "muted": "#A8B0BD",
-        "subtle": "#7B8596",
-        "accent": "#00E08A",
-        "accent_alt": "#00E08A",
-        "success": "#00E08A",
-        "danger": "#FF5C73",
-        "warning": "#FFB84D",
+        "app_bg": "#0b1220",
+        "app_bg_alt": "#111827",
+        "panel_bg": "rgba(17,24,39,0.92)",
+        "card_bg": "rgba(20,29,45,0.94)",
+        "card_bg_hover": "rgba(24,35,54,0.98)",
+        "card_border": "rgba(148,163,184,0.18)",
+        "text": "#e5edf7",
+        "muted": "#9aa8bb",
+        "subtle": "#64748b",
+        "accent": "#38bdf8",
+        "accent_alt": "#22d3ee",
+        "success": "#2dd4bf",
+        "danger": "#fb7185",
+        "warning": "#fbbf24",
         "shadow": "0 12px 28px rgba(2,6,23,0.26)",
-        "sidebar": "#05070B",
-        "sidebar_panel": "#0A1018",
-        "tab_bg": "rgba(10,16,24,0.92)",
-        "tab_active": "rgba(0,224,138,0.16)",
-        "tab_border": "rgba(255,255,255,0.08)",
-        "input_bg": "#070B12",
-        "heat_bull": "rgba(0,224,138,0.20)",
-        "heat_bear": "rgba(255,92,115,0.20)",
-        "table_bg": "#070B12",
-        "table_header_bg": "#0A1018",
+        "sidebar": "rgba(15,23,42,0.98)",
+        "sidebar_panel": "rgba(30,41,59,0.72)",
+        "tab_bg": "rgba(30,41,59,0.68)",
+        "tab_active": "rgba(14,165,233,0.18)",
+        "tab_border": "rgba(148,163,184,0.20)",
+        "input_bg": "rgba(15,23,42,0.86)",
+        "heat_bull": "rgba(45,212,191,0.24)",
+        "heat_bear": "rgba(251,113,133,0.24)",
     },
     "Premium Light": {
         "app_bg": "#f3f6fb",
@@ -110,9 +89,9 @@ THEME_TOKENS = {
         "subtle": "#7a8799",
         "accent": "#0f6fdc",
         "accent_alt": "#0891b2",
-        "success": "#00E08A",
-        "danger": "#FF5C73",
-        "warning": "#FFB84D",
+        "success": "#047857",
+        "danger": "#be123c",
+        "warning": "#b45309",
         "shadow": "0 10px 24px rgba(15,23,42,0.08)",
         "sidebar": "rgba(248,250,252,0.98)",
         "sidebar_panel": "rgba(255,255,255,0.86)",
@@ -120,16 +99,12 @@ THEME_TOKENS = {
         "tab_active": "rgba(15,111,220,0.10)",
         "tab_border": "rgba(51,65,85,0.15)",
         "input_bg": "#ffffff",
-        "heat_bull": "rgba(0,224,138,0.14)",
-        "heat_bear": "rgba(255,92,115,0.14)",
-        "table_bg": "#ffffff",
-        "table_header_bg": "#f5f8fb",
+        "heat_bull": "rgba(16,185,129,0.16)",
+        "heat_bear": "rgba(244,63,94,0.16)",
     },
 }
 def get_theme_css(theme_name: str) -> str:
-    theme_name = normalize_theme_name(theme_name)
-    token_key = THEME_TOKEN_MAP.get(theme_name, "Institutional Dark")
-    t = THEME_TOKENS.get(token_key, THEME_TOKENS["Institutional Dark"])
+    t = THEME_TOKENS.get(theme_name, THEME_TOKENS["Institutional Dark"])
     return f"""
     <style>
     :root {{
@@ -156,24 +131,14 @@ def get_theme_css(theme_name: str) -> str:
       --input-bg: {t['input_bg']};
       --heat-bull: {t['heat_bull']};
       --heat-bear: {t['heat_bear']};
-      --cg-green: #00E08A;
-      --cg-red: #FF5C73;
-      --cg-pos-weak: rgba(0,224,138,0.12);
-      --cg-pos-medium: rgba(0,224,138,0.20);
-      --cg-pos-strong: rgba(0,224,138,0.32);
-      --cg-neg-weak: rgba(255,92,115,0.12);
-      --cg-neg-medium: rgba(255,92,115,0.20);
-      --cg-neg-strong: rgba(255,92,115,0.32);
-      --table-bg: {t['table_bg']};
-      --table-header-bg: {t['table_header_bg']};
       --radius-sm: 6px;
       --radius-md: 8px;
       --radius-lg: 10px;
       --dashboard-grid-min: 190px;
       --dashboard-grid-gap: 16px;
       --dashboard-grid-margin: 0.7rem 0 1rem;
-      --dashboard-card-padding: 12px 14px;
-      --dashboard-card-min-height: 96px;
+      --dashboard-card-padding: 14px 16px;
+      --dashboard-card-min-height: 104px;
       --dashboard-card-overflow: visible;
       --terminal-card-min-height: 76px;
       --section-subtitle-margin: 0.65rem;
@@ -182,7 +147,7 @@ def get_theme_css(theme_name: str) -> str:
       --metric-tile-value-size: clamp(1rem,1.16vw,1.18rem);
     }}
     body, .stApp {{
-      background: var(--app-bg) !important;
+      background: linear-gradient(180deg, var(--app-bg) 0%, var(--app-bg-alt) 100%) !important;
       color: var(--text) !important;
       font-feature-settings: "tnum" 1, "ss01" 1;
     }}
@@ -208,28 +173,12 @@ def get_theme_css(theme_name: str) -> str:
       display: flex;
       align-items: center;
       gap: 14px;
-      margin: 0;
-      padding: 0.05rem 0 0.68rem;
+      margin: 0 0 0.75rem;
+      padding: 0.05rem 0 0.75rem;
+      border-bottom: 1px solid var(--card-border);
     }}
     .app-header h1, .app-title, .hero-title {{ margin: 0 !important; font-size: clamp(2rem, 2.75vw, 2.35rem) !important; line-height: 1.12 !important; }}
     .app-header p {{ margin: 0.3rem 0 0; color: var(--muted) !important; font-size: 0.92rem; }}
-    div[data-testid="stHorizontalBlock"]:has(.app-header) {{
-      gap: 18px;
-      align-items: start;
-      margin: 0 0 0.8rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--card-border);
-    }}
-    .theme-control-label {{
-      color: var(--subtle);
-      font-size: 0.66rem;
-      font-weight: 800;
-      letter-spacing: .04em !important;
-      margin: 0 0 4px;
-      text-transform: uppercase;
-      text-align: right;
-    }}
-    .header-theme-spacer {{ height: 2px; }}
     .brand-mark {{
       display: inline-flex;
       align-items: center;
@@ -248,103 +197,45 @@ def get_theme_css(theme_name: str) -> str:
     section[data-testid="stSidebar"] {{
       background: var(--sidebar) !important;
       border-right: 1px solid var(--card-border);
-      box-shadow: 10px 0 30px rgba(0,0,0,0.10);
-      transition: width .18s ease, background .18s ease, border-color .18s ease;
+      box-shadow: 12px 0 36px rgba(2,6,23,0.08);
     }}
-    section[data-testid="stSidebar"] .block-container {{ padding-top: 0.62rem !important; padding-inline: 0.72rem !important; }}
+    section[data-testid="stSidebar"] .block-container {{ padding-top: 0.75rem !important; padding-inline: 0.85rem !important; }}
     .sidebar-block {{
-      background: color-mix(in srgb, var(--sidebar-panel) 82%, transparent);
+      background: var(--sidebar-panel);
       border: 1px solid var(--card-border);
       color: var(--text);
-      padding: 9px 10px;
+      padding: 10px 12px 11px;
       border-radius: var(--radius-md);
-      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
-      transition: background .16s ease, border-color .16s ease, box-shadow .16s ease;
+      box-shadow: 0 10px 24px rgba(2,6,23,0.10);
     }}
-    .sidebar-block:hover {{ border-color: color-mix(in srgb, var(--cg-green) 32%, var(--card-border)); }}
-    .sidebar-block h3 {{
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text);
-      margin: 0;
-      font-size: 0.98rem;
-      font-weight: 850;
-      line-height: 1;
-      text-transform: none !important;
-      white-space: nowrap;
-    }}
-    .sidebar-block h3::before {{
-      content: "SS";
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      background: var(--cg-pos-weak);
-      border: 1px solid color-mix(in srgb, var(--cg-green) 38%, var(--card-border));
-      font-size: 0.62rem;
-      font-weight: 900;
-      flex: 0 0 24px;
-    }}
+    .sidebar-block h3 {{ color: var(--text); margin: 0 0 4px 0; font-size: 1rem; }}
     .sidebar-block p {{ color: var(--muted); margin-bottom: 0; }}
-    .sidebar-divider {{ height: 1px; background: var(--card-border); margin: 8px 0 7px; }}
-    .stSidebar .element-container {{ background: transparent !important; margin-bottom: 0.26rem !important; }}
-    .stSidebar [data-testid="stMarkdownContainer"] p {{ margin-bottom: 0.1rem; }}
-    .stSidebar h3 {{
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.68rem !important;
-      text-transform: uppercase;
-      color: var(--subtle) !important;
-      margin: 0.54rem 0 0.24rem 0 !important;
-      font-weight: 850 !important;
-    }}
-    .stSidebar h3::before {{ color: var(--muted); font-size: 0.76rem; line-height: 1; }}
-    .stSidebar h3:has(+ div) {{ letter-spacing: .02em !important; }}
-    .stSidebar h3:nth-of-type(1)::before {{ content: "◐"; }}
-    .stSidebar h3:nth-of-type(2)::before {{ content: "↻"; }}
-    .stSidebar h3:nth-of-type(3)::before {{ content: "▦"; }}
-    .stSidebar h3:nth-of-type(4)::before {{ content: "◇"; }}
-    .stSidebar h3:nth-of-type(5)::before {{ content: "⌁"; }}
-    .stSidebar label {{ color: var(--text) !important; font-weight: 650 !important; font-size: 0.8rem !important; }}
-    .stSidebar [data-testid="stWidgetLabel"] {{ margin-bottom: 0.14rem !important; }}
+    .sidebar-divider {{ height: 1px; background: var(--card-border); margin: 10px 0 9px; }}
+    .stSidebar .element-container {{ background: transparent !important; margin-bottom: 0.34rem !important; }}
+    .stSidebar [data-testid="stMarkdownContainer"] p {{ margin-bottom: 0.15rem; }}
+    .stSidebar h3 {{ font-size: 0.72rem !important; text-transform: uppercase; color: var(--subtle) !important; margin: 0.62rem 0 0.3rem 0 !important; }}
+    .stSidebar label {{ color: var(--text) !important; font-weight: 650 !important; font-size: 0.82rem !important; }}
+    .stSidebar [data-testid="stWidgetLabel"] {{ margin-bottom: 0.18rem !important; }}
     .stSidebar .stSelectbox > div > div,
     .stSidebar .stNumberInput input,
     .stSidebar [data-baseweb="select"] > div,
     .stSidebar [data-baseweb="input"] {{
-      background: color-mix(in srgb, var(--input-bg) 88%, transparent) !important;
+      background: var(--input-bg) !important;
       border: 1px solid var(--card-border) !important;
       border-radius: var(--radius-md) !important;
-      min-height: 34px !important;
+      min-height: 36px !important;
       color: var(--text) !important;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease, transform .16s ease;
+      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
     }}
     .stSidebar .stSelectbox > div > div:hover,
     .stSidebar .stNumberInput input:hover,
-    .stSidebar [data-baseweb="select"] > div:hover {{
-      border-color: var(--cg-green) !important;
-      background: var(--input-bg) !important;
-      box-shadow: 0 0 0 3px var(--cg-pos-weak);
-    }}
-    .stSidebar .stCheckbox {{ padding-block: 0; }}
-    .stSidebar .stSlider {{ padding-top: 0; padding-bottom: 0.1rem; }}
-    .stSidebar .stSlider [role="slider"] {{ border: 2px solid var(--accent) !important; box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent); }}
+    .stSidebar [data-baseweb="select"] > div:hover {{ border-color: color-mix(in srgb, var(--accent) 52%, var(--card-border)) !important; }}
+    .stSidebar .stCheckbox {{ padding-block: 1px; }}
+    .stSidebar .stSlider {{ padding-top: 0.05rem; padding-bottom: 0.18rem; }}
+    .stSidebar .stSlider [role="slider"] {{ border: 2px solid var(--accent) !important; box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent); }}
     .stSidebar [data-baseweb="slider"] div {{ transition: background .16s ease, box-shadow .16s ease; }}
-    .stSidebar details {{
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      background: color-mix(in srgb, var(--sidebar-panel) 62%, transparent);
-      padding: 1px 8px 5px;
-      margin: 0.22rem 0;
-      transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
-    }}
-    .stSidebar details:hover {{ border-color: color-mix(in srgb, var(--cg-green) 28%, var(--card-border)); }}
-    .stSidebar summary {{ color: var(--text); font-weight: 720; font-size: 0.8rem; }}
+    .stSidebar details {{ border: 1px solid var(--card-border); border-radius: var(--radius-md); background: color-mix(in srgb, var(--sidebar-panel) 68%, transparent); padding: 2px 8px 6px; margin: 0.28rem 0; }}
+    .stSidebar summary {{ color: var(--text); font-weight: 650; }}
 
     .dashboard-grid {{
       display: grid;
@@ -355,10 +246,9 @@ def get_theme_css(theme_name: str) -> str:
       margin: var(--dashboard-grid-margin);
     }}
     .dashboard-card, .dashboard-tile, .table-card, .terminal-card, .signal-card {{
-      --card-accent: var(--muted);
-      background: linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 94%, var(--table-header-bg)));
+      background: linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 92%, var(--panel-bg)));
       border: 1px solid var(--card-border);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+      box-shadow: var(--shadow);
       color: var(--text);
       border-radius: var(--radius-lg);
       box-sizing: border-box;
@@ -377,32 +267,25 @@ def get_theme_css(theme_name: str) -> str:
       gap: 7px;
       position: relative;
     }}
-    .dashboard-card::before, .dashboard-tile::before, .table-card::before, .terminal-card::before, .signal-card::before {{
+    .dashboard-card::before, .terminal-card::before, .signal-card::before {{
       content: "";
       position: absolute;
       inset: 0 auto 0 0;
-      width: 3px;
+      width: 2px;
       border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-      background: var(--card-accent);
-      opacity: 0.9;
+      background: color-mix(in srgb, var(--accent) 38%, transparent);
+      opacity: 0.62;
     }}
-    .status-positive, .dashboard-card.buy, .terminal-card.buy, .signal-card.buy {{ --card-accent: var(--cg-green); }}
-    .status-negative, .dashboard-card.sell, .terminal-card.sell, .signal-card.sell {{ --card-accent: var(--cg-red); }}
-    .status-warning, .status-neutral, .dashboard-card.hold, .terminal-card.hold, .signal-card.hold {{ --card-accent: var(--warning); }}
-    .status-muted, .status-unavailable {{ --card-accent: var(--muted); }}
-    .status-positive, .signal-card.buy {{ box-shadow: 0 12px 28px rgba(0,224,138,0.10); }}
-    .status-negative, .signal-card.sell {{ box-shadow: 0 12px 28px rgba(255,92,115,0.10); }}
-    .status-warning, .status-neutral, .signal-card.hold {{ box-shadow: 0 12px 28px rgba(255,184,77,0.08); }}
     .dashboard-card:hover, .dashboard-tile:hover, .signal-card:hover {{
       transform: translateY(-1px);
       background: var(--card-bg-hover);
-      border-color: color-mix(in srgb, var(--card-accent) 42%, var(--card-border));
-      box-shadow: 0 14px 32px rgba(0,0,0,0.28);
+      border-color: color-mix(in srgb, var(--accent) 30%, var(--card-border));
+      box-shadow: 0 14px 34px rgba(2,6,23,0.18);
     }}
     .dashboard-tile h4 {{ margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.82rem; color: var(--muted); overflow-wrap: break-word; }}
     .dashboard-tile p {{ margin: 0.28rem 0 0; color: var(--muted) !important; font-size: 0.76rem; line-height: 1.28; }}
-    .dashboard-tile {{ display: flex; flex-direction: column; gap: 5px; position: relative; }}
-    .table-card, .terminal-card, .signal-card {{ min-height: var(--terminal-card-min-height); position: relative; }}
+    .dashboard-tile {{ display: flex; flex-direction: column; gap: 5px; }}
+    .terminal-card, .signal-card {{ min-height: var(--terminal-card-min-height); position: relative; }}
     .metric-label {{ color: var(--muted); font-size: 0.66rem; font-weight: 760; text-transform: uppercase; line-height: 1.2; overflow-wrap: break-word; }}
     .metric-val, .metric-value, .metric-subtext {{
       color: var(--text);
@@ -417,9 +300,12 @@ def get_theme_css(theme_name: str) -> str:
     .indicator-grid {{ grid-template-columns: repeat(auto-fit, minmax(188px, 1fr)); gap: 16px; margin-top: 0.7rem; }}
     .indicator-grid .dashboard-card {{ min-height: 132px; align-items: center; justify-content: center; text-align: center; }}
     .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); white-space: nowrap; }}
-    .metric-pill.buy {{ background: var(--cg-pos-weak); color: var(--cg-green); }}
-    .metric-pill.sell {{ background: var(--cg-neg-weak); color: var(--cg-red); }}
+    .metric-pill.buy {{ background: color-mix(in srgb, var(--success) 15%, transparent); color: var(--success); }}
+    .metric-pill.sell {{ background: color-mix(in srgb, var(--danger) 15%, transparent); color: var(--danger); }}
     .metric-pill.hold {{ background: color-mix(in srgb, var(--warning) 16%, transparent); color: var(--warning); }}
+    .signal-card.buy {{ box-shadow: 0 16px 42px color-mix(in srgb, var(--success) 15%, transparent); }}
+    .signal-card.sell {{ box-shadow: 0 16px 42px color-mix(in srgb, var(--danger) 15%, transparent); }}
+    .signal-card.hold {{ box-shadow: 0 16px 42px color-mix(in srgb, var(--warning) 13%, transparent); }}
     .signal-badge {{ background: var(--accent); color: #fff; border-radius: 999px; padding: 4px 9px; font-weight: 800; letter-spacing: .04em !important; }}
     .small-muted {{ color: var(--muted); }}
     .conf-wrap, .dom-wrap {{ background: color-mix(in srgb, var(--panel-bg) 70%, transparent); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 3px; }}
@@ -428,9 +314,9 @@ def get_theme_css(theme_name: str) -> str:
     .signal-row {{ display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }}
     .signal-meta, .signal-item {{ color: var(--text); background: color-mix(in srgb, var(--panel-bg) 55%, transparent); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 7px 9px; }}
     .risk-badge {{ color: var(--text); border-radius: 999px; padding: 3px 8px; font-size: 0.78rem; font-weight: 800; }}
-    .risk-low {{ background: var(--cg-pos-medium); color: var(--cg-green); }}
+    .risk-low {{ background: color-mix(in srgb, var(--success) 24%, transparent); color: var(--success); }}
     .risk-medium {{ background: color-mix(in srgb, var(--warning) 24%, transparent); color: var(--warning); }}
-    .risk-high {{ background: var(--cg-neg-medium); color: var(--cg-red); }}
+    .risk-high {{ background: color-mix(in srgb, var(--danger) 24%, transparent); color: var(--danger); }}
 
     .section-title {{ color: var(--text); font-size: clamp(1.08rem, 1.45vw, 1.34rem); font-weight: 800; margin: 0.35rem 0 0.12rem; }}
     .section-subtitle {{ color: var(--muted); margin-bottom: var(--section-subtitle-margin); font-size: var(--section-subtitle-size); max-width: 980px; line-height: 1.35; }}
@@ -448,148 +334,7 @@ def get_theme_css(theme_name: str) -> str:
     div[data-testid="stMetric"] label, div[data-testid="stMetric"] [data-testid="stMetricLabel"] {{ color: var(--muted) !important; font-size: 0.7rem !important; font-weight: 750 !important; text-transform: uppercase; }}
     div[data-testid="stMetricValue"] {{ color: var(--text) !important; font-size: clamp(1.02rem, 1.35vw, 1.36rem) !important; font-weight: 800 !important; line-height: 1.08 !important; overflow-wrap: anywhere; }}
     div[data-testid="stMetricDelta"] {{ font-size: 0.74rem !important; }}
-    .stDataFrame, [data-testid="stDataFrame"] {{
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      border: 1px solid var(--card-border);
-      box-shadow: 0 10px 26px rgba(2,6,23,0.10);
-      background: var(--table-bg);
-    }}
-    [data-testid="stDataFrame"] [role="grid"] {{
-      background: var(--card-bg) !important;
-    }}
-    [data-testid="stDataFrame"] [role="columnheader"],
-    [data-testid="stDataFrame"] [data-testid="stTableStyledTable"] thead tr th {{
-      background: var(--table-header-bg) !important;
-      color: var(--muted) !important;
-      font-size: 0.72rem !important;
-      font-weight: 800 !important;
-      text-transform: uppercase;
-      border-color: var(--card-border) !important;
-    }}
-    [data-testid="stDataFrame"] [role="gridcell"],
-    [data-testid="stDataFrame"] [data-testid="stTableStyledTable"] tbody tr td {{
-      color: var(--text) !important;
-      border-color: color-mix(in srgb, var(--card-border) 72%, transparent) !important;
-      font-variant-numeric: tabular-nums;
-    }}
-    [data-testid="stDataFrame"] [role="row"]:hover [role="gridcell"],
-    [data-testid="stDataFrame"] [data-testid="stTableStyledTable"] tbody tr:hover td {{
-      background: color-mix(in srgb, var(--accent) 7%, transparent) !important;
-    }}
-    [data-testid="stDataFrame"] input,
-    [data-testid="stDataFrame"] textarea,
-    [data-testid="stDataFrame"] [contenteditable="true"] {{
-      background: var(--input-bg) !important;
-      color: var(--text) !important;
-      border-color: var(--card-border) !important;
-      caret-color: var(--accent) !important;
-    }}
-    [data-testid="stTextInput"] input,
-    [data-testid="stNumberInput"] input {{
-      background: var(--input-bg) !important;
-      color: var(--text) !important;
-      border-color: var(--card-border) !important;
-      caret-color: var(--accent) !important;
-    }}
-    [data-testid="stNumberInput"] button,
-    [data-testid="stNumberInput"] [role="button"],
-    [data-testid="stNumberInput"] [data-baseweb="button"],
-    [data-testid="stNumberInput"] [data-baseweb="base-input"] > div:last-child,
-    [data-testid="stNumberInput"] [data-testid*="Step"] {{
-      background: var(--input-bg) !important;
-      color: var(--text) !important;
-      border-color: var(--card-border) !important;
-    }}
-    [data-testid="stNumberInput"] button:hover,
-    [data-testid="stNumberInput"] [role="button"]:hover,
-    [data-testid="stNumberInput"] [data-baseweb="button"]:hover,
-    [data-testid="stNumberInput"] [data-testid*="Step"]:hover {{
-      background: color-mix(in srgb, var(--accent) 10%, var(--input-bg)) !important;
-      color: var(--text) !important;
-    }}
-    .ag-root-wrapper, .ag-root {{
-      background: var(--table-bg) !important;
-      color: var(--text) !important;
-      border-color: var(--card-border) !important;
-    }}
-    .ag-header {{ background: var(--table-header-bg) !important; }}
-    .cg-table-wrap {{
-      width: 100%;
-      overflow-x: auto;
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      background: var(--table-bg);
-      box-shadow: 0 16px 34px rgba(2,6,23,0.18);
-      scrollbar-width: thin;
-    }}
-    .cg-table {{
-      width: 100%;
-      min-width: 1080px;
-      border-collapse: separate;
-      border-spacing: 0;
-      color: var(--text);
-      font-variant-numeric: tabular-nums;
-    }}
-    .cg-table thead th {{
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      background: var(--table-header-bg);
-      color: color-mix(in srgb, var(--text) 86%, var(--accent) 14%);
-      border-bottom: 1px solid var(--card-border);
-      font-size: 0.72rem;
-      font-weight: 850;
-      line-height: 1.1;
-      padding: 14px 14px;
-      text-align: right;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }}
-    .cg-table thead th:first-child {{ text-align: left; padding-left: 18px; }}
-    .cg-table tbody tr {{ transition: background .16s ease; }}
-    .cg-table tbody tr:hover {{ background: var(--cg-pos-weak); }}
-    .cg-table tbody td {{
-      border-bottom: 1px solid color-mix(in srgb, var(--card-border) 74%, transparent);
-      padding: 13px 14px;
-      text-align: right;
-      vertical-align: middle;
-      white-space: nowrap;
-      font-size: 0.9rem;
-      font-weight: 650;
-    }}
-    .cg-table tbody tr:last-child td {{ border-bottom: 0; }}
-    .cg-table tbody td:first-child {{ text-align: left; padding-left: 18px; }}
-    .cg-symbol-cell {{ display: inline-flex; align-items: center; gap: 10px; min-width: 150px; }}
-    .coin-logo {{
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      flex: 0 0 26px;
-      background: color-mix(in srgb, var(--panel-bg) 78%, var(--accent) 8%);
-      border: 1px solid color-mix(in srgb, var(--card-border) 70%, transparent);
-      object-fit: cover;
-      box-shadow: 0 4px 12px rgba(2,6,23,0.16);
-    }}
-    .coin-logo-fallback {{
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text);
-      font-size: .66rem;
-      font-weight: 900;
-    }}
-    .cg-symbol-text {{ color: var(--text); font-weight: 900; letter-spacing: .01em !important; }}
-    .cg-name-text {{ display: block; color: var(--muted); font-size: 0.68rem; font-weight: 650; margin-top: 2px; }}
-    .cg-heat-pos {{ background: var(--cg-pos-weak); color: var(--cg-green); font-weight: 850; }}
-    .cg-heat-neg {{ background: var(--cg-neg-weak); color: var(--cg-red); font-weight: 850; }}
-    .cg-signal-buy {{ color: var(--success); font-weight: 900; }}
-    .cg-signal-sell {{ color: var(--danger); font-weight: 900; }}
-    .cg-signal-hold {{ color: var(--warning); font-weight: 850; }}
-    @media (max-width: 760px) {{
-      .cg-table thead th, .cg-table tbody td {{ padding: 11px 12px; font-size: 0.84rem; }}
-      .cg-symbol-cell {{ min-width: 132px; }}
-    }}
+    .stDataFrame, [data-testid="stDataFrame"] {{ border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--card-border); box-shadow: var(--shadow); }}
     .mover-grid {{
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -609,24 +354,7 @@ def get_theme_css(theme_name: str) -> str:
     .mover-card .metric-label {{ font-size: 0.64rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
     .mover-card .metric-val {{ font-size: clamp(1rem,1.25vw,1.22rem) !important; margin-top: 2px !important; }}
     .mover-card .metric-subtext {{ color: var(--muted); font-size: 0.74rem; text-align: right; font-weight: 650; }}
-    .mover-card .cg-symbol-cell {{ min-width: 0; gap: 8px; }}
-    .mover-card .coin-logo {{ width: 22px; height: 22px; flex-basis: 22px; }}
-    .mover-card .cg-name-text {{ display: none; }}
-    #MainMenu,
-    footer,
-    header[data-testid="stHeader"],
-    div[data-testid="stToolbar"],
-    div[data-testid="stDecoration"],
-    div[data-testid="stStatusWidget"],
-    div[data-testid="stDeployButton"],
-    div[data-testid="stMainMenu"],
-    div[data-testid="stAppDeployButton"],
-    div[data-testid="viewerBadge_container__1QSob"],
-    button[title="View fullscreen"] {{
-      display: none !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
-    }}
+    div[data-testid="stDecoration"], button[title="View fullscreen"] {{ display: none !important; }}
     div[data-testid="stVerticalBlock"] {{ gap: var(--vertical-block-gap, 0.65rem) !important; }}
     div[data-testid="column"] {{ min-width: 0 !important; }}
     hr {{ margin: 0.75rem 0 !important; border-color: var(--card-border) !important; }}
@@ -641,20 +369,20 @@ def get_theme_css(theme_name: str) -> str:
       overflow-x: auto;
       overflow-y: hidden;
       scrollbar-width: thin;
-      padding: 4px;
+      padding: 5px;
       margin: 0.1rem 0 1.05rem;
       background: color-mix(in srgb, var(--panel-bg) 78%, transparent);
       border: 1px solid var(--card-border);
-      border-radius: 999px;
+      border-radius: var(--radius-lg);
       box-shadow: 0 10px 24px rgba(2,6,23,0.10);
       width: 100%;
       max-width: 1180px;
     }}
     div[role="radiogroup"] label {{
-      border-radius: 999px;
+      border-radius: var(--radius-md);
       border: 1px solid transparent;
-      padding: 7px 13px;
-      min-height: 34px;
+      padding: 6px 12px;
+      min-height: 32px;
       flex: 0 0 auto;
       justify-content: center;
       color: var(--muted) !important;
@@ -670,8 +398,8 @@ def get_theme_css(theme_name: str) -> str:
     div[role="radiogroup"] label:has(input:checked) {{
       color: var(--text) !important;
       background: var(--tab-active);
-      border-color: var(--cg-green);
-      box-shadow: 0 7px 18px color-mix(in srgb, var(--accent) 10%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--tab-border));
+      box-shadow: inset 0 -2px 0 var(--accent), 0 7px 18px color-mix(in srgb, var(--accent) 10%, transparent);
       font-weight: 800;
     }}
     div[role="radiogroup"] label [data-testid="stMarkdownContainer"] p {{ margin: 0 !important; white-space: nowrap; font-size: 0.84rem; line-height: 1.1; }}
@@ -687,53 +415,7 @@ def get_theme_css(theme_name: str) -> str:
     }}
     .stButton>button:hover {{ transform: translateY(-1px); border-color: var(--accent); box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 16%, transparent); }}
     .stSidebar .stButton>button {{ width: 100%; }}
-    [data-testid="stSelectbox"] [data-baseweb="select"] > div {{
-      background: var(--input-bg) !important;
-      border: 1px solid var(--card-border) !important;
-      border-radius: var(--radius-md) !important;
-      color: var(--text) !important;
-      min-height: 36px !important;
-      box-shadow: 0 8px 20px rgba(2,6,23,0.08);
-    }}
-    [data-testid="stSelectbox"] [data-baseweb="select"] > div:hover {{
-      border-color: var(--cg-green) !important;
-    }}
-    [data-baseweb="popover"],
-    [data-baseweb="popover"] > div,
-    [data-baseweb="menu"],
-    [role="listbox"],
-    [role="menu"],
-    ul[role="listbox"],
-    div[data-baseweb="select-dropdown"],
-    div[data-baseweb="select-dropdown"] ul {{
-      background: var(--panel-bg) !important;
-      color: var(--text) !important;
-      border-color: var(--card-border) !important;
-      box-shadow: var(--shadow) !important;
-    }}
-    [role="option"],
-    [role="menuitem"],
-    [data-baseweb="menu"] li,
-    [data-baseweb="select-dropdown"] li {{
-      background: var(--panel-bg) !important;
-      color: var(--text) !important;
-    }}
-    [role="option"]:hover,
-    [role="option"][aria-selected="true"],
-    [role="menuitem"]:hover,
-    [data-baseweb="menu"] li:hover,
-    [data-baseweb="select-dropdown"] li:hover {{
-      background: color-mix(in srgb, var(--accent) 13%, var(--panel-bg)) !important;
-      color: var(--text) !important;
-    }}
-    input, textarea, [data-baseweb="input"] input {{
-      background: var(--input-bg) !important;
-      color: var(--text) !important;
-      border-color: var(--card-border) !important;
-      caret-color: var(--accent) !important;
-    }}
-    input::placeholder, textarea::placeholder {{ color: var(--subtle) !important; }}
-    button:focus-visible, input:focus-visible, [role="button"]:focus-visible, [role="slider"]:focus-visible {{ outline: 2px solid var(--cg-green) !important; outline-offset: 2px !important; }}
+    button:focus-visible, input:focus-visible, [role="button"]:focus-visible, [role="slider"]:focus-visible {{ outline: 2px solid var(--accent) !important; outline-offset: 2px !important; }}
     .stAlert {{ border-radius: var(--radius-md) !important; border: 1px solid var(--card-border) !important; }}
 
     @keyframes pulse {{
@@ -753,42 +435,12 @@ def get_theme_css(theme_name: str) -> str:
       div[role="radiogroup"] label {{ flex: 0 0 auto; justify-content: center; }}
       .section-subtitle {{ font-size: 0.86rem; }}
       .app-header {{ align-items: flex-start; }}
-      .theme-control-label {{ text-align: left; }}
     }}
     </style>
     """
 
 def render_theme_css(theme_name: str):
     st.markdown(get_theme_css(theme_name), unsafe_allow_html=True)
-
-
-def render_app_header(theme_name: str) -> None:
-    theme_name = normalize_theme_name(theme_name)
-    left, right = st.columns([0.78, 0.22])
-    with left:
-        st.markdown("""
-        <div class='app-header'>
-            <div class='brand-mark'>SS</div>
-            <div>
-                <h1>SuperSignal</h1>
-                <p>Institutional-grade crypto intelligence platform</p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    with right:
-        st.markdown("<div class='theme-control-label'>Theme</div>", unsafe_allow_html=True)
-        selected_theme = st.selectbox(
-            "Theme",
-            THEME_OPTIONS,
-            index=THEME_OPTIONS.index(theme_name) if theme_name in THEME_OPTIONS else 0,
-            key="header_theme",
-            label_visibility="collapsed",
-        )
-        st.markdown("<div class='header-theme-spacer'></div>", unsafe_allow_html=True)
-    selected_theme = normalize_theme_name(selected_theme)
-    if selected_theme != normalize_theme_name(st.session_state.get("theme")):
-        st.session_state.theme = selected_theme
-    qp_set("theme", selected_theme)
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -805,174 +457,34 @@ def fmt_price(price: float, _sym: str = "") -> str:
 
 def pct_str(v: float) -> str:
     arrow = "▲" if v >= 0 else "▼"
-    color = "#00E08A" if v >= 0 else "#FF5C73"
+    color = "#26a69a" if v >= 0 else "#ef5350"
     return f"<span style='color:{color}'>{arrow} {abs(v):.2f}%</span>"
 
-def base_symbol(symbol: str) -> str:
-    return str(symbol).split("/")[0].replace("USDT", "").upper()
-
-@st.cache_data(show_spinner=False)
-def fallback_logo_map() -> dict:
-    return {
-        "BTC": "https://assets.coingecko.com/coins/images/1/small/bitcoin.png",
-        "ETH": "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
-        "SOL": "https://assets.coingecko.com/coins/images/4128/small/solana.png",
-        "XRP": "https://assets.coingecko.com/coins/images/44/small/xrp-symbol-white-128.png",
-        "BNB": "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png",
-        "DOGE": "https://assets.coingecko.com/coins/images/5/small/dogecoin.png",
-        "ADA": "https://assets.coingecko.com/coins/images/975/small/cardano.png",
-        "LINK": "https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png",
-        "AVAX": "https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png",
-        "SUI": "https://assets.coingecko.com/coins/images/26375/small/sui_asset.jpeg",
-        "AR": "https://assets.coingecko.com/coins/images/4343/small/oRt6SiEN_400x400.jpg",
-        "ZEC": "https://assets.coingecko.com/coins/images/486/small/circle-zcash-color.png",
-        "FIL": "https://assets.coingecko.com/coins/images/12817/small/filecoin.png",
-        "ALGO": "https://assets.coingecko.com/coins/images/4380/small/download.png",
-        "PYTH": "https://assets.coingecko.com/coins/images/31924/small/pyth.png",
-    }
-
-def coin_logo_url(symbol: str, coin_data: dict | None = None) -> str:
-    coin_data = coin_data or {}
-    return coin_data.get("image") or fallback_logo_map().get(base_symbol(symbol), "")
-
-def render_coin_identity(symbol: str, coin_data: dict | None = None) -> str:
-    ticker = base_symbol(symbol)
-    name = html.escape(str((coin_data or {}).get("name") or ticker))
-    logo = coin_logo_url(symbol, coin_data)
-    if logo:
-        logo_html = f"<img class='coin-logo' src='{html.escape(logo, quote=True)}' alt='{ticker} logo'>"
-    else:
-        logo_html = f"<span class='coin-logo coin-logo-fallback'>{html.escape(ticker[:2])}</span>"
-    return (
-        "<span class='cg-symbol-cell'>"
-        f"{logo_html}"
-        "<span>"
-        f"<span class='cg-symbol-text'>{html.escape(ticker)}</span>"
-        f"<span class='cg-name-text'>{name}</span>"
-        "</span>"
-        "</span>"
-    )
-
-def heat_class(value: float) -> str:
-    return "cg-heat-pos" if value >= 0 else "cg-heat-neg"
-
-def signal_class(value: str) -> str:
-    return {
-        SIGNAL_BUY: "cg-signal-buy",
-        SIGNAL_SELL: "cg-signal-sell",
-        SIGNAL_HOLD: "cg-signal-hold",
-    }.get(value, "")
-
 def signal_color(s: str) -> str:
-    return {"BUY": "#00E08A", "SELL": "#FF5C73", "HOLD": "#FFB84D"}.get(s, "#A8B0BD")
-
-def _normalize_status_text(text) -> str | None:
-    if text is None:
-        return None
-    value = str(text).strip().lower()
-    if not value:
-        return None
-    unavailable_terms = ("unknown", "n/a", "na", "no data", "no signal", "unchanged", "no movement", "unavailable", "not available")
-    positive_terms = ("buy", "strong buy", "bull", "bullish", "uptrend", "up", "↑", "gain", "gainer", "positive", "above", "inflow", "discount")
-    negative_terms = ("sell", "strong sell", "bear", "bearish", "downtrend", "down", "↓", "loss", "loser", "negative", "below", "outflow", "extreme fear", "fear", "premium")
-    warning_terms = ("hold", "neutral", "mixed", "sideways", "warning", "divergence", "balanced")
-    if any(term in value for term in unavailable_terms):
-        return "unavailable"
-    if any(term in value for term in positive_terms):
-        return "positive"
-    if any(term in value for term in negative_terms):
-        return "negative"
-    if any(term in value for term in warning_terms):
-        return "warning"
-    return None
-
-def card_status_class(
-    status: str | None = None,
-    value=None,
-    label: str | None = None,
-    signal: str | None = None,
-    trend: str | None = None,
-) -> str:
-    resolved = _normalize_status_text(signal)
-    if resolved is None:
-        resolved = _normalize_status_text(status)
-    if resolved is None:
-        resolved = _normalize_status_text(label)
-    if resolved is None:
-        resolved = _normalize_status_text(trend)
-    if resolved is None and value is not None:
-        if isinstance(value, (int, float, np.integer, np.floating)) and not pd.isna(value):
-            resolved = "positive" if value > 0 else "negative" if value < 0 else "unavailable"
-        else:
-            resolved = _normalize_status_text(value)
-    return {
-        "positive": "status-positive",
-        "negative": "status-negative",
-        "warning": "status-warning",
-        "neutral": "status-neutral",
-        "hold": "status-neutral",
-        "unavailable": "status-unavailable",
-        "muted": "status-muted",
-    }.get(str(resolved or "unavailable").lower(), "status-unavailable")
-
-def get_status_class(value=None, label: str | None = None, status: str | None = None, signal: str | None = None, trend: str | None = None) -> str:
-    return card_status_class(status=status, value=value, label=label, signal=signal, trend=trend)
-
-def status_color(status: str | None = None, signal: str | None = None, trend: str | None = None) -> str:
-    cls = card_status_class(status=status, signal=signal, trend=trend)
-    if cls == "status-positive":
-        return "var(--cg-green)"
-    if cls == "status-negative":
-        return "var(--cg-red)"
-    if cls in {"status-warning", "status-neutral"}:
-        return "var(--warning)"
-    return "var(--muted)"
-
-def status_from_color(color: str) -> str:
-    color = str(color).lower()
-    if "00e08a" in color or "--success" in color or "--cg-green" in color:
-        return "positive"
-    if "ff5c73" in color or "--danger" in color or "--cg-red" in color:
-        return "negative"
-    if "ffb84d" in color or "warning" in color:
-        return "warning"
-    return "muted"
+    return {"BUY": "#26a69a", "SELL": "#ef5350", "HOLD": "#f39c12"}.get(s, "#888")
 
 def sig_badge(sig: str) -> str:
     cls = {"BUY": "badge-buy", "SELL": "badge-sell"}.get(sig, "badge-hold")
     return f"<span class='{cls}'>{sig}</span>"
 
 def sentiment_color(s: str) -> str:
-    return {"positive": "#00E08A", "negative": "#FF5C73", "neutral": "#FFB84D"}.get(s, "#A8B0BD")
+    return {"positive": "#26a69a", "negative": "#ef5350", "neutral": "#f39c12"}.get(s, "#888")
 
-def render_dashboard_card(
-    title: str,
-    value: str,
-    subtitle: str = "",
-    accent: str | None = None,
-    status: str | None = None,
-    signal: str | None = None,
-    trend: str | None = None,
-) -> str:
-    if status is None and signal is None and trend is None:
-        status = status_from_color(accent or "") if accent else None
-    card_class = card_status_class(status=status, value=value, label=title, signal=signal, trend=trend)
-    accent_color = accent or status_color(status=status, signal=signal, trend=trend)
+def render_dashboard_card(title: str, value: str, subtitle: str = "", accent: str = "var(--accent)") -> str:
     return (
-        f"<div class='dashboard-card {card_class}'>"
+        f"<div class='dashboard-card'>"
         f"<div class='metric-label'>{title}</div>"
-        f"<div class='metric-val' style='font-size:var(--metric-value-size);color:{accent_color};line-height:1.08;margin-top:4px'>{value}</div>"
+        f"<div class='metric-val' style='font-size:var(--metric-value-size);color:{accent};line-height:1.08;margin-top:4px'>{value}</div>"
         f"<div class='metric-subtitle'>{subtitle}</div>"
         f"</div>"
     )
 
 def render_metric_tile(title: str, value: str, detail: str = "", badge: str = "") -> str:
     badge_html = f"<span class='metric-pill {badge}'>{badge.replace('-', ' ').title()}</span>" if badge else ""
-    status = badge or None
     return (
-        f"<div class='dashboard-tile {card_status_class(status=status, value=value, label=title)}'>"
+        f"<div class='dashboard-tile'>"
         f"<h4>{title}{badge_html}</h4>"
-        f"<div class='metric-val' style='font-size:var(--metric-tile-value-size);line-height:1.08;margin-top:4px;color:{status_color(status=status)}'>{value}</div>"
+        f"<div class='metric-val' style='font-size:var(--metric-tile-value-size);line-height:1.08;margin-top:4px;color:var(--text)'>{value}</div>"
         f"<p>{detail}</p>"
         f"</div>"
     )
@@ -987,10 +499,10 @@ def render_section_header(title: str, subtitle: str = "") -> str:
 def render_notice_badge(message: str, kind: str = "info") -> None:
     colors = {
         "info": ("#2563eb", "rgba(37,99,235,0.08)"),
-        "warning": ("#FFB84D", "rgba(251,146,60,0.12)"),
+        "warning": ("#f59e0b", "rgba(251,146,60,0.12)"),
         "error": ("#ef4444", "rgba(239,68,68,0.12)"),
     }
-    fg, bg = colors.get(kind, ("#7B8596", "rgba(123,133,150,0.10)"))
+    fg, bg = colors.get(kind, ("#64748b", "rgba(100,116,139,0.1)"))
     st.markdown(
         f"<div style='padding:12px 16px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);"
         f"background:{bg};color:{fg};font-size:0.95rem;margin-bottom:16px;line-height:1.4;'>"
@@ -1182,12 +694,12 @@ def render_tab_density_css(active_tab: str) -> None:
 
 def verdict_color(v: str) -> str:
     return {
-        "Strong Buy":  "#00A868",
-        "Buy":         "#00E08A",
-        "Hold":        "#FFB84D",
-        "Sell":        "#FF5C73",
+        "Strong Buy":  "#1a7f37",
+        "Buy":         "#26a69a",
+        "Hold":        "#f39c12",
+        "Sell":        "#ef5350",
         "Strong Sell": "#8b0000",
-    }.get(v, "#7B8596")
+    }.get(v, "#888")
 
 # ── PERF: Session state & lazy loading ─────────────────────────────────────
 if "rendered_tabs" not in st.session_state:
@@ -1462,11 +974,11 @@ def load_mtf_data(symbol: str, base_tf: str = "1h"):
         if score >= 2.0:
             signal = "BUY"
             alignment = "Strong Bullish"
-            color = "#00A868"
+            color = "#1a7f37"
         elif score >= 1.0:
             signal = "BUY"
             alignment = "Bullish"
-            color = "#00E08A"
+            color = "#2ecc71"
         elif score <= -2.0:
             signal = "SELL"
             alignment = "Strong Bearish"
@@ -1474,11 +986,11 @@ def load_mtf_data(symbol: str, base_tf: str = "1h"):
         elif score <= -1.0:
             signal = "SELL"
             alignment = "Bearish"
-            color = "#FF5C73"
+            color = "#e74c3c"
         else:
             signal = "HOLD"
             alignment = "Neutral"
-            color = "#FFB84D"
+            color = "#f59e0b"
         scores["signal"] = signal
         scores["alignment"] = alignment
         scores["color"] = color
@@ -1585,7 +1097,7 @@ def load_mtf_data(symbol: str, base_tf: str = "1h"):
         "alignment": "Bullish" if avg_score > 0 else "Bearish" if avg_score < 0 else "Neutral",
         "verdict": overall_signal,
         "avg_score": avg_score,
-        "color": "#00E08A" if avg_score > 0 else ("#FF5C73" if avg_score < 0 else "#FFB84D"),
+        "color": "#2ecc71" if avg_score > 0 else ("#e74c3c" if avg_score < 0 else "#fbbf24"),
         "confidence": min(max(abs(avg_score) / 2.0, 0.0), 1.0),
         "bullish": sum(1 for v in results.values() if v.get("score", 0) > 0),
         "bearish": sum(1 for v in results.values() if v.get("score", 0) < 0),
@@ -1607,21 +1119,25 @@ def load_news_sentiment(symbol: str):
 # ── sidebar ───────────────────────────────────────────────────────────────────
 
 def render_sidebar(watchlist_symbols: list):
-    if st.session_state.get("header_theme"):
-        st.session_state.theme = normalize_theme_name(st.session_state.header_theme)
-
     st.sidebar.markdown(
-        "<div class='sidebar-block'><h3>SuperSignal</h3></div>",
+        "<div class='sidebar-block'><h3>SuperSignal</h3>Institutional crypto terminal for advanced traders.</div>",
         unsafe_allow_html=True,
     )
     st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
 
     init_widget_from_query("theme", "theme", THEME_OPTIONS[0], str)
-    st.session_state.theme = normalize_theme_name(st.session_state.theme)
-    theme = st.session_state.theme
+    if st.session_state.theme not in THEME_OPTIONS:
+        st.session_state.theme = THEME_OPTIONS[0]
+    theme = st.sidebar.selectbox(
+        "Theme",
+        THEME_OPTIONS,
+        index=THEME_OPTIONS.index(st.session_state.theme) if st.session_state.theme in THEME_OPTIONS else 0,
+        help="Choose the interface theme for the dashboard.",
+        key="theme",
+    )
     qp_set("theme", theme)
-    st.session_state.header_theme = theme
 
+    st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
     st.sidebar.subheader("Market")
 
     raw_symbol_default = qp_get("symbol", st.session_state.get("selected_symbol", watchlist_symbols[0]))
@@ -1830,34 +1346,31 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
     fg_val = fg.get("value", 50)
     fg_c = get_fg_color(fg_val)
     fg_cl = fg.get("classification", "Neutral")
-    ai_pulse_status = "positive" if buy_count > sell_count else "negative" if sell_count > buy_count else "warning"
-    fg_status = "negative" if fg_val < 25 else "warning" if fg_val < 55 else "positive" if fg_val >= 55 else "neutral"
     st.markdown(
         "<div class='dashboard-grid overview-summary-grid'>"
         + render_dashboard_card(
             "Total Watchlist Market Cap",
             format_large_number(total_mcap),
             "Aggregate value across tracked crypto assets.",
-            status="muted",
+            accent="#60a5fa",
         )
         + render_dashboard_card(
             "Avg 24h Change",
             f"{avg_change:+.2f}%",
             "Weighted performance across selected coins.",
-            status="positive" if avg_change > 0 else "negative" if avg_change < 0 else "neutral",
+            accent="#26a69a" if avg_change >= 0 else "#ef5350",
         )
         + render_dashboard_card(
             "AI Market Pulse",
             f"{buy_count} BUY / {sell_count} SELL",
             f"{hold_count} Neutral · {avg_conf*100:.0f}% avg confidence",
-            status=ai_pulse_status,
+            accent="#fbbf24",
         )
         + render_dashboard_card(
             "Fear & Greed",
             f"{fg_val}",
             f"{get_fg_emoji(fg_cl)} {fg_cl}",
             accent=fg_c,
-            status=fg_status,
         )
         + "</div>",
         unsafe_allow_html=True,
@@ -1866,16 +1379,16 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
     mover_cards = []
     for sym, pct, price in top_gainers:
         mover_cards.append(
-            f"<div class='dashboard-card mover-card status-positive'>"
-            f"<div><div class='metric-label'>{render_coin_identity(sym, cg_data.get(sym, {}))} Gainer</div>"
+            f"<div class='dashboard-card mover-card'>"
+            f"<div><div class='metric-label'>{sym} Gainer</div>"
             f"<div class='metric-val' style='color:var(--success)'>{pct:+.2f}%</div></div>"
             f"<div class='metric-subtext'>{fmt_price(price, sym)}</div>"
             f"</div>"
         )
     for sym, pct, price in top_losers:
         mover_cards.append(
-            f"<div class='dashboard-card mover-card status-negative'>"
-            f"<div><div class='metric-label'>{render_coin_identity(sym, cg_data.get(sym, {}))} Loser</div>"
+            f"<div class='dashboard-card mover-card'>"
+            f"<div><div class='metric-label'>{sym} Loser</div>"
             f"<div class='metric-val' style='color:var(--danger)'>{pct:+.2f}%</div></div>"
             f"<div class='metric-subtext'>{fmt_price(price, sym)}</div>"
             f"</div>"
@@ -1907,89 +1420,41 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
             else ("↑" if ind.get("ema9_above_ema21") else "↓")
         )
         rows.append({
-            "Logo":       coin_logo_url(sym, cg),
-            "Symbol":     base_symbol(sym),
             "Pair":       sym,
-            "Name":       cg.get("name", base_symbol(sym)),
-            "Price":      float(price or 0),
-            "24h %":      float(pct or 0),
-            "Market Cap": float(mcap or 0),
-            "Volume 24h": float(vol or 0),
-            "RSI":        float(ind.get("rsi")) if ind.get("rsi") is not None else None,
-            "MACD":       float(ind.get("macd")) if ind.get("macd") is not None else None,
-            "EMA 9":      float(ema9) if ema9 else None,
-            "EMA 21":     float(ema21) if ema21 else None,
-            "EMA 50":     float(ind.get("ema_50")) if ind.get("ema_50") else None,
-            "EMA 200":    float(ind.get("ema_200")) if ind.get("ema_200") else None,
+            "Name":       cg.get("name", sym.split("/")[0]),
+            "Price":      fmt_price(price, sym),
+            "24h %":      f"{'▲' if pct>=0 else '▼'} {abs(pct):.2f}%",
+            "Market Cap": format_large_number(cg.get("market_cap", 0)),
+            "Volume 24h": format_large_number(
+                t.get("quoteVolume", 0) or cg.get("total_volume", 0)
+            ),
+            "RSI":        f"{ind.get('rsi', 0):.1f}" if ind.get("rsi") else "—",
+            "MACD":       f"{ind.get('macd', 0):.4f}" if ind.get("macd") is not None else "—",
+            "EMA 9":      fmt_price(ema9, sym) if ema9 else "—",
+            "EMA 21":     fmt_price(ema21, sym) if ema21 else "—",
+            "EMA 50":     fmt_price(ind.get("ema_50", 0), sym) if ind.get("ema_50") else "—",
+            "EMA 200":    fmt_price(ind.get("ema_200", 0), sym) if ind.get("ema_200") else "—",
             "Cross":      cross,
             "Signal":     sig,
-            "Conf %":     float(conf * 100) if conf else None,
+            "Conf %":     f"{conf*100:.0f}%" if conf else "—",
         })
 
     df_table = pd.DataFrame(rows)
-    search_query = st.text_input(
-        "Search/filter by symbol",
-        placeholder="Search BTC, ETH, Solana...",
-        key="market_scanner_search",
-    ).strip().lower()
-    if search_query:
-        mask = (
-            df_table["Symbol"].str.lower().str.contains(search_query, na=False)
-            | df_table["Pair"].str.lower().str.contains(search_query, na=False)
-            | df_table["Name"].str.lower().str.contains(search_query, na=False)
-        )
-        df_table = df_table.loc[mask].copy()
 
-    def style_change(value):
-        if pd.isna(value):
-            return ""
-        magnitude = abs(float(value))
-        if value >= 0:
-            bg = "rgba(0,224,138,0.32)" if magnitude >= 5 else "rgba(0,224,138,0.20)" if magnitude >= 2 else "rgba(0,224,138,0.12)"
-            return f"background:{bg};color:#00E08A;font-weight:850"
-        bg = "rgba(255,92,115,0.32)" if magnitude >= 5 else "rgba(255,92,115,0.20)" if magnitude >= 2 else "rgba(255,92,115,0.12)"
-        return f"background:{bg};color:#FF5C73;font-weight:850"
-
-    def style_signal(value):
+    def color_sig(val):
         return {
-            SIGNAL_BUY: "color:#00E08A;font-weight:900",
-            SIGNAL_SELL: "color:#FF5C73;font-weight:900",
-            SIGNAL_HOLD: "color:#FFB84D;font-weight:850",
-        }.get(value, "")
+            "BUY":  "color:#26a69a;font-weight:700",
+            "SELL": "color:#ef5350;font-weight:700",
+            "HOLD": "color:#f39c12",
+        }.get(val, "")
 
-    styled_table = (
-        df_table.style
-        .map(style_change, subset=["24h %"])
-        .map(style_signal, subset=["Signal"])
-    )
-    st.dataframe(
-        styled_table,
-        width="stretch",
-        hide_index=True,
-        height=min(640, 72 + max(len(df_table), 1) * 42),
-        column_order=[
-            "Logo", "Symbol", "Name", "Price", "24h %", "Market Cap", "Volume 24h",
-            "RSI", "MACD", "EMA 9", "EMA 21", "EMA 50", "EMA 200", "Cross", "Signal", "Conf %",
-        ],
-        column_config={
-            "Logo": st.column_config.ImageColumn("", width="small"),
-            "Symbol": st.column_config.TextColumn("Symbol", width="small"),
-            "Name": st.column_config.TextColumn("Name", width="medium"),
-            "Price": st.column_config.NumberColumn("Price", format="$%.4f"),
-            "24h %": st.column_config.NumberColumn("24h %", format="%+.2f%%"),
-            "Market Cap": st.column_config.NumberColumn("Market Cap", format="$%.0f"),
-            "Volume 24h": st.column_config.NumberColumn("Volume 24h", format="$%.0f"),
-            "RSI": st.column_config.NumberColumn("RSI", format="%.1f"),
-            "MACD": st.column_config.NumberColumn("MACD", format="%.4f"),
-            "EMA 9": st.column_config.NumberColumn("EMA 9", format="$%.4f"),
-            "EMA 21": st.column_config.NumberColumn("EMA 21", format="$%.4f"),
-            "EMA 50": st.column_config.NumberColumn("EMA 50", format="$%.4f"),
-            "EMA 200": st.column_config.NumberColumn("EMA 200", format="$%.4f"),
-            "Cross": st.column_config.TextColumn("Cross", width="small"),
-            "Signal": st.column_config.TextColumn("Signal", width="small"),
-            "Conf %": st.column_config.NumberColumn("Conf %", format="%.0f%%"),
-        },
-    )
+    def color_pct(val):
+        if isinstance(val, str):
+            return "color:#26a69a" if val.startswith("▲") else "color:#ef5350"
+        return ""
+
+    styled = df_table.style.map(color_sig, subset=["Signal"]).map(color_pct, subset=["24h %"])
+    st.dataframe(styled, width="stretch", hide_index=True)
 
 # ── Tab 2: Technical Analysis ─────────────────────────────────────────────────
 
@@ -2017,7 +1482,7 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
 
     def ind_card(label, val_str, sub="", color="#ccc"):
         return (
-            f"<div class='dashboard-card {card_status_class(status=status_from_color(color), label=sub, value=val_str)}' style='text-align:center'>"
+            f"<div class='dashboard-card' style='text-align:center'>"
             f"<div class='metric-label'>{label}</div>"
             f"<div class='metric-val' style='color:{color};font-size:var(--metric-tile-value-size);line-height:1.08'>{val_str}</div>"
             f"<div class='metric-subtitle'>{sub}</div>"
@@ -2025,20 +1490,20 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         )
 
     rsi = ind["rsi"]
-    rsi_c = "#FF5C73" if rsi > 70 else ("#00E08A" if rsi < 30 else "#FFB84D")
+    rsi_c = "#ef5350" if rsi > 70 else ("#26a69a" if rsi < 30 else "#f1c40f")
     macd  = ind["macd"]
     macd_sig = ind["macd_signal"]
-    macd_c   = "#00E08A" if macd > macd_sig else "#FF5C73"
+    macd_c   = "#26a69a" if macd > macd_sig else "#ef5350"
 
     stk  = adv.get("stochrsi_k", 50)
     std  = adv.get("stochrsi_d", 50)
-    stk_c = "#FF5C73" if stk > 80 else ("#00E08A" if stk < 20 else "#FFB84D")
+    stk_c = "#ef5350" if stk > 80 else ("#26a69a" if stk < 20 else "#f39c12")
     cci = adv.get("cci", 0)
-    cci_c = "#FF5C73" if cci > 100 else ("#00E08A" if cci < -100 else "#FFB84D")
+    cci_c = "#ef5350" if cci > 100 else ("#26a69a" if cci < -100 else "#f39c12")
     adx = adv.get("adx", 25)
-    adx_c = "#00E08A" if adx > 30 else "#7B8596"
+    adx_c = "#26a69a" if adx > 30 else "#8b949e"
     roc = adv.get("roc", 0)
-    roc_c = "#00E08A" if roc > 0 else "#FF5C73"
+    roc_c = "#26a69a" if roc > 0 else "#ef5350"
     ema9  = ind.get("ema_9", close)
     ema21 = ind.get("ema_21", close)
     ema50 = ind.get("ema_50", close)
@@ -2046,14 +1511,14 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
     vwap = adv.get("vwap", close)
     sma20 = adv.get("sma_20", close)
     mfi = adv.get("mfi", 50)
-    mfi_c = "#FF5C73" if mfi > 80 else ("#00E08A" if mfi < 20 else "#FFB84D")
+    mfi_c = "#ef5350" if mfi > 80 else ("#26a69a" if mfi < 20 else "#f39c12")
     cmf = adv.get("cmf", 0)
-    cmf_c = "#00E08A" if cmf > 0.05 else ("#FF5C73" if cmf < -0.05 else "#FFB84D")
+    cmf_c = "#26a69a" if cmf > 0.05 else ("#ef5350" if cmf < -0.05 else "#f39c12")
     obv = adv.get("obv", 0)
     bb_pct = ind.get("bb_pct", 0.5) * 100
-    bb_c = "#FF5C73" if bb_pct > 80 else ("#00E08A" if bb_pct < 20 else "#FFB84D")
+    bb_c = "#ef5350" if bb_pct > 80 else ("#26a69a" if bb_pct < 20 else "#f39c12")
     st_dir = adv.get("supertrend_dir", 0)
-    st_c = "#00E08A" if st_dir == 1 else ("#FF5C73" if st_dir == -1 else "#7B8596")
+    st_c = "#26a69a" if st_dir == 1 else ("#ef5350" if st_dir == -1 else "#8b949e")
     st_lbl = "Bullish" if st_dir == 1 else ("Bearish" if st_dir == -1 else "N/A")
     psar_bull = adv.get("psar_bull", True)
 
@@ -2064,18 +1529,18 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         ind_card("CCI (20)", f"{cci:.1f}", "Overbought" if cci > 100 else "Oversold" if cci < -100 else "Neutral", cci_c),
         ind_card("ADX (14)", f"{adx:.1f}", "Strong" if adx > 30 else "Weak", adx_c),
         ind_card("ROC (12)", f"{roc:.2f}%", "", roc_c),
-        ind_card("EMA 9", fmt_price(ema9, symbol), "🟢 Bull" if ema9 > ema21 else "🔴 Bear", "#00E08A" if ema9 > ema21 else "#FF5C73"),
-        ind_card("EMA 21", fmt_price(ema21, symbol), f"Gap {abs(ema9-ema21)/ema21*100:.2f}%" if ema21 else "", "#00E08A" if ema9 > ema21 else "#FF5C73"),
-        ind_card("EMA 50", fmt_price(ema50, symbol), "↑ Bullish" if close > ema50 else "↓ Bearish", "#00E08A" if close > ema50 else "#FF5C73"),
-        ind_card("EMA 200", fmt_price(ema200, symbol), "Above" if close > ema200 else "Below", "#00E08A" if close > ema200 else "#FF5C73"),
-        ind_card("VWAP", fmt_price(vwap, symbol), "Above" if close > vwap else "Below", "#00E08A" if close > vwap else "#FF5C73"),
-        ind_card("SMA 20", fmt_price(sma20, symbol), "Above" if close > sma20 else "Below", "#00E08A" if close > sma20 else "#FF5C73"),
+        ind_card("EMA 9", fmt_price(ema9, symbol), "🟢 Bull" if ema9 > ema21 else "🔴 Bear", "#26a69a" if ema9 > ema21 else "#ef5350"),
+        ind_card("EMA 21", fmt_price(ema21, symbol), f"Gap {abs(ema9-ema21)/ema21*100:.2f}%" if ema21 else "", "#26a69a" if ema9 > ema21 else "#ef5350"),
+        ind_card("EMA 50", fmt_price(ema50, symbol), "↑ Bullish" if close > ema50 else "↓ Bearish", "#26a69a" if close > ema50 else "#ef5350"),
+        ind_card("EMA 200", fmt_price(ema200, symbol), "Above" if close > ema200 else "Below", "#26a69a" if close > ema200 else "#ef5350"),
+        ind_card("VWAP", fmt_price(vwap, symbol), "Above" if close > vwap else "Below", "#26a69a" if close > vwap else "#ef5350"),
+        ind_card("SMA 20", fmt_price(sma20, symbol), "Above" if close > sma20 else "Below", "#26a69a" if close > sma20 else "#ef5350"),
         ind_card("MFI (14)", f"{mfi:.1f}", "Overbought" if mfi > 80 else "Oversold" if mfi < 20 else "Neutral", mfi_c),
         ind_card("CMF (20)", f"{cmf:.3f}", "Inflow" if cmf > 0 else "Outflow", cmf_c),
-        ind_card("OBV", format_large_number(abs(obv)).replace("$", ""), "↑" if obv > 0 else "↓", "#00E08A" if obv > 0 else "#FF5C73"),
+        ind_card("OBV", format_large_number(abs(obv)).replace("$", ""), "↑" if obv > 0 else "↓", "#26a69a" if obv > 0 else "#ef5350"),
         ind_card("BB %B", f"{bb_pct:.1f}%", "", bb_c),
         ind_card("Supertrend", st_lbl, "", st_c),
-        ind_card("Parabolic SAR", "Bullish" if psar_bull else "Bearish", "", "#00E08A" if psar_bull else "#FF5C73"),
+        ind_card("Parabolic SAR", "Bullish" if psar_bull else "Bearish", "", "#26a69a" if psar_bull else "#ef5350"),
     ]
     st.markdown(f"<div class='dashboard-grid indicator-grid'>{''.join(indicator_cards)}</div>", unsafe_allow_html=True)
 
@@ -2102,7 +1567,7 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         st.markdown(f"🟢 **Support:** `{fmt_price(ns, symbol)}` (-{sr.get('support_pct',0):.2f}%)")
         for name, key in [("R2","pivot_r2"),("R1","pivot_r1"),("PP","pivot"),("S1","pivot_s1"),("S2","pivot_s2")]:
             val = sr.get(key, 0)
-            c = "#FF5C73" if "R" in name else ("#FFB84D" if "PP" in name else "#00E08A")
+            c = "#ef5350" if "R" in name else ("#f1c40f" if "PP" in name else "#26a69a")
             st.markdown(f"<span style='color:{c}'><b>{name}</b>: {fmt_price(val, symbol)}</span>",
                         unsafe_allow_html=True)
     with c2:
@@ -2113,7 +1578,7 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         kij   = adv.get("ich_kijun", 0)
         cloud_top    = max(ich_a, ich_b)
         cloud_bottom = min(ich_a, ich_b)
-        cloud_color  = "#00E08A" if ich_a > ich_b else "#FF5C73"
+        cloud_color  = "#26a69a" if ich_a > ich_b else "#ef5350"
         cloud_label  = "Bullish Cloud" if ich_a > ich_b else "Bearish Cloud"
         st.markdown(f"**Tenkan-sen (9):** `{fmt_price(ten, symbol)}`")
         st.markdown(f"**Kijun-sen (26):** `{fmt_price(kij, symbol)}`")
@@ -2140,15 +1605,15 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
     fig.add_trace(go.Candlestick(
         x=df.index, open=df["open"], high=df["high"], low=df["low"], close=df["close"],
         name="OHLC",
-        increasing_line_color="#00E08A", decreasing_line_color="#FF5C73",
-        increasing_fillcolor="#00E08A", decreasing_fillcolor="#FF5C73",
+        increasing_line_color="#26a69a", decreasing_line_color="#ef5350",
+        increasing_fillcolor="#26a69a", decreasing_fillcolor="#ef5350",
     ), row=1, col=1)
 
     # ── EMA / SMA lines ───────────────────────────────────────────────────
     ema_cfg = [
         ("ema_9",   "#00e5ff", "EMA 9",   "solid", show.get("ema_9")),
         ("ema_21",  "#ff6f00", "EMA 21",  "solid", show.get("ema_21")),
-        ("ema_50",  "#FFB84D", "EMA 50",  "dot",   show.get("ema_50")),
+        ("ema_50",  "#f39c12", "EMA 50",  "dot",   show.get("ema_50")),
         ("ema_200", "#9b59b6", "EMA 200", "dot",   show.get("ema_200")),
         ("sma_20",  "#3498db", "SMA 20",  "dash",  show.get("sma_20")),
         ("sma_50",  "#1abc9c", "SMA 50",  "dash",  show.get("sma_50")),
@@ -2193,9 +1658,9 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
         bull_st = df["supertrend"].where(df["supertrend_direction"] == 1)
         bear_st = df["supertrend"].where(df["supertrend_direction"] == -1)
         fig.add_trace(go.Scatter(x=df.index, y=bull_st, name="ST Bull",
-            line=dict(color="#00E08A", width=2), mode="lines"), row=1, col=1)
+            line=dict(color="#26a69a", width=2), mode="lines"), row=1, col=1)
         fig.add_trace(go.Scatter(x=df.index, y=bear_st, name="ST Bear",
-            line=dict(color="#FF5C73", width=2), mode="lines"), row=1, col=1)
+            line=dict(color="#ef5350", width=2), mode="lines"), row=1, col=1)
 
     # ── Ichimoku ──────────────────────────────────────────────────────────
     if show.get("ichimoku") and "ich_senkou_a" in df.columns:
@@ -2214,10 +1679,10 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
         bull_psar = df["psar"].where(df.get("psar_bull", pd.Series(1, index=df.index)) == 1)
         bear_psar = df["psar"].where(df.get("psar_bull", pd.Series(1, index=df.index)) != 1)
         fig.add_trace(go.Scatter(x=df.index, y=bull_psar, name="SAR Bull",
-            mode="markers", marker=dict(size=3, color="#00E08A", symbol="circle")),
+            mode="markers", marker=dict(size=3, color="#26a69a", symbol="circle")),
             row=1, col=1)
         fig.add_trace(go.Scatter(x=df.index, y=bear_psar, name="SAR Bear",
-            mode="markers", marker=dict(size=3, color="#FF5C73", symbol="circle")),
+            mode="markers", marker=dict(size=3, color="#ef5350", symbol="circle")),
             row=1, col=1)
 
     # ── EMA crossover markers ─────────────────────────────────────────────
@@ -2226,14 +1691,14 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
         if len(bull_x):
             fig.add_trace(go.Scatter(x=bull_x, y=df.loc[bull_x, "ema_9"],
                 mode="markers", name="Bull X",
-                marker=dict(symbol="triangle-up", size=12, color="#00E08A",
+                marker=dict(symbol="triangle-up", size=12, color="#26a69a",
                             line=dict(color="white", width=1))), row=1, col=1)
     if "ema_bearish_cross" in df.columns:
         bear_x = df.index[df["ema_bearish_cross"] == True]
         if len(bear_x):
             fig.add_trace(go.Scatter(x=bear_x, y=df.loc[bear_x, "ema_9"],
                 mode="markers", name="Bear X",
-                marker=dict(symbol="triangle-down", size=12, color="#FF5C73",
+                marker=dict(symbol="triangle-down", size=12, color="#ef5350",
                             line=dict(color="white", width=1))), row=1, col=1)
 
     # ── Support/Resistance lines ──────────────────────────────────────────
@@ -2246,7 +1711,7 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
                           line_width=1, row=1, col=1)
 
     # ── Volume ────────────────────────────────────────────────────────────
-    bar_colors = ["#00E08A" if c >= o else "#FF5C73"
+    bar_colors = ["#26a69a" if c >= o else "#ef5350"
                   for c, o in zip(df["close"], df["open"])]
     fig.add_trace(go.Bar(x=df.index, y=df["volume"], name="Volume",
         marker_color=bar_colors, opacity=0.7), row=2, col=1)
@@ -2256,7 +1721,7 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
     # ── RSI + Stoch RSI ───────────────────────────────────────────────────
     if "rsi" in df.columns:
         fig.add_trace(go.Scatter(x=df.index, y=df["rsi"], name="RSI",
-            line=dict(color="#FF5C73", width=1.4)), row=3, col=1)
+            line=dict(color="#ef5350", width=1.4)), row=3, col=1)
         for lvl, clr in [(70,"rgba(239,83,80,0.4)"),(30,"rgba(38,166,154,0.4)"),
                          (50,"rgba(128,128,128,0.2)")]:
             fig.add_hline(y=lvl, line_dash="dash", line_color=clr, line_width=1, row=3, col=1)
@@ -2264,15 +1729,15 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
         fig.add_trace(go.Scatter(x=df.index, y=df["stochrsi_k"], name="Stoch K",
             line=dict(color="#3498db", width=1, dash="dot")), row=3, col=1)
         fig.add_trace(go.Scatter(x=df.index, y=df["stochrsi_d"], name="Stoch D",
-            line=dict(color="#FFB84D", width=1, dash="dot")), row=3, col=1)
+            line=dict(color="#f39c12", width=1, dash="dot")), row=3, col=1)
 
     # ── MACD ──────────────────────────────────────────────────────────────
     if "macd" in df.columns:
         fig.add_trace(go.Scatter(x=df.index, y=df["macd"], name="MACD",
             line=dict(color="#3498db", width=1.4)), row=4, col=1)
         fig.add_trace(go.Scatter(x=df.index, y=df["macd_signal"], name="Signal",
-            line=dict(color="#FF5C73", width=1.4)), row=4, col=1)
-        hist_c = ["#00E08A" if v >= 0 else "#FF5C73"
+            line=dict(color="#ef5350", width=1.4)), row=4, col=1)
+        hist_c = ["#26a69a" if v >= 0 else "#ef5350"
                   for v in df.get("macd_hist", pd.Series())]
         fig.add_trace(go.Bar(x=df.index, y=df.get("macd_hist", pd.Series()),
             name="Hist", marker_color=hist_c, opacity=0.65), row=4, col=1)
@@ -2323,7 +1788,7 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
 
     pd_zone = smc.get("premium_discount", {})
     zone    = pd_zone.get("current_zone", "N/A")
-    zone_c  = "#00E08A" if zone == "Discount" else ("#FF5C73" if zone == "Premium" else "#FFB84D")
+    zone_c  = "#26a69a" if zone == "Discount" else ("#ef5350" if zone == "Premium" else "#f39c12")
     bull_fvg = smc.get("bull_fvg", [])
     bear_fvg = smc.get("bear_fvg", [])
     bull_ob  = smc.get("bull_ob", [])
@@ -2333,25 +1798,20 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
     choch_b  = smc.get("choch_bull", [])
     choch_br = smc.get("choch_bear", [])
 
-    zone_status = "positive" if zone == "Discount" else "negative" if zone == "Premium" else "neutral"
-    st.markdown(
-        "<div class='dashboard-grid'>"
-        + render_dashboard_card("Zone", zone, "Premium / discount context", accent=zone_c, status=zone_status)
-        + render_dashboard_card("Bullish FVG", str(len(bull_fvg)), "Fair value gaps", status="positive" if bull_fvg else "muted")
-        + render_dashboard_card("Bearish FVG", str(len(bear_fvg)), "Fair value gaps", status="negative" if bear_fvg else "muted")
-        + render_dashboard_card("Bullish OB", str(len(bull_ob)), "Order blocks", status="positive" if bull_ob else "muted")
-        + render_dashboard_card("Bearish OB", str(len(bear_ob)), "Order blocks", status="negative" if bear_ob else "muted")
-        + "</div>",
-        unsafe_allow_html=True,
-    )
+    m1, m2, m3, m4, m5 = st.columns(5)
+    m1.metric("Zone",         zone,         delta=None)
+    m2.metric("Bullish FVG",  len(bull_fvg), delta=None)
+    m3.metric("Bearish FVG",  len(bear_fvg), delta=None)
+    m4.metric("Bullish OB",   len(bull_ob),  delta=None)
+    m5.metric("Bearish OB",   len(bear_ob),  delta=None)
 
     st.markdown(
-        f"<div class='terminal-card {card_status_class(status=zone_status)}'>"
+        f"<div class='terminal-card'>"
         f"<b>Price Zone:</b> <span style='color:{zone_c};font-size:1.1em'><b>{zone}</b></span> &nbsp;|&nbsp; "
-        f"BOS Bull: <b style='color:#00E08A'>{len(bos_bull)}</b> &nbsp;|&nbsp; "
-        f"BOS Bear: <b style='color:#FF5C73'>{len(bos_bear)}</b> &nbsp;|&nbsp; "
-        f"CHoCH Bull: <b style='color:#00E08A'>{len(choch_b)}</b> &nbsp;|&nbsp; "
-        f"CHoCH Bear: <b style='color:#FF5C73'>{len(choch_br)}</b>"
+        f"BOS Bull: <b style='color:#26a69a'>{len(bos_bull)}</b> &nbsp;|&nbsp; "
+        f"BOS Bear: <b style='color:#ef5350'>{len(bos_bear)}</b> &nbsp;|&nbsp; "
+        f"CHoCH Bull: <b style='color:#26a69a'>{len(choch_b)}</b> &nbsp;|&nbsp; "
+        f"CHoCH Bear: <b style='color:#ef5350'>{len(choch_br)}</b>"
         f"</div>",
         unsafe_allow_html=True,
     )
@@ -2363,8 +1823,8 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
         x=recent.index, open=recent["open"], high=recent["high"],
         low=recent["low"], close=recent["close"],
         name="OHLC",
-        increasing_line_color="#00E08A", decreasing_line_color="#FF5C73",
-        increasing_fillcolor="#00E08A", decreasing_fillcolor="#FF5C73",
+        increasing_line_color="#26a69a", decreasing_line_color="#ef5350",
+        increasing_fillcolor="#26a69a", decreasing_fillcolor="#ef5350",
     ))
 
     for fvg in bull_fvg[-4:]:
@@ -2374,7 +1834,7 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
             fillcolor="rgba(38,166,154,0.12)", line_color="rgba(38,166,154,0.4)",
             line_width=1)
         fig.add_annotation(x=fvg["time"], y=fvg["mid"], text=f"FVG↑",
-            font=dict(color="#00E08A", size=9), showarrow=False, xanchor="left")
+            font=dict(color="#26a69a", size=9), showarrow=False, xanchor="left")
 
     for fvg in bear_fvg[-4:]:
         fig.add_shape(type="rect",
@@ -2383,7 +1843,7 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
             fillcolor="rgba(239,83,80,0.12)", line_color="rgba(239,83,80,0.4)",
             line_width=1)
         fig.add_annotation(x=fvg["time"], y=fvg["mid"], text=f"FVG↓",
-            font=dict(color="#FF5C73", size=9), showarrow=False, xanchor="left")
+            font=dict(color="#ef5350", size=9), showarrow=False, xanchor="left")
 
     for ob in bull_ob[-3:]:
         fig.add_shape(type="rect",
@@ -2392,7 +1852,7 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
             fillcolor="rgba(38,166,154,0.18)", line_color="rgba(38,166,154,0.7)",
             line_width=1, line_dash="dot")
         fig.add_annotation(x=ob["time"], y=(ob["top"]+ob["bottom"])/2, text="OB+",
-            font=dict(color="#00E08A", size=9), showarrow=False, xanchor="left")
+            font=dict(color="#26a69a", size=9), showarrow=False, xanchor="left")
 
     for ob in bear_ob[-3:]:
         fig.add_shape(type="rect",
@@ -2401,7 +1861,7 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
             fillcolor="rgba(239,83,80,0.18)", line_color="rgba(239,83,80,0.7)",
             line_width=1, line_dash="dot")
         fig.add_annotation(x=ob["time"], y=(ob["top"]+ob["bottom"])/2, text="OB−",
-            font=dict(color="#FF5C73", size=9), showarrow=False, xanchor="left")
+            font=dict(color="#ef5350", size=9), showarrow=False, xanchor="left")
 
     for b in bos_bull[-2:]:
         fig.add_hline(y=b["level"], line_dash="dash",
@@ -2538,7 +1998,7 @@ def render_orderbook(ob: dict, symbol: str):
     # ── Bid / Ask tables side by side ──────────────────────────────────────
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown("<div class='table-card status-positive'><h5 style='margin:0 0 10px;color:var(--text)'>🟢 Top Bids</h5></div>", unsafe_allow_html=True)
+        st.markdown("<div class='table-card'><h5 style='margin:0 0 10px;color:var(--text)'>🟢 Top Bids</h5></div>", unsafe_allow_html=True)
         bids_df = pd.DataFrame(ob["bids"]).rename(
             columns={"price":"Price","size":"Size","cumulative":"Cumulative","value":"Value ($)"})
         bids_df["Price"]      = bids_df["Price"].apply(lambda x: fmt_price(x, symbol))
@@ -2549,7 +2009,7 @@ def render_orderbook(ob: dict, symbol: str):
                      width="stretch", hide_index=True)
 
     with col2:
-        st.markdown("<div class='table-card status-negative'><h5 style='margin:0 0 10px;color:var(--text)'>🔴 Top Asks</h5></div>", unsafe_allow_html=True)
+        st.markdown("<div class='table-card'><h5 style='margin:0 0 10px;color:var(--text)'>🔴 Top Asks</h5></div>", unsafe_allow_html=True)
         asks_df = pd.DataFrame(ob["asks"]).rename(
             columns={"price":"Price","size":"Size","cumulative":"Cumulative","value":"Value ($)"})
         asks_df["Price"]      = asks_df["Price"].apply(lambda x: fmt_price(x, symbol))
@@ -2572,12 +2032,12 @@ def render_orderbook(ob: dict, symbol: str):
     fig.add_trace(go.Scatter(
         x=bid_prices, y=bid_cum, name="Bid Depth",
         fill="tozeroy", fillcolor="rgba(38,166,154,0.3)",
-        line=dict(color="#00E08A", width=2),
+        line=dict(color="#26a69a", width=2),
     ))
     fig.add_trace(go.Scatter(
         x=ask_prices, y=ask_cum, name="Ask Depth",
         fill="tozeroy", fillcolor="rgba(239,83,80,0.3)",
-        line=dict(color="#FF5C73", width=2),
+        line=dict(color="#ef5350", width=2),
     ))
     fig.update_layout(
         height=260, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
@@ -2590,30 +2050,21 @@ def render_orderbook(ob: dict, symbol: str):
     st.markdown("##### ⚖️ Buy / Sell Pressure")
     fig2 = go.Figure()
     fig2.add_trace(go.Bar(x=["Buy Pressure"],  y=[ob["buy_pct"]],
-        marker_color="#00E08A", name="Bids"))
+        marker_color="#26a69a", name="Bids"))
     fig2.add_trace(go.Bar(x=["Sell Pressure"], y=[ob["sell_pct"]],
-        marker_color="#FF5C73", name="Asks"))
+        marker_color="#ef5350", name="Asks"))
     fig2.update_layout(height=145, paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0,r=0,t=10,b=0),
         showlegend=False, yaxis=dict(range=[0,100], ticksuffix="%"))
     st.plotly_chart(fig2, width="stretch")
 
-    st.markdown(
-        "<div class='dashboard-grid'>"
-        + render_dashboard_card(
-            "Cumulative Delta",
-            f"{ob['cum_delta']:+,.4f}",
-            "Net buying" if ob["cum_delta"] > 0 else "Net selling" if ob["cum_delta"] < 0 else "Balanced flow",
-            status="positive" if ob["cum_delta"] > 0 else "negative" if ob["cum_delta"] < 0 else "neutral",
-        )
-        + "</div>",
-        unsafe_allow_html=True,
-    )
+    st.metric("Cumulative Delta",
+              f"{ob['cum_delta']:+,.4f}",
+              "Net buying" if ob["cum_delta"] > 0 else "Net selling")
 
 # ── Tab 5: Multi-Timeframe ────────────────────────────────────────────────────
 
-def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
-    theme_name = normalize_theme_name(theme_name)
+def render_mtf(mtf: dict, symbol: str, theme_name: str = "Institutional Dark"):
     # PERF: Validate data before rendering
     if not mtf or not isinstance(mtf, dict):
         st.info("⏰ Multi-timeframe data unavailable")
@@ -2623,7 +2074,7 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
         st.info("⏰ Multi-timeframe data unavailable")
         return
     
-    theme = THEME_TOKENS.get(THEME_TOKEN_MAP.get(theme_name, "Institutional Dark"), THEME_TOKENS["Institutional Dark"])
+    theme = THEME_TOKENS.get(theme_name, THEME_TOKENS["Institutional Dark"])
     st.markdown(render_section_header(
         f"Multi-Timeframe Analysis — {symbol}",
         "Fast institutional regime alignment view"
@@ -2647,10 +2098,10 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
 
     st.markdown(
         "<div class='dashboard-grid'>"
-        + render_dashboard_card("MTF Consensus", ov, f"Avg score {avg:+.2f} · {conf}% confidence", ov_c, signal=overall.get("signal"), status=ov, trend=overall.get("alignment"),)
-        + render_dashboard_card("Bullish Timeframes", str(overall.get("bullish", 0)), "Weighted alignment", theme["success"], status="positive")
-        + render_dashboard_card("Bearish Timeframes", str(overall.get("bearish", 0)), "Market pressure", theme["danger"], status="negative")
-        + render_dashboard_card("Neutral / Hold", str(overall.get("hold", 0)), "Divergence zones", theme["warning"], status="neutral")
+        + render_dashboard_card("MTF Consensus", ov, f"Avg score {avg:+.2f} · {conf}% confidence", ov_c)
+        + render_dashboard_card("Bullish Timeframes", str(overall.get("bullish", 0)), "Weighted alignment", theme["success"])
+        + render_dashboard_card("Bearish Timeframes", str(overall.get("bearish", 0)), "Market pressure", theme["danger"])
+        + render_dashboard_card("Neutral / Hold", str(overall.get("hold", 0)), "Divergence zones", theme["warning"])
         + "</div>",
         unsafe_allow_html=True,
     )
@@ -2667,17 +2118,15 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
         momentum = d.get("momentum", 0)
         confidence = int(d.get("confidence", 0.0) * 100)
         trend = d.get("details", {}).get("trend", "Neutral")
-        tf_signal = d.get("signal", d.get("verdict", "N/A"))
-        tf_status_class = card_status_class(signal=tf_signal, status=d.get("verdict"), trend=trend, value=momentum)
         cards_html += (
-            f"<div class='dashboard-card {tf_status_class}' style='padding:18px;'>"
+            "<div class='dashboard-card' style='padding:18px;'>"
             f"<div class='metric-label'>{MTF_LABELS.get(tf, tf)}</div>"
             f"<div style='font-size:1.4rem;font-weight:800;color:{tf_color};margin-bottom:4px'>{d.get('verdict', 'N/A')}</div>"
             f"<div style='font-size:.88rem;color:var(--muted);margin-bottom:12px'>Trend: {trend}</div>"
             f"<div style='display:flex;gap:7px;flex-wrap:wrap'>"
             f"<span class='metric-pill' style='background:rgba(37,99,235,0.12);color:{theme['accent']}'>Momentum {momentum}%</span>"
-            f"<span class='metric-pill' style='background:rgba(255,92,115,0.12);color:{theme['danger']}'>Conf {confidence}%</span>"
-            f"<span class='metric-pill' style='background:rgba(0,224,138,0.12);color:{theme['success']}'>Signal {d.get('signal','N/A')}</span>"
+            f"<span class='metric-pill' style='background:rgba(248,113,113,0.12);color:{theme['danger']}'>Conf {confidence}%</span>"
+            f"<span class='metric-pill' style='background:rgba(16,185,129,0.12);color:{theme['success']}'>Signal {d.get('signal','N/A')}</span>"
             f"</div>"
             "</div>"
         )
@@ -2773,7 +2222,6 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
 
     # dynamic classes and layout helpers
     css_state = "buy" if sig == "BUY" else ("sell" if sig == "SELL" else "hold")
-    signal_status_class = card_status_class(signal=sig)
     dominance_total = bull + bear
     if dominance_total > 0:
         bull_pct = bull / dominance_total * 100
@@ -2789,7 +2237,7 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
         left, right = st.columns([1, 2])
         with left:
             st.markdown(
-                f"<div class='signal-card {css_state} {signal_status_class}'><div style='display:flex;align-items:center;justify-content:space-between'>"
+                f"<div class='signal-card {css_state}'><div style='display:flex;align-items:center;justify-content:space-between'>"
                 f"<div style='display:flex;flex-direction:column;align-items:flex-start'>"
                 f"<div class='signal-badge' style='background:{color}'>{sig}</div>"
                 f"<div class='small-muted' style='margin-top:6px'>Confidence</div>"
@@ -2808,7 +2256,7 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
         with right:
             # Top meta row
             st.markdown(
-                f"<div class='signal-card {card_status_class(signal=sig)}'><div class='signal-row'>"
+                f"<div class='signal-card'><div class='signal-row'>"
                 f"<div style='flex:1'><div class='signal-meta'><b>Institutional:</b> {inst_label} ({inst_score:+.3f})</div></div>"
                 f"<div style='flex:1'><div class='signal-meta'><b>Regime:</b> {market_regime}</div></div>"
                 f"<div style='flex:1' style='text-align:right'><div class='signal-meta'><b>Risk:</b> <span class='risk-badge {rclass}'>{risk_level}</span></div></div>"
@@ -2838,10 +2286,10 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
     if render_ml_prediction_state(ml_result):
         direction = ml_result.get("direction", "?")
         prob      = ml_result.get("combined_probability", 0.5)
-        dir_c     = "#00E08A" if direction == "UP" else "#FF5C73"
+        dir_c     = "#26a69a" if direction == "UP" else "#ef5350"
         mc1, mc2, mc3, mc4 = st.columns(4)
         mc1.markdown(
-            f"<div class='terminal-card {card_status_class(signal=direction)}' style='text-align:center'>"
+            f"<div class='terminal-card' style='text-align:center'>"
             f"<div class='metric-label'>ML Consensus</div>"
             f"<div style='font-size:1.8em;color:{dir_c};font-weight:700'>"
             f"{('↑' if direction=='UP' else '↓')} {direction}</div></div>",
@@ -2949,12 +2397,12 @@ def render_backtest(df, cfg, symbol):
 
     st.markdown(
         "<div class='dashboard-grid'>" +
-        render_dashboard_card("Total Return", f"${m['total_return']:,.2f}", f"{m['total_return_pct']:+.2f}%", status="positive" if m['total_return'] > 0 else "negative" if m['total_return'] < 0 else "neutral") +
-        render_dashboard_card("Win Rate", f"{m['win_rate']:.1f}%", f"{m['winning_trades']}W / {m['losing_trades']}L", status="positive" if m['win_rate'] >= 50 else "negative") +
-        render_dashboard_card("Sharpe Ratio", f"{m['sharpe_ratio']:.3f}", "Risk-adjusted returns", status="positive" if m['sharpe_ratio'] > 0 else "negative" if m['sharpe_ratio'] < 0 else "neutral") +
-        render_dashboard_card("Max Drawdown", f"{m['max_drawdown']:.2f}%", "Peak-to-trough", status="negative" if m['max_drawdown'] > 0 else "neutral") +
-        render_dashboard_card("Total Trades", str(m['total_trades']), "Market events", status="muted") +
-        render_dashboard_card("Profit Factor", f"{m['profit_factor']:.3f}", "Gross profit / loss", status="positive" if m['profit_factor'] >= 1 else "negative") +
+        render_dashboard_card("Total Return", f"${m['total_return']:,.2f}", f"{m['total_return_pct']:+.2f}%") +
+        render_dashboard_card("Win Rate", f"{m['win_rate']:.1f}%", f"{m['winning_trades']}W / {m['losing_trades']}L") +
+        render_dashboard_card("Sharpe Ratio", f"{m['sharpe_ratio']:.3f}", "Risk-adjusted returns") +
+        render_dashboard_card("Max Drawdown", f"{m['max_drawdown']:.2f}%", "Peak-to-trough", "#f97316") +
+        render_dashboard_card("Total Trades", str(m['total_trades']), "Market events") +
+        render_dashboard_card("Profit Factor", f"{m['profit_factor']:.3f}", "Gross profit / loss") +
         "</div>",
         unsafe_allow_html=True,
     )
@@ -2962,8 +2410,8 @@ def render_backtest(df, cfg, symbol):
     eq = bt_result["equity_curve"].reset_index()
     if len(eq):
         fig = go.Figure(go.Scatter(x=eq["timestamp"], y=eq["equity"],
-            fill="tozeroy", fillcolor="rgba(0,224,138,0.12)",
-            line=dict(color="#00E08A", width=2), name="Portfolio"))
+            fill="tozeroy", fillcolor="rgba(38,166,154,0.10)",
+            line=dict(color="#26a69a", width=2), name="Portfolio"))
         fig.update_layout(height=220, title="Equity Curve",
             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
             yaxis=dict(tickprefix="$", gridcolor="rgba(255,255,255,0.04)"),
@@ -3006,9 +2454,9 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
 
     st.markdown(
         "<div class='dashboard-grid'>"
-        + render_dashboard_card("Active Signal", sig, f"Price @ {fmt_price(close, symbol)}", status=sig.lower())
-        + render_dashboard_card("Capital", f"${capital:,.2f}", "Paper trading balance", status="muted")
-        + render_dashboard_card("Position Size", f"${pos['position_value']:,.2f}", f"{pos['units']:.6f} units", status="positive" if sig == SIGNAL_BUY else "negative" if sig == SIGNAL_SELL else "neutral")
+        + render_dashboard_card("Active Signal", sig, f"Price @ {fmt_price(close, symbol)}")
+        + render_dashboard_card("Capital", f"${capital:,.2f}", "Paper trading balance")
+        + render_dashboard_card("Position Size", f"${pos['position_value']:,.2f}", f"{pos['units']:.6f} units")
         + "</div>",
         unsafe_allow_html=True,
     )
@@ -3210,7 +2658,7 @@ def main():
 
     # ── Tabs ────────────────────────────────────────────────────────────────
 
-    render_app_header(cfg["theme"])
+    render_header()
     active_tab = render_persistent_tabs()
     render_tab_density_css(active_tab)
 
