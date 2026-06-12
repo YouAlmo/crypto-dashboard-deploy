@@ -14,7 +14,7 @@ except ImportError:
     _TA_AVAILABLE = False
 
 
-# ── Trend ─────────────────────────────────────────────────────────────────────
+# Trend
 
 def add_sma(df: pd.DataFrame, periods=(20, 50, 200), col="close") -> pd.DataFrame:
     if df is None or df.empty:
@@ -24,7 +24,7 @@ def add_sma(df: pd.DataFrame, periods=(20, 50, 200), col="close") -> pd.DataFram
         return df
     for p in periods:
         df[f"sma_{p}"] = df[col].rolling(window=p, min_periods=1).mean()
-        return df
+    return df
 
 
 def add_vwap(df: pd.DataFrame) -> pd.DataFrame:
@@ -94,7 +94,6 @@ def add_ichimoku(df: pd.DataFrame) -> pd.DataFrame:
             return df
         except Exception:
             pass
-    # Manual fallback
     high9  = df["high"].rolling(9).max()
     low9   = df["low"].rolling(9).min()
     high26 = df["high"].rolling(26).max()
@@ -146,8 +145,6 @@ def add_parabolic_sar(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-# ── Momentum ──────────────────────────────────────────────────────────────────
-
 def add_stochastic_rsi(df: pd.DataFrame, period: int = 14,
                         smooth1: int = 3, smooth2: int = 3) -> pd.DataFrame:
     if _TA_AVAILABLE:
@@ -196,8 +193,6 @@ def add_momentum_ind(df: pd.DataFrame, period: int = 10) -> pd.DataFrame:
     df["momentum"] = df["close"] - df["close"].shift(period)
     return df
 
-
-# ── Volume ────────────────────────────────────────────────────────────────────
 
 def add_obv(df: pd.DataFrame) -> pd.DataFrame:
     if _TA_AVAILABLE:
@@ -269,8 +264,6 @@ def add_volume_profile(df: pd.DataFrame, bins: int = 30) -> dict:
     return profile
 
 
-# ── Volatility ────────────────────────────────────────────────────────────────
-
 def add_keltner_channel(df: pd.DataFrame, period: int = 20, mult: float = 2.0) -> pd.DataFrame:
     if _TA_AVAILABLE:
         try:
@@ -314,8 +307,6 @@ def add_donchian_channel(df: pd.DataFrame, period: int = 20) -> pd.DataFrame:
     df["dc_middle"] = (df["dc_upper"] + df["dc_lower"]) / 2
     return df
 
-
-# ── Master function ───────────────────────────────────────────────────────────
 
 def add_all_advanced_indicators(df: pd.DataFrame) -> pd.DataFrame:
     if df is None or df.empty:

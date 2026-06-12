@@ -1,6 +1,8 @@
 # SuperSignal AI Engine
 import sys
 import os
+import hashlib
+import time
 sys.path.insert(0, os.path.dirname(__file__))
 
 import streamlit as st
@@ -34,10 +36,9 @@ from src.analysis.support_resistance import find_support_resistance
 from src.analysis.backtest import run_backtest
 from src.ml.models import train_and_predict
 from src.data.news_sentiment import get_news_sentiment
-from src.risk.risk_manager import assess_risk
+from src.risk.risk_manager import assess_risk, calculate_position_size
 from src.ui.layout import (
     render_header,
-    render_tabs,
     get_theme_css
 )
 from src.ui.charts import render_price_chart
@@ -52,58 +53,70 @@ st.markdown(get_theme_css(), unsafe_allow_html=True)
 THEME_OPTIONS = ["Institutional Dark", "Premium Light"]
 THEME_TOKENS = {
     "Institutional Dark": {
-        "app_bg": "#05101d",
-        "panel_bg": "rgba(9,17,31,0.94)",
-        "card_bg": "rgba(10,18,30,0.96)",
-        "card_border": "rgba(97,156,255,0.16)",
-        "text": "#e2e8f0",
-        "muted": "#94a3b8",
-        "accent": "#60a5fa",
-        "accent_alt": "#26c6da",
-        "success": "#26a69a",
-        "danger": "#ef5350",
+        "app_bg": "#0b1220",
+        "app_bg_alt": "#111827",
+        "panel_bg": "rgba(17,24,39,0.92)",
+        "card_bg": "rgba(20,29,45,0.94)",
+        "card_bg_hover": "rgba(24,35,54,0.98)",
+        "card_border": "rgba(148,163,184,0.18)",
+        "text": "#e5edf7",
+        "muted": "#9aa8bb",
+        "subtle": "#64748b",
+        "accent": "#38bdf8",
+        "accent_alt": "#22d3ee",
+        "success": "#2dd4bf",
+        "danger": "#fb7185",
         "warning": "#fbbf24",
-        "shadow": "0 24px 60px rgba(10,18,35,0.28)",
-        "sidebar": "rgba(8,12,18,0.98)",
-        "tab_bg": "rgba(15,23,42,0.95)",
-        "tab_active": "rgba(34,70,124,0.95)",
-        "tab_border": "rgba(97,156,255,0.18)",
-        "heat_bull": "rgba(38,166,154,0.28)",
-        "heat_bear": "rgba(239,83,80,0.28)",
+        "shadow": "0 12px 28px rgba(2,6,23,0.26)",
+        "sidebar": "rgba(15,23,42,0.98)",
+        "sidebar_panel": "rgba(30,41,59,0.72)",
+        "tab_bg": "rgba(30,41,59,0.68)",
+        "tab_active": "rgba(14,165,233,0.18)",
+        "tab_border": "rgba(148,163,184,0.20)",
+        "input_bg": "rgba(15,23,42,0.86)",
+        "heat_bull": "rgba(45,212,191,0.24)",
+        "heat_bear": "rgba(251,113,133,0.24)",
     },
     "Premium Light": {
-        "app_bg": "#eff5fb",
-        "panel_bg": "#f5f8ff",
+        "app_bg": "#f3f6fb",
+        "app_bg_alt": "#e8eef7",
+        "panel_bg": "rgba(255,255,255,0.92)",
         "card_bg": "rgba(255,255,255,0.98)",
-        "card_border": "rgba(37,99,235,0.15)",
-        "text": "#102a43",
-        "muted": "#64748b",
-        "accent": "#2563eb",
-        "accent_alt": "#1d4ed8",
+        "card_bg_hover": "#ffffff",
+        "card_border": "rgba(51,65,85,0.14)",
+        "text": "#132033",
+        "muted": "#526176",
+        "subtle": "#7a8799",
+        "accent": "#0f6fdc",
+        "accent_alt": "#0891b2",
         "success": "#047857",
-        "danger": "#b91c1c",
-        "warning": "#c2410b",
-        "shadow": "0 22px 52px rgba(15,23,42,0.08)",
-        "sidebar": "#eef4fb",
-        "tab_bg": "#e7f0ff",
-        "tab_active": "#ffffff",
-        "tab_border": "rgba(37,99,235,0.18)",
-        "heat_bull": "rgba(34,197,94,0.18)",
-        "heat_bear": "rgba(248,113,113,0.18)",
+        "danger": "#be123c",
+        "warning": "#b45309",
+        "shadow": "0 10px 24px rgba(15,23,42,0.08)",
+        "sidebar": "rgba(248,250,252,0.98)",
+        "sidebar_panel": "rgba(255,255,255,0.86)",
+        "tab_bg": "rgba(255,255,255,0.74)",
+        "tab_active": "rgba(15,111,220,0.10)",
+        "tab_border": "rgba(51,65,85,0.15)",
+        "input_bg": "#ffffff",
+        "heat_bull": "rgba(16,185,129,0.16)",
+        "heat_bear": "rgba(244,63,94,0.16)",
     },
 }
-
 def get_theme_css(theme_name: str) -> str:
     t = THEME_TOKENS.get(theme_name, THEME_TOKENS["Institutional Dark"])
     return f"""
     <style>
     :root {{
       --app-bg: {t['app_bg']};
+      --app-bg-alt: {t['app_bg_alt']};
       --panel-bg: {t['panel_bg']};
       --card-bg: {t['card_bg']};
+      --card-bg-hover: {t['card_bg_hover']};
       --card-border: {t['card_border']};
       --text: {t['text']};
       --muted: {t['muted']};
+      --subtle: {t['subtle']};
       --accent: {t['accent']};
       --accent-alt: {t['accent_alt']};
       --success: {t['success']};
@@ -111,63 +124,318 @@ def get_theme_css(theme_name: str) -> str:
       --warning: {t['warning']};
       --shadow: {t['shadow']};
       --sidebar: {t['sidebar']};
+      --sidebar-panel: {t['sidebar_panel']};
       --tab-bg: {t['tab_bg']};
       --tab-active: {t['tab_active']};
       --tab-border: {t['tab_border']};
+      --input-bg: {t['input_bg']};
       --heat-bull: {t['heat_bull']};
       --heat-bear: {t['heat_bear']};
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 10px;
+      --dashboard-grid-min: 190px;
+      --dashboard-grid-gap: 16px;
+      --dashboard-grid-margin: 0.7rem 0 1rem;
+      --dashboard-card-padding: 14px 16px;
+      --dashboard-card-min-height: 104px;
+      --dashboard-card-overflow: visible;
+      --terminal-card-min-height: 76px;
+      --section-subtitle-margin: 0.65rem;
+      --section-subtitle-size: 0.84rem;
+      --metric-value-size: clamp(1.08rem,1.22vw,1.38rem);
+      --metric-tile-value-size: clamp(1rem,1.16vw,1.18rem);
     }}
-    body, .stApp, .block-container, .main {{ background: var(--app-bg) !important; color: var(--text) !important; }}
-    section[data-testid="stSidebar"], .sidebar .css-1lcbmhc, .stSidebar {{ background: var(--sidebar) !important; border-right: 1px solid var(--card-border); }}
-    .sidebar-block {{ background: var(--panel-bg); border-color: var(--card-border); color: var(--text); padding: 18px 20px; border-radius: 18px; box-shadow: var(--shadow); }}
-    .sidebar-block h3 {{ color: var(--text); margin-bottom: 10px; }}
-    .sidebar-block p {{ color: var(--muted); margin-bottom: 0; }}
-    .stSidebar .element-container {{ background: transparent !important; }}
-    .stSidebar .stSelectbox > div > div, .stSidebar .stSlider > div, .stSidebar .stNumberInput > div, .stSidebar .stCheckbox > div, .stSidebar .stRadio > div {{ border-radius: 16px !important; }}
-    .dashboard-card, .dashboard-tile, .table-card, .terminal-card, .signal-card {{ background: var(--card-bg); border-color: var(--card-border); box-shadow: var(--shadow); color: var(--text); border-radius: 20px; padding: 18px 20px; }}
-    .dashboard-card:hover, .signal-card:hover {{ transform: translateY(-3px); }}
-    .dashboard-card {{ border: 1px solid var(--card-border); }}
-    .dashboard-tile {{ border: 1px solid var(--card-border); }}
-    .table-card {{ border: 1px solid var(--card-border); }}
-    .terminal-card {{ border: 1px solid var(--card-border); }}
-    .metric-pill {{ color: var(--text); padding: 7px 14px; font-size: 0.78rem; }}
-    .metric-pill.buy {{ background: rgba(38,166,154,0.14); color: var(--success); }}
-    .metric-pill.sell {{ background: rgba(239,83,80,0.14); color: var(--danger); }}
-    .metric-pill.hold {{ background: rgba(251,191,36,0.16); color: var(--warning); }}
-    .signal-card.buy {{ box-shadow: 0 20px 52px rgba(38,166,154,0.16); }}
-    .signal-card.sell {{ box-shadow: 0 20px 52px rgba(239,83,80,0.16); }}
-    .signal-card.hold {{ box-shadow: 0 20px 52px rgba(251,191,36,0.14); }}
-    .signal-badge {{ background: var(--accent); color: #fff; }}
-    .small-muted {{ color: var(--muted); }}
-    .conf-wrap, .dom-wrap {{ background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; }}
-    .conf-bar {{ background: rgba(255,255,255,0.12); }}
-    .dom-bar {{ background: rgba(255,255,255,0.12); }}
-    .risk-badge {{ color: var(--text); }}
-    .risk-low {{ background: linear-gradient(90deg, var(--success), #a5f3c9); }}
-    .risk-medium {{ background: linear-gradient(90deg, var(--warning), #fde68a); }}
-    .risk-high {{ background: linear-gradient(90deg, var(--danger), #fca5a5); }}
-    .section-title {{ color: var(--text); font-size: 1.45rem; letter-spacing: -0.02em; margin-bottom: 0.35rem; }}
-    .section-subtitle {{ color: var(--muted); margin-bottom: 1.15rem; font-size: 0.95rem; }}
-    .stTabs [role="tab"] {{ display: inline-flex !important; align-items: center; justify-content: center; gap: 0.45rem; min-height: 52px; padding: 0.9rem 1rem; margin-right: 8px; border-radius: 14px 14px 0 0; border: 1px solid var(--tab-border); background: var(--tab-bg); color: var(--text); transition: transform .18s ease, box-shadow .18s ease, background .18s ease; font-size: 0.95rem; font-weight: 600; }}
-    .stTabs [role="tab"]:hover {{ transform: translateY(-1px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }}
-    .stTabs [role="tab"][aria-selected="true"] {{ background: var(--tab-active); color: var(--text); box-shadow: 0 10px 28px rgba(0,0,0,0.14); border-bottom: 4px solid var(--accent); }}
-    .stTabs [role="tab"] span, .stTabs [role="tab"] svg {{ line-height: 1.2; }}
-    .signal-item {{ background: rgba(255,255,255,0.08); color: var(--text); }}
-    .table-card h5 {{ color: var(--text); }}
-    button[aria-label*="Theme"], button[title*="Theme"], [data-testid="stThemeToggle"] {{ display: none !important; }}
-    .stButton>button {{ border-radius: 14px; padding: 0.95rem 1rem; font-weight: 700; }}
-    .stSidebar .stButton>button {{ width: 100%; }}
-    .stSidebar label {{ color: var(--text) !important; font-weight: 600; }}
-    .stSidebar .stSelectbox>div, .stSidebar .stSlider>div, .stSidebar .stNumberInput>div {{ background: var(--card-bg) !important; border: 1px solid var(--card-border) !important; box-shadow: inset 0 0 0 rgba(0,0,0,0.02); }}
-    .stSidebar .stSlider .expy {{
+    body, .stApp {{
+      background: linear-gradient(180deg, var(--app-bg) 0%, var(--app-bg-alt) 100%) !important;
+      color: var(--text) !important;
+      font-feature-settings: "tnum" 1, "ss01" 1;
+    }}
+    .block-container {{
       background: transparent !important;
+      color: var(--text) !important;
+      padding-top: 1.05rem !important;
+      padding-left: clamp(0.85rem, 1.6vw, 1.55rem) !important;
+      padding-right: clamp(0.85rem, 1.6vw, 1.55rem) !important;
+      padding-bottom: 1.1rem !important;
+      width: 100%;
+      max-width: 1480px;
+      margin-left: auto;
+      margin-right: auto;
     }}
+    h1, h2, h3, h4, h5, h6, p, label, span, div {{ letter-spacing: 0 !important; }}
+    h1 {{ font-size: clamp(2rem, 3vw, 2.75rem) !important; line-height: 1.08 !important; }}
+    h2 {{ font-size: clamp(1.45rem, 2vw, 1.9rem) !important; }}
+    h3 {{ font-size: clamp(1.08rem, 1.5vw, 1.35rem) !important; margin: 0.55rem 0 0.25rem !important; }}
+    h4, h5 {{ margin: 0.45rem 0 0.25rem !important; }}
+    p, .stCaption, [data-testid="stCaptionContainer"] {{ color: var(--muted) !important; }}
+    .app-header {{
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 0 0 0.75rem;
+      padding: 0.05rem 0 0.75rem;
+      border-bottom: 1px solid var(--card-border);
+    }}
+    .app-header h1, .app-title, .hero-title {{ margin: 0 !important; font-size: clamp(2rem, 2.75vw, 2.35rem) !important; line-height: 1.12 !important; }}
+    .app-header p {{ margin: 0.3rem 0 0; color: var(--muted) !important; font-size: 0.92rem; }}
+    .brand-mark {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 28%, transparent), color-mix(in srgb, var(--accent-alt) 20%, transparent));
+      border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--card-border));
+      color: var(--text);
+      font-weight: 900;
+      font-size: 0.88rem;
+      box-shadow: 0 10px 22px color-mix(in srgb, var(--accent) 12%, transparent);
+    }}
+
+    section[data-testid="stSidebar"] {{
+      background: var(--sidebar) !important;
+      border-right: 1px solid var(--card-border);
+      box-shadow: 12px 0 36px rgba(2,6,23,0.08);
+    }}
+    section[data-testid="stSidebar"] .block-container {{ padding-top: 0.75rem !important; padding-inline: 0.85rem !important; }}
+    .sidebar-block {{
+      background: var(--sidebar-panel);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 10px 12px 11px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 24px rgba(2,6,23,0.10);
+    }}
+    .sidebar-block h3 {{ color: var(--text); margin: 0 0 4px 0; font-size: 1rem; }}
+    .sidebar-block p {{ color: var(--muted); margin-bottom: 0; }}
+    .sidebar-divider {{ height: 1px; background: var(--card-border); margin: 10px 0 9px; }}
+    .stSidebar .element-container {{ background: transparent !important; margin-bottom: 0.34rem !important; }}
+    .stSidebar [data-testid="stMarkdownContainer"] p {{ margin-bottom: 0.15rem; }}
+    .stSidebar h3 {{ font-size: 0.72rem !important; text-transform: uppercase; color: var(--subtle) !important; margin: 0.62rem 0 0.3rem 0 !important; }}
+    .stSidebar label {{ color: var(--text) !important; font-weight: 650 !important; font-size: 0.82rem !important; }}
+    .stSidebar [data-testid="stWidgetLabel"] {{ margin-bottom: 0.18rem !important; }}
+    .stSidebar .stSelectbox > div > div,
+    .stSidebar .stNumberInput input,
+    .stSidebar [data-baseweb="select"] > div,
+    .stSidebar [data-baseweb="input"] {{
+      background: var(--input-bg) !important;
+      border: 1px solid var(--card-border) !important;
+      border-radius: var(--radius-md) !important;
+      min-height: 36px !important;
+      color: var(--text) !important;
+      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }}
+    .stSidebar .stSelectbox > div > div:hover,
+    .stSidebar .stNumberInput input:hover,
+    .stSidebar [data-baseweb="select"] > div:hover {{ border-color: color-mix(in srgb, var(--accent) 52%, var(--card-border)) !important; }}
+    .stSidebar .stCheckbox {{ padding-block: 1px; }}
+    .stSidebar .stSlider {{ padding-top: 0.05rem; padding-bottom: 0.18rem; }}
+    .stSidebar .stSlider [role="slider"] {{ border: 2px solid var(--accent) !important; box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent); }}
+    .stSidebar [data-baseweb="slider"] div {{ transition: background .16s ease, box-shadow .16s ease; }}
+    .stSidebar details {{ border: 1px solid var(--card-border); border-radius: var(--radius-md); background: color-mix(in srgb, var(--sidebar-panel) 68%, transparent); padding: 2px 8px 6px; margin: 0.28rem 0; }}
+    .stSidebar summary {{ color: var(--text); font-weight: 650; }}
+
+    .dashboard-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(var(--dashboard-grid-min), 1fr));
+      gap: var(--dashboard-grid-gap);
+      row-gap: var(--dashboard-grid-gap);
+      align-items: stretch;
+      margin: var(--dashboard-grid-margin);
+    }}
+    .dashboard-card, .dashboard-tile, .table-card, .terminal-card, .signal-card {{
+      background: linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 92%, var(--panel-bg)));
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      color: var(--text);
+      border-radius: var(--radius-lg);
+      box-sizing: border-box;
+      height: auto !important;
+      overflow: var(--dashboard-card-overflow) !important;
+      padding: var(--dashboard-card-padding);
+      min-height: var(--dashboard-card-min-height);
+      min-width: 0;
+      margin: 0;
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+    }}
+    .dashboard-card {{
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 7px;
+      position: relative;
+    }}
+    .dashboard-card::before, .terminal-card::before, .signal-card::before {{
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 2px;
+      border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+      background: color-mix(in srgb, var(--accent) 38%, transparent);
+      opacity: 0.62;
+    }}
+    .dashboard-card:hover, .dashboard-tile:hover, .signal-card:hover {{
+      transform: translateY(-1px);
+      background: var(--card-bg-hover);
+      border-color: color-mix(in srgb, var(--accent) 30%, var(--card-border));
+      box-shadow: 0 14px 34px rgba(2,6,23,0.18);
+    }}
+    .dashboard-tile h4 {{ margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.82rem; color: var(--muted); overflow-wrap: break-word; }}
+    .dashboard-tile p {{ margin: 0.28rem 0 0; color: var(--muted) !important; font-size: 0.76rem; line-height: 1.28; }}
+    .dashboard-tile {{ display: flex; flex-direction: column; gap: 5px; }}
+    .terminal-card, .signal-card {{ min-height: var(--terminal-card-min-height); position: relative; }}
+    .metric-label {{ color: var(--muted); font-size: 0.66rem; font-weight: 760; text-transform: uppercase; line-height: 1.2; overflow-wrap: break-word; }}
+    .metric-val, .metric-value, .metric-subtext {{
+      color: var(--text);
+      font-weight: 800;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      max-width: 100%;
+    }}
+    .metric-val {{ font-variant-numeric: tabular-nums; }}
+    .metric-subtitle {{ font-size: 0.74rem; color: var(--muted); margin-top: 1px; line-height: 1.28; font-weight: 550; }}
+    .overview-summary-grid {{ grid-template-columns: repeat(4, minmax(210px, 1fr)); }}
+    .indicator-grid {{ grid-template-columns: repeat(auto-fit, minmax(188px, 1fr)); gap: 16px; margin-top: 0.7rem; }}
+    .indicator-grid .dashboard-card {{ min-height: 132px; align-items: center; justify-content: center; text-align: center; }}
+    .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); white-space: nowrap; }}
+    .metric-pill.buy {{ background: color-mix(in srgb, var(--success) 15%, transparent); color: var(--success); }}
+    .metric-pill.sell {{ background: color-mix(in srgb, var(--danger) 15%, transparent); color: var(--danger); }}
+    .metric-pill.hold {{ background: color-mix(in srgb, var(--warning) 16%, transparent); color: var(--warning); }}
+    .signal-card.buy {{ box-shadow: 0 16px 42px color-mix(in srgb, var(--success) 15%, transparent); }}
+    .signal-card.sell {{ box-shadow: 0 16px 42px color-mix(in srgb, var(--danger) 15%, transparent); }}
+    .signal-card.hold {{ box-shadow: 0 16px 42px color-mix(in srgb, var(--warning) 13%, transparent); }}
+    .signal-badge {{ background: var(--accent); color: #fff; border-radius: 999px; padding: 4px 9px; font-weight: 800; letter-spacing: .04em !important; }}
+    .small-muted {{ color: var(--muted); }}
+    .conf-wrap, .dom-wrap {{ background: color-mix(in srgb, var(--panel-bg) 70%, transparent); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 3px; }}
+    .conf-bar, .dom-bar {{ background: color-mix(in srgb, var(--muted) 16%, transparent); border-radius: 999px; overflow: hidden; min-height: 8px; }}
+    .conf-fill, .dom-bull, .dom-bear {{ min-height: 8px; }}
+    .signal-row {{ display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }}
+    .signal-meta, .signal-item {{ color: var(--text); background: color-mix(in srgb, var(--panel-bg) 55%, transparent); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 7px 9px; }}
+    .risk-badge {{ color: var(--text); border-radius: 999px; padding: 3px 8px; font-size: 0.78rem; font-weight: 800; }}
+    .risk-low {{ background: color-mix(in srgb, var(--success) 24%, transparent); color: var(--success); }}
+    .risk-medium {{ background: color-mix(in srgb, var(--warning) 24%, transparent); color: var(--warning); }}
+    .risk-high {{ background: color-mix(in srgb, var(--danger) 24%, transparent); color: var(--danger); }}
+
+    .section-title {{ color: var(--text); font-size: clamp(1.08rem, 1.45vw, 1.34rem); font-weight: 800; margin: 0.35rem 0 0.12rem; }}
+    .section-subtitle {{ color: var(--muted); margin-bottom: var(--section-subtitle-margin); font-size: var(--section-subtitle-size); max-width: 980px; line-height: 1.35; }}
+    .table-card {{ min-height: auto !important; padding: 10px 12px !important; }}
+    .table-card h5 {{ color: var(--text); }}
+    div[data-testid="stMetric"] {{
+      background: var(--card-bg) !important;
+      border: 1px solid var(--card-border) !important;
+      border-radius: var(--radius-lg) !important;
+      padding: 10px 12px !important;
+      box-shadow: var(--shadow);
+      min-height: 78px;
+      overflow: hidden;
+    }}
+    div[data-testid="stMetric"] label, div[data-testid="stMetric"] [data-testid="stMetricLabel"] {{ color: var(--muted) !important; font-size: 0.7rem !important; font-weight: 750 !important; text-transform: uppercase; }}
+    div[data-testid="stMetricValue"] {{ color: var(--text) !important; font-size: clamp(1.02rem, 1.35vw, 1.36rem) !important; font-weight: 800 !important; line-height: 1.08 !important; overflow-wrap: anywhere; }}
+    div[data-testid="stMetricDelta"] {{ font-size: 0.74rem !important; }}
+    .stDataFrame, [data-testid="stDataFrame"] {{ border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--card-border); box-shadow: var(--shadow); }}
+    .mover-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 0.55rem 0 1rem;
+    }}
+    .mover-card {{
+      min-height: 0 !important;
+      padding: 10px 12px !important;
+      border-radius: var(--radius-md) !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      overflow: hidden !important;
+    }}
+    .mover-card .metric-label {{ font-size: 0.64rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .mover-card .metric-val {{ font-size: clamp(1rem,1.25vw,1.22rem) !important; margin-top: 2px !important; }}
+    .mover-card .metric-subtext {{ color: var(--muted); font-size: 0.74rem; text-align: right; font-weight: 650; }}
+    div[data-testid="stDecoration"], button[title="View fullscreen"] {{ display: none !important; }}
+    div[data-testid="stVerticalBlock"] {{ gap: var(--vertical-block-gap, 0.65rem) !important; }}
+    div[data-testid="column"] {{ min-width: 0 !important; }}
+    hr {{ margin: 0.75rem 0 !important; border-color: var(--card-border) !important; }}
+    [data-testid="stExpander"] {{ border-color: var(--card-border) !important; border-radius: var(--radius-lg) !important; }}
+
+    div[role="radiogroup"] {{
+      display: flex;
+      gap: 6px;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      padding: 5px;
+      margin: 0.1rem 0 1.05rem;
+      background: color-mix(in srgb, var(--panel-bg) 78%, transparent);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 24px rgba(2,6,23,0.10);
+      width: 100%;
+      max-width: 1180px;
+    }}
+    div[role="radiogroup"] label {{
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      padding: 6px 12px;
+      min-height: 32px;
+      flex: 0 0 auto;
+      justify-content: center;
+      color: var(--muted) !important;
+      background: transparent;
+      transition: background .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+    }}
+    div[role="radiogroup"] label:hover {{
+      color: var(--text) !important;
+      background: var(--tab-bg);
+      border-color: var(--tab-border);
+      transform: translateY(-1px);
+    }}
+    div[role="radiogroup"] label:has(input:checked) {{
+      color: var(--text) !important;
+      background: var(--tab-active);
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--tab-border));
+      box-shadow: inset 0 -2px 0 var(--accent), 0 7px 18px color-mix(in srgb, var(--accent) 10%, transparent);
+      font-weight: 800;
+    }}
+    div[role="radiogroup"] label [data-testid="stMarkdownContainer"] p {{ margin: 0 !important; white-space: nowrap; font-size: 0.84rem; line-height: 1.1; }}
+    div[role="radiogroup"] label > div:first-child {{ display: none !important; }}
+
+    button[aria-label*="Theme"], button[title*="Theme"], [data-testid="stThemeToggle"] {{ display: none !important; }}
+    .stButton>button {{
+      border-radius: var(--radius-md);
+      padding: 0.72rem 0.95rem;
+      font-weight: 750;
+      border: 1px solid var(--card-border);
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }}
+    .stButton>button:hover {{ transform: translateY(-1px); border-color: var(--accent); box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 16%, transparent); }}
+    .stSidebar .stButton>button {{ width: 100%; }}
+    button:focus-visible, input:focus-visible, [role="button"]:focus-visible, [role="slider"]:focus-visible {{ outline: 2px solid var(--accent) !important; outline-offset: 2px !important; }}
+    .stAlert {{ border-radius: var(--radius-md) !important; border: 1px solid var(--card-border) !important; }}
+
     @keyframes pulse {{
-      0%, 100% {{ opacity: 0.6; }}
+      0%, 100% {{ opacity: 0.72; }}
       50% {{ opacity: 1; }}
     }}
-    @media (max-width: 1024px) {{ .stTabs [role="tab"] {{ padding: 0.75rem 0.85rem; min-height: 48px; }} }}
-    @media (max-width: 760px) {{ .stTabs [role="tab"] {{ flex: 1 1 auto; margin-right: 6px; min-width: 120px; }} }}
+    @media (max-width: 1400px) {{
+      .dashboard-grid {{ grid-template-columns: repeat(auto-fit, minmax(min(var(--dashboard-grid-min), 100%), 1fr)); }}
+      div[role="radiogroup"] {{ max-width: 100%; }}
+      div[role="radiogroup"] label {{ padding: 6px 10px; font-size: 0.8rem; }}
+    }}
+    @media (max-width: 760px) {{
+      .block-container {{ padding-inline: 0.75rem !important; }}
+      .dashboard-grid {{ grid-template-columns: 1fr; }}
+      .overview-summary-grid, .indicator-grid {{ grid-template-columns: 1fr; }}
+      div[role="radiogroup"] {{ gap: 6px; max-width: 100%; }}
+      div[role="radiogroup"] label {{ flex: 0 0 auto; justify-content: center; }}
+      .section-subtitle {{ font-size: 0.86rem; }}
+      .app-header {{ align-items: flex-start; }}
+    }}
     </style>
     """
 
@@ -205,9 +473,9 @@ def sentiment_color(s: str) -> str:
 def render_dashboard_card(title: str, value: str, subtitle: str = "", accent: str = "var(--accent)") -> str:
     return (
         f"<div class='dashboard-card'>"
-        f"<div style='font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px'>{title}</div>"
-        f"<div style='font-size:2rem;font-weight:800;color:{accent};line-height:1.05;margin-bottom:6px'>{value}</div>"
-        f"<div style='font-size:.92rem;color:var(--muted)'>{subtitle}</div>"
+        f"<div class='metric-label'>{title}</div>"
+        f"<div class='metric-val' style='font-size:var(--metric-value-size);color:{accent};line-height:1.08;margin-top:4px'>{value}</div>"
+        f"<div class='metric-subtitle'>{subtitle}</div>"
         f"</div>"
     )
 
@@ -216,8 +484,8 @@ def render_metric_tile(title: str, value: str, detail: str = "", badge: str = ""
     return (
         f"<div class='dashboard-tile'>"
         f"<h4>{title}{badge_html}</h4>"
-        f"<div style='font-size:1.5rem;font-weight:800;line-height:1.1;margin-top:8px;color:var(--text)'>{value}</div>"
-        f"<p style='color:var(--muted)'>{detail}</p>"
+        f"<div class='metric-val' style='font-size:var(--metric-tile-value-size);line-height:1.08;margin-top:4px;color:var(--text)'>{value}</div>"
+        f"<p>{detail}</p>"
         f"</div>"
     )
 
@@ -249,6 +517,180 @@ def render_empty_state(message: str = "Data unavailable.", icon: str = "⚠️")
         f"{icon} {message}</div>",
         unsafe_allow_html=True,
     )
+
+def render_compact_state(message: str, detail: str = "") -> None:
+    detail_html = f"<span style='color:var(--muted);font-weight:500;margin-left:8px'>{detail}</span>" if detail else ""
+    st.markdown(
+        f"<div style='display:inline-flex;align-items:center;padding:9px 12px;border-radius:12px;"
+        f"border:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.06);"
+        f"color:var(--text);font-size:0.9rem;margin:4px 0 12px 0;'>"
+        f"<strong>{message}</strong>{detail_html}</div>",
+        unsafe_allow_html=True,
+    )
+
+def render_ml_prediction_state(ml_result: dict) -> bool:
+    if not isinstance(ml_result, dict) or not ml_result:
+        render_empty_state("ML predictions are unavailable for the current market dataset.", icon="ℹ️")
+        return False
+    if ml_result.get("error"):
+        render_notice_badge(f"ML predictions unavailable: {ml_result['error']}", kind="warning")
+        return False
+    if ml_result.get("combined_probability") is None:
+        render_notice_badge("ML models trained, but no current prediction probability is available.", kind="warning")
+        return False
+    return True
+
+TAB_OPTIONS = [
+    ("overview", "Overview"),
+    ("technical", "Technical"),
+    ("smart_money", "Smart Money"),
+    ("order_book", "Order Book"),
+    ("multi_tf", "Multi-TF"),
+    ("ai_signals", "AI Signals"),
+    ("backtest", "Backtest"),
+    ("portfolio", "Portfolio"),
+]
+TAB_LABEL_BY_ID = dict(TAB_OPTIONS)
+TAB_ID_BY_LABEL = {label: tab_id for tab_id, label in TAB_OPTIONS}
+
+
+def qp_get(name: str, default=None):
+    value = st.query_params.get(name, default)
+    if isinstance(value, list):
+        return value[0] if value else default
+    return value
+
+
+def qp_set(name: str, value) -> None:
+    text = str(value)
+    if qp_get(name) != text:
+        st.query_params[name] = text
+
+
+def qp_choice(name: str, choices: list, default):
+    value = qp_get(name, default)
+    return value if value in choices else default
+
+
+def qp_float(name: str, default: float, min_value: float | None = None, max_value: float | None = None) -> float:
+    try:
+        value = float(qp_get(name, default))
+    except (TypeError, ValueError):
+        value = float(default)
+    if min_value is not None:
+        value = max(float(min_value), value)
+    if max_value is not None:
+        value = min(float(max_value), value)
+    return value
+
+
+def qp_int(name: str, default: int, min_value: int | None = None, max_value: int | None = None, step: int | None = None) -> int:
+    try:
+        value = int(float(qp_get(name, default)))
+    except (TypeError, ValueError):
+        value = int(default)
+    if step:
+        value = int(round(value / step) * step)
+    if min_value is not None:
+        value = max(int(min_value), value)
+    if max_value is not None:
+        value = min(int(max_value), value)
+    return value
+
+
+def qp_bool(name: str, default: bool) -> bool:
+    value = str(qp_get(name, "1" if default else "0")).lower()
+    return value in {"1", "true", "yes", "on"}
+
+
+def init_widget_from_query(widget_key: str, query_key: str, default, cast=str):
+    if widget_key in st.session_state:
+        return
+    value = qp_get(query_key, default)
+    try:
+        st.session_state[widget_key] = cast(value)
+    except (TypeError, ValueError):
+        st.session_state[widget_key] = default
+
+
+def render_persistent_tabs() -> str:
+    initial_tab = qp_choice("tab", [tab_id for tab_id, _ in TAB_OPTIONS], "overview")
+    tab_labels = [label for _, label in TAB_OPTIONS]
+    if "active_tab_label" not in st.session_state or st.session_state.active_tab_label not in tab_labels:
+        st.session_state.active_tab_label = TAB_LABEL_BY_ID[initial_tab]
+
+    selected_label = st.radio(
+        "Navigation",
+        tab_labels,
+        key="active_tab_label",
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+    active_tab = TAB_ID_BY_LABEL.get(selected_label, "overview")
+    st.session_state.active_tab = active_tab
+    qp_set("tab", active_tab)
+    return active_tab
+
+
+def sync_overlay_query(show: dict) -> None:
+    for key, value in show.items():
+        qp_set(f"show_{key}", int(bool(value)))
+
+
+def render_tab_density_css(active_tab: str) -> None:
+    heavy_tabs = {"overview", "technical", "smart_money"}
+    if active_tab in heavy_tabs:
+        density = {
+            "grid_min": "220px",
+            "grid_gap": "16px",
+            "grid_margin": "0.7rem 0 1rem",
+            "card_padding": "14px 16px",
+            "card_min": "110px",
+            "overflow": "visible",
+            "terminal_min": "96px",
+            "subtitle_margin": "0.78rem",
+            "subtitle_size": "0.88rem",
+            "metric_value": "clamp(1.08rem,1.28vw,1.42rem)",
+            "metric_tile_value": "clamp(1rem,1.16vw,1.18rem)",
+            "vertical_gap": "0.7rem",
+        }
+    else:
+        density = {
+            "grid_min": "170px",
+            "grid_gap": "16px",
+            "grid_margin": "0.65rem 0 0.95rem",
+            "card_padding": "13px 15px",
+            "card_min": "96px",
+            "overflow": "hidden",
+            "terminal_min": "78px",
+            "subtitle_margin": "0.58rem",
+            "subtitle_size": "0.84rem",
+            "metric_value": "clamp(1.04rem,1.2vw,1.3rem)",
+            "metric_tile_value": "clamp(0.98rem,1.12vw,1.1rem)",
+            "vertical_gap": "0.65rem",
+        }
+    st.markdown(
+        f"""
+        <style>
+        :root {{
+          --dashboard-grid-min: {density['grid_min']};
+          --dashboard-grid-gap: {density['grid_gap']};
+          --dashboard-grid-margin: {density['grid_margin']};
+          --dashboard-card-padding: {density['card_padding']};
+          --dashboard-card-min-height: {density['card_min']};
+          --dashboard-card-overflow: {density['overflow']};
+          --terminal-card-min-height: {density['terminal_min']};
+          --section-subtitle-margin: {density['subtitle_margin']};
+          --section-subtitle-size: {density['subtitle_size']};
+          --metric-value-size: {density['metric_value']};
+          --metric-tile-value-size: {density['metric_tile_value']};
+          --vertical-block-gap: {density['vertical_gap']};
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
 def verdict_color(v: str) -> str:
     return {
@@ -374,6 +816,107 @@ def load_orderbook(symbol: str):
         "asks": [{"price": 0, "size": 0, "cumulative": 0, "value": 0}],
         "source": "synthetic",
     }
+
+
+def load_ml_prediction(df: pd.DataFrame, symbol: str) -> dict:
+    """Run the cached ML prediction path for the active market dataset."""
+    if df is None or not isinstance(df, pd.DataFrame) or df.empty:
+        return {"error": "market dataset is empty"}
+    try:
+        df_serialized = df.to_json(date_format="iso")
+        df_hash = hashlib.sha256(df_serialized.encode("utf-8")).hexdigest()
+        return train_and_predict(df_hash, df_serialized, symbol)
+    except Exception as exc:
+        return {"error": str(exc)}
+
+
+def market_data_cache_key(df: pd.DataFrame, symbol: str, timeframe: str, limit: int) -> str:
+    if df is None or not isinstance(df, pd.DataFrame) or df.empty:
+        return f"{symbol}|{timeframe}|{limit}|empty"
+    close_tail = df["close"].tail(5).round(8).astype(str).tolist() if "close" in df.columns else []
+    last_index = str(df.index[-1])
+    return "|".join([symbol, timeframe, str(limit), str(len(df)), last_index, *close_tail])
+
+
+def trim_session_cache(cache_name: str, max_items: int = 6) -> None:
+    cache = st.session_state.get(cache_name, {})
+    if isinstance(cache, dict) and len(cache) > max_items:
+        for key in list(cache.keys())[:-max_items]:
+            cache.pop(key, None)
+
+
+def get_cached_ml_prediction(df: pd.DataFrame, symbol: str, timeframe: str, limit: int) -> dict:
+    key = market_data_cache_key(df, symbol, timeframe, limit)
+    cache = st.session_state.setdefault("ml_prediction_cache", {})
+    if key in cache:
+        result = dict(cache[key])
+        result["_cache_status"] = "cached"
+        return result
+
+    start = time.perf_counter()
+    result = dict(load_ml_prediction(df, symbol) or {})
+    result["_elapsed_ms"] = int((time.perf_counter() - start) * 1000)
+    result["_cache_status"] = "calculated"
+    cache[key] = result
+    trim_session_cache("ml_prediction_cache")
+    return dict(result)
+
+
+def has_cached_ml_prediction(df: pd.DataFrame, symbol: str, timeframe: str, limit: int) -> bool:
+    key = market_data_cache_key(df, symbol, timeframe, limit)
+    return key in st.session_state.get("ml_prediction_cache", {})
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def load_backtest_result(symbol: str, timeframe: str, limit: int, initial_capital: float,
+                         stop_loss_pct: float, take_profit_pct: float, position_size_pct: float) -> dict:
+    full_df = load_full_data(symbol, timeframe, limit)
+    return run_backtest(
+        full_df,
+        initial_capital=initial_capital,
+        stop_loss_pct=stop_loss_pct,
+        take_profit_pct=take_profit_pct,
+        position_size_pct=position_size_pct,
+    )
+
+
+def backtest_cache_key(symbol: str, timeframe: str, limit: int, initial_capital: float,
+                       stop_loss_pct: float, take_profit_pct: float, position_size_pct: float) -> tuple:
+    return (
+        symbol, timeframe, int(limit), round(float(initial_capital), 2),
+        round(float(stop_loss_pct), 4), round(float(take_profit_pct), 4),
+        round(float(position_size_pct), 4),
+    )
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def load_portfolio_risk(capital: float, close: float, atr: float, confidence: float,
+                        risk_tolerance: str, risk_reward: float) -> dict:
+    risk = assess_risk(capital, close, atr, confidence, risk_tolerance)
+    risk["risk_reward"] = risk_reward
+    return risk
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def load_position_size_cached(capital: float, entry: float, stop_loss: float,
+                              risk_per_trade: float, max_position_pct: float) -> dict:
+    return calculate_position_size(capital, entry, stop_loss, risk_per_trade, max_position_pct)
+
+
+def orderbook_source_label(ob: dict) -> str:
+    source = str((ob or {}).get("source", "live")).lower()
+    return {"live": "Live", "cached": "Cached", "synthetic": "Synthetic"}.get(source, source.title() or "Live")
+
+
+def orderbook_source_message(ob: dict) -> tuple[str, str] | None:
+    label = orderbook_source_label(ob)
+    if label == "Live":
+        return None
+    if label == "Cached":
+        return "Displaying the most recent cached order book snapshot.", "info"
+    if label == "Synthetic":
+        return "Displaying synthetic order book data because a live snapshot is not currently available.", "warning"
+    return f"Displaying {label.lower()} order book data.", "info"
 
 
 def _default_mtf() -> dict:
@@ -582,165 +1125,174 @@ def render_sidebar(watchlist_symbols: list):
     )
     st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
 
-    theme_default = st.session_state.get("theme", THEME_OPTIONS[0])
+    init_widget_from_query("theme", "theme", THEME_OPTIONS[0], str)
+    if st.session_state.theme not in THEME_OPTIONS:
+        st.session_state.theme = THEME_OPTIONS[0]
     theme = st.sidebar.selectbox(
         "Theme",
         THEME_OPTIONS,
-        index=THEME_OPTIONS.index(theme_default) if theme_default in THEME_OPTIONS else 0,
+        index=THEME_OPTIONS.index(st.session_state.theme) if st.session_state.theme in THEME_OPTIONS else 0,
         help="Choose the interface theme for the dashboard.",
+        key="theme",
     )
-    st.session_state.theme = theme
+    qp_set("theme", theme)
 
     st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
     st.sidebar.subheader("Market")
 
-    symbol_default = st.query_params.get(
-        "symbol",
-        st.session_state.get("selected_symbol", watchlist_symbols[0])
-    )
-
-    if isinstance(symbol_default, list):
-        symbol_default = symbol_default[0]
-    if "/" not in symbol_default and symbol_default.endswith("USDT"):
-        base = symbol_default.replace("USDT", "")
-        symbol_default = f"{base}/USDT"
+    raw_symbol_default = qp_get("symbol", st.session_state.get("selected_symbol", watchlist_symbols[0]))
+    if "/" not in str(raw_symbol_default) and str(raw_symbol_default).endswith("USDT"):
+        base = str(raw_symbol_default).replace("USDT", "")
+        raw_symbol_default = f"{base}/USDT"
+    symbol_default = raw_symbol_default if raw_symbol_default in watchlist_symbols else watchlist_symbols[0]
+    st.session_state.setdefault("selected_symbol", symbol_default)
+    if st.session_state.selected_symbol not in watchlist_symbols:
+        st.session_state.selected_symbol = symbol_default
 
     symbol = st.sidebar.selectbox(
         "Symbol",
         watchlist_symbols,
-        index=watchlist_symbols.index(symbol_default) if symbol_default in watchlist_symbols else 0,
+        index=watchlist_symbols.index(st.session_state.selected_symbol)
+        if st.session_state.selected_symbol in watchlist_symbols else 0,
+        key="selected_symbol",
     )
+    qp_set("symbol", symbol)
 
-    st.session_state.selected_symbol = symbol
-    st.query_params["symbol"] = symbol
-
-    timeframe_default = st.query_params.get(
-        "timeframe",
-        st.session_state.get("selected_timeframe", list(TIMEFRAMES)[0])
+    timeframe_options = list(TIMEFRAMES)
+    timeframe_default = qp_choice(
+        "timeframe", timeframe_options,
+        st.session_state.get("selected_timeframe", timeframe_options[0]),
     )
-
-    if isinstance(timeframe_default, list):
-        timeframe_default = timeframe_default[0]
+    st.session_state.setdefault("selected_timeframe", timeframe_default)
+    if st.session_state.selected_timeframe not in timeframe_options:
+        st.session_state.selected_timeframe = timeframe_options[0]
 
     timeframe = st.sidebar.selectbox(
         "Timeframe",
-        list(TIMEFRAMES),
-        index=list(TIMEFRAMES).index(timeframe_default),
+        timeframe_options,
+        index=timeframe_options.index(st.session_state.selected_timeframe)
+        if st.session_state.selected_timeframe in timeframe_options else 0,
+        key="selected_timeframe",
     )
+    qp_set("timeframe", timeframe)
 
-    st.session_state.selected_timeframe = timeframe
-    st.query_params["timeframe"] = timeframe
-    limit     = st.sidebar.slider("Candle Limit", 100, 1000, 500, 50)
+    init_widget_from_query("candle_limit", "limit", 500, lambda v: qp_int("limit", 500, 100, 1000, 50))
+    limit = st.sidebar.slider("Candle Limit", 100, 1000, 500, 50, key="candle_limit")
+    qp_set("limit", limit)
 
     st.sidebar.subheader("Auto-Refresh")
+    refresh_options = ["Off", "30s", "1m", "5m"]
+    refresh_default = qp_choice("refresh", refresh_options, "Off")
+    st.session_state.setdefault("refresh_option", refresh_default)
+    if st.session_state.refresh_option not in refresh_options:
+        st.session_state.refresh_option = "Off"
     refresh_option = st.sidebar.select_slider(
-        "Interval", options=["Off", "30s", "1m", "5m"], value="Off"
+        "Interval", options=refresh_options, value=st.session_state.refresh_option, key="refresh_option"
     )
+    qp_set("refresh", refresh_option)
     ms_map    = {"Off": None, "30s": 30_000, "1m": 60_000, "5m": 300_000}
     refresh_ms = ms_map[refresh_option]
 
     st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
     st.sidebar.subheader("Chart Overlays")
+    show_defaults = {
+        "ema_9": True, "ema_21": True, "ema_50": True, "ema_200": True,
+        "sma_20": False, "sma_50": False, "sma_200": False, "vwap": False,
+        "supertrend": False, "ichimoku": False, "psar": False, "bb": True,
+        "keltner": False, "donchian": False, "fvg": True, "ob": True, "sr_lines": True,
+    }
+    overlay_widget_keys = {
+        "ema_9": "s_e9", "ema_21": "s_e21", "ema_50": "s_e50", "ema_200": "s_e200",
+        "sma_20": "s_s20", "sma_50": "s_s50", "sma_200": "s_s200", "vwap": "s_vwap",
+        "supertrend": "s_st", "ichimoku": "s_ich", "psar": "s_psar", "bb": "s_bb",
+        "keltner": "s_kc", "donchian": "s_dc", "fvg": "s_fvg", "ob": "s_ob", "sr_lines": "s_sr",
+    }
+    for overlay_key, widget_key in overlay_widget_keys.items():
+        if widget_key not in st.session_state:
+            st.session_state[widget_key] = qp_bool(f"show_{overlay_key}", show_defaults[overlay_key])
+
     show = {}
     with st.sidebar.expander("Trend", expanded=False):
-        show["ema_9"]      = st.checkbox("EMA 9",    True,  key="s_e9")
-        show["ema_21"]     = st.checkbox("EMA 21",   True,  key="s_e21")
-        show["ema_50"]     = st.checkbox("EMA 50",   True,  key="s_e50")
-        show["ema_200"]    = st.checkbox("EMA 200",  True,  key="s_e200")
-        show["sma_20"]     = st.checkbox("SMA 20",   False, key="s_s20")
-        show["sma_50"]     = st.checkbox("SMA 50",   False, key="s_s50")
-        show["sma_200"]    = st.checkbox("SMA 200",  False, key="s_s200")
-        show["vwap"]       = st.checkbox("VWAP",     False, key="s_vwap")
-        show["supertrend"] = st.checkbox("Supertrend", False, key="s_st")
-        show["ichimoku"]   = st.checkbox("Ichimoku", False, key="s_ich")
-        show["psar"]       = st.checkbox("Parabolic SAR", False, key="s_psar")
+        show["ema_9"]      = st.checkbox("EMA 9",    key="s_e9")
+        show["ema_21"]     = st.checkbox("EMA 21",   key="s_e21")
+        show["ema_50"]     = st.checkbox("EMA 50",   key="s_e50")
+        show["ema_200"]    = st.checkbox("EMA 200",  key="s_e200")
+        show["sma_20"]     = st.checkbox("SMA 20",   key="s_s20")
+        show["sma_50"]     = st.checkbox("SMA 50",   key="s_s50")
+        show["sma_200"]    = st.checkbox("SMA 200",  key="s_s200")
+        show["vwap"]       = st.checkbox("VWAP",     key="s_vwap")
+        show["supertrend"] = st.checkbox("Supertrend", key="s_st")
+        show["ichimoku"]   = st.checkbox("Ichimoku", key="s_ich")
+        show["psar"]       = st.checkbox("Parabolic SAR", key="s_psar")
     with st.sidebar.expander("Volatility", expanded=False):
-        show["bb"]       = st.checkbox("Bollinger Bands",  True,  key="s_bb")
-        show["keltner"]  = st.checkbox("Keltner Channel",  False, key="s_kc")
-        show["donchian"] = st.checkbox("Donchian Channel", False, key="s_dc")
+        show["bb"]       = st.checkbox("Bollinger Bands",  key="s_bb")
+        show["keltner"]  = st.checkbox("Keltner Channel",  key="s_kc")
+        show["donchian"] = st.checkbox("Donchian Channel", key="s_dc")
     with st.sidebar.expander("Smart Money", expanded=False):
-        show["fvg"]      = st.checkbox("Fair Value Gaps",  True, key="s_fvg")
-        show["ob"]       = st.checkbox("Order Blocks",     True, key="s_ob")
-        show["sr_lines"] = st.checkbox("Support/Resistance", True, key="s_sr")
+        show["fvg"]      = st.checkbox("Fair Value Gaps",  key="s_fvg")
+        show["ob"]       = st.checkbox("Order Blocks",     key="s_ob")
+        show["sr_lines"] = st.checkbox("Support/Resistance", key="s_sr")
+    sync_overlay_query(show)
 
     st.sidebar.subheader("Risk Management")
 
-    # Paper Capital
-    capital_default = st.query_params.get("capital", "100")
-
-    if isinstance(capital_default, list):
-        capital_default = capital_default[0]
-
+    init_widget_from_query("paper_capital", "capital", 100.0, lambda v: qp_float("capital", 100.0, 5.0, 1_000_000.0))
     capital = st.sidebar.number_input(
         "Paper Capital ($)",
         5.0,
         1_000_000.0,
-        value=float(capital_default),
         step=1.0,
-        format="%.2f"
+        format="%.2f",
+        key="paper_capital",
     )
+    qp_set("capital", capital)
 
-    st.query_params["capital"] = str(capital)
-
-    # Risk Tolerance
-    risk_default = st.query_params.get("risk", "moderate")
-
-    if isinstance(risk_default, list):
-        risk_default = risk_default[0]
-
+    risk_options = ["conservative", "moderate", "aggressive"]
+    risk_default = qp_choice("risk", risk_options, "moderate")
+    st.session_state.setdefault("risk_tolerance", risk_default)
+    if st.session_state.risk_tolerance not in risk_options:
+        st.session_state.risk_tolerance = "moderate"
     risk_tolerance = st.sidebar.select_slider(
         "Risk Tolerance",
-        ["conservative", "moderate", "aggressive"],
-        value=risk_default
+        risk_options,
+        value=st.session_state.risk_tolerance,
+        key="risk_tolerance",
     )
+    qp_set("risk", risk_tolerance)
 
-    st.query_params["risk"] = risk_tolerance
-
-    # Stop Loss
-    sl_default = st.query_params.get("sl", "2.0")
-
-    if isinstance(sl_default, list):
-        sl_default = sl_default[0]
-
+    init_widget_from_query("stop_loss_pct_input", "sl", 2.0, lambda v: qp_float("sl", 2.0, 0.5, 10.0))
     sl_pct = st.sidebar.slider(
         "Stop Loss %",
         0.5,
         10.0,
-        value=float(sl_default),
-        step=0.5
+        step=0.5,
+        key="stop_loss_pct_input",
     )
-
-    st.query_params["sl"] = str(sl_pct)
-
+    qp_set("sl", sl_pct)
     stop_loss_pct = sl_pct / 100
 
-    # Take Profit
-    tp_default = st.query_params.get("tp", "4.0")
-
-    if isinstance(tp_default, list):
-        tp_default = tp_default[0]
-
+    init_widget_from_query("take_profit_pct_input", "tp", 4.0, lambda v: qp_float("tp", 4.0, 1.0, 20.0))
     tp_pct = st.sidebar.slider(
         "Take Profit %",
         1.0,
         20.0,
-        value=float(tp_default),
-        step=0.5
+        step=0.5,
+        key="take_profit_pct_input",
     )
-
-    st.query_params["tp"] = str(tp_pct)
-
+    qp_set("tp", tp_pct)
     take_profit_pct = tp_pct / 100
 
     rr = take_profit_pct / stop_loss_pct if stop_loss_pct else 2.0
-
     st.sidebar.markdown(f"**R/R:** 1:{rr:.1f}")
 
     st.sidebar.subheader("Backtesting")
-    bt_pos_size = st.sidebar.slider("Position Size %", 5, 50, 10, 5) / 100
+    init_widget_from_query("bt_pos_size_pct", "bt_pos", 10, lambda v: qp_int("bt_pos", 10, 5, 50, 5))
+    bt_pos_size_pct = st.sidebar.slider("Position Size %", 5, 50, 10, 5, key="bt_pos_size_pct")
+    qp_set("bt_pos", bt_pos_size_pct)
+    bt_pos_size = bt_pos_size_pct / 100
 
     st.sidebar.markdown("<div class='sidebar-divider'></div>", unsafe_allow_html=True)
-    st.sidebar.info("🔒 **Paper Trading Only** — no real funds.")
+    st.sidebar.info("**Paper Trading Only** · no real funds.")
 
     return dict(
         symbol=symbol, timeframe=timeframe, limit=limit,
@@ -752,6 +1304,7 @@ def render_sidebar(watchlist_symbols: list):
         risk_reward=rr, bt_pos_size=bt_pos_size,
         theme=theme,
     )
+
 
 # ── Tab 1: Overview ───────────────────────────────────────────────────────────
 
@@ -790,56 +1343,57 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
     top_gainers = movers[:3]
     top_losers = movers[-3:][::-1]
 
-    with st.container():
-        cols = st.columns(4)
-        cols[0].markdown(render_dashboard_card(
+    fg_val = fg.get("value", 50)
+    fg_c = get_fg_color(fg_val)
+    fg_cl = fg.get("classification", "Neutral")
+    st.markdown(
+        "<div class='dashboard-grid overview-summary-grid'>"
+        + render_dashboard_card(
             "Total Watchlist Market Cap",
             format_large_number(total_mcap),
             "Aggregate value across tracked crypto assets.",
-            accent="#60a5fa"
-        ), unsafe_allow_html=True)
-        cols[1].markdown(render_dashboard_card(
+            accent="#60a5fa",
+        )
+        + render_dashboard_card(
             "Avg 24h Change",
             f"{avg_change:+.2f}%",
             "Weighted performance across selected coins.",
-            accent="#26a69a" if avg_change >= 0 else "#ef5350"
-        ), unsafe_allow_html=True)
-        cols[2].markdown(render_dashboard_card(
+            accent="#26a69a" if avg_change >= 0 else "#ef5350",
+        )
+        + render_dashboard_card(
             "AI Market Pulse",
             f"{buy_count} BUY / {sell_count} SELL",
             f"{hold_count} Neutral · {avg_conf*100:.0f}% avg confidence",
-            accent="#fbbf24"
-        ), unsafe_allow_html=True)
-        fg_val = fg.get("value", 50)
-        fg_c = get_fg_color(fg_val)
-        fg_cl = fg.get("classification", "Neutral")
-        cols[3].markdown(render_dashboard_card(
+            accent="#fbbf24",
+        )
+        + render_dashboard_card(
             "Fear & Greed",
             f"{fg_val}",
             f"{get_fg_emoji(fg_cl)} {fg_cl}",
-            accent=fg_c
-        ), unsafe_allow_html=True)
+            accent=fg_c,
+        )
+        + "</div>",
+        unsafe_allow_html=True,
+    )
 
-    st.markdown("<div class='dashboard-grid'>", unsafe_allow_html=True)
+    mover_cards = []
     for sym, pct, price in top_gainers:
-        label = "Gainer"
-        color = "#26a69a"
-        st.markdown(render_dashboard_card(
-            f"{sym} Top Gainer",
-            f"{pct:+.2f}%",
-            f"{fmt_price(price, sym)}",
-            accent=color
-        ), unsafe_allow_html=True)
+        mover_cards.append(
+            f"<div class='dashboard-card mover-card'>"
+            f"<div><div class='metric-label'>{sym} Gainer</div>"
+            f"<div class='metric-val' style='color:var(--success)'>{pct:+.2f}%</div></div>"
+            f"<div class='metric-subtext'>{fmt_price(price, sym)}</div>"
+            f"</div>"
+        )
     for sym, pct, price in top_losers:
-        label = "Loser"
-        color = "#ef5350"
-        st.markdown(render_dashboard_card(
-            f"{sym} Top Loser",
-            f"{pct:+.2f}%",
-            f"{fmt_price(price, sym)}",
-            accent=color
-        ), unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+        mover_cards.append(
+            f"<div class='dashboard-card mover-card'>"
+            f"<div><div class='metric-label'>{sym} Loser</div>"
+            f"<div class='metric-val' style='color:var(--danger)'>{pct:+.2f}%</div></div>"
+            f"<div class='metric-subtext'>{fmt_price(price, sym)}</div>"
+            f"</div>"
+        )
+    st.markdown(f"<div class='mover-grid'>{''.join(mover_cards)}</div>", unsafe_allow_html=True)
 
     st.markdown("### 📋 Market Scanner")
     st.caption(f"{len(watchlist_symbols)} coins · sorted by Market Cap · indicators on 200-candle 1h OHLCV")
@@ -930,8 +1484,8 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         return (
             f"<div class='dashboard-card' style='text-align:center'>"
             f"<div class='metric-label'>{label}</div>"
-            f"<div class='metric-val' style='color:{color};font-size:1.35em'>{val_str}</div>"
-            f"<div style='font-size:.78em;color:#8b949e;margin-top:5px'>{sub}</div>"
+            f"<div class='metric-val' style='color:{color};font-size:var(--metric-tile-value-size);line-height:1.08'>{val_str}</div>"
+            f"<div class='metric-subtitle'>{sub}</div>"
             f"</div>"
         )
 
@@ -941,80 +1495,54 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
     macd_sig = ind["macd_signal"]
     macd_c   = "#26a69a" if macd > macd_sig else "#ef5350"
 
-    cols = st.columns(6)
-    cols[0].markdown(ind_card("RSI (14)", f"{rsi:.1f}",
-        "Overbought" if rsi>70 else "Oversold" if rsi<30 else "Neutral", rsi_c),
-        unsafe_allow_html=True)
-    cols[1].markdown(ind_card("MACD", f"{macd:.4f}", f"Sig {macd_sig:.4f}", macd_c),
-        unsafe_allow_html=True)
     stk  = adv.get("stochrsi_k", 50)
     std  = adv.get("stochrsi_d", 50)
     stk_c = "#ef5350" if stk > 80 else ("#26a69a" if stk < 20 else "#f39c12")
-    cols[2].markdown(ind_card("Stoch RSI K", f"{stk:.1f}", f"D {std:.1f}", stk_c),
-        unsafe_allow_html=True)
     cci = adv.get("cci", 0)
     cci_c = "#ef5350" if cci > 100 else ("#26a69a" if cci < -100 else "#f39c12")
-    cols[3].markdown(ind_card("CCI (20)", f"{cci:.1f}",
-        "Overbought" if cci>100 else "Oversold" if cci<-100 else "Neutral", cci_c),
-        unsafe_allow_html=True)
     adx = adv.get("adx", 25)
     adx_c = "#26a69a" if adx > 30 else "#8b949e"
-    cols[4].markdown(ind_card("ADX (14)", f"{adx:.1f}",
-        "Strong" if adx>30 else "Weak", adx_c), unsafe_allow_html=True)
     roc = adv.get("roc", 0)
     roc_c = "#26a69a" if roc > 0 else "#ef5350"
-    cols[5].markdown(ind_card("ROC (12)", f"{roc:.2f}%", "", roc_c), unsafe_allow_html=True)
-
-    cols2 = st.columns(6)
     ema9  = ind.get("ema_9", close)
     ema21 = ind.get("ema_21", close)
     ema50 = ind.get("ema_50", close)
     ema200 = ind.get("ema_200", close)
-    cols2[0].markdown(ind_card("EMA 9",   fmt_price(ema9, symbol),
-        "🟢 Bull" if ema9>ema21 else "🔴 Bear", "#26a69a" if ema9>ema21 else "#ef5350"),
-        unsafe_allow_html=True)
-    cols2[1].markdown(ind_card("EMA 21",  fmt_price(ema21, symbol),
-        f"Gap {abs(ema9-ema21)/ema21*100:.2f}%" if ema21 else "",
-        "#26a69a" if ema9>ema21 else "#ef5350"), unsafe_allow_html=True)
-    cols2[2].markdown(ind_card("EMA 50",  fmt_price(ema50, symbol),
-        "↑ Bullish" if close>ema50 else "↓ Bearish", "#26a69a" if close>ema50 else "#ef5350"),
-        unsafe_allow_html=True)
-    cols2[3].markdown(ind_card("EMA 200", fmt_price(ema200, symbol),
-        "Above" if close>ema200 else "Below", "#26a69a" if close>ema200 else "#ef5350"),
-        unsafe_allow_html=True)
     vwap = adv.get("vwap", close)
-    cols2[4].markdown(ind_card("VWAP", fmt_price(vwap, symbol),
-        "Above" if close>vwap else "Below", "#26a69a" if close>vwap else "#ef5350"),
-        unsafe_allow_html=True)
     sma20 = adv.get("sma_20", close)
-    cols2[5].markdown(ind_card("SMA 20", fmt_price(sma20, symbol),
-        "Above" if close>sma20 else "Below", "#26a69a" if close>sma20 else "#ef5350"),
-        unsafe_allow_html=True)
-
-    cols3 = st.columns(6)
     mfi = adv.get("mfi", 50)
     mfi_c = "#ef5350" if mfi > 80 else ("#26a69a" if mfi < 20 else "#f39c12")
-    cols3[0].markdown(ind_card("MFI (14)", f"{mfi:.1f}",
-        "Overbought" if mfi>80 else "Oversold" if mfi<20 else "Neutral", mfi_c),
-        unsafe_allow_html=True)
     cmf = adv.get("cmf", 0)
     cmf_c = "#26a69a" if cmf > 0.05 else ("#ef5350" if cmf < -0.05 else "#f39c12")
-    cols3[1].markdown(ind_card("CMF (20)", f"{cmf:.3f}",
-        "Inflow" if cmf>0 else "Outflow", cmf_c), unsafe_allow_html=True)
     obv = adv.get("obv", 0)
-    cols3[2].markdown(ind_card("OBV", format_large_number(abs(obv)).replace("$",""),
-        "↑" if obv>0 else "↓", "#26a69a" if obv>0 else "#ef5350"), unsafe_allow_html=True)
     bb_pct = ind.get("bb_pct", 0.5) * 100
-    bb_c   = "#ef5350" if bb_pct > 80 else ("#26a69a" if bb_pct < 20 else "#f39c12")
-    cols3[3].markdown(ind_card("BB %B",   f"{bb_pct:.1f}%", "", bb_c), unsafe_allow_html=True)
+    bb_c = "#ef5350" if bb_pct > 80 else ("#26a69a" if bb_pct < 20 else "#f39c12")
     st_dir = adv.get("supertrend_dir", 0)
-    st_c   = "#26a69a" if st_dir == 1 else ("#ef5350" if st_dir == -1 else "#8b949e")
+    st_c = "#26a69a" if st_dir == 1 else ("#ef5350" if st_dir == -1 else "#8b949e")
     st_lbl = "Bullish" if st_dir == 1 else ("Bearish" if st_dir == -1 else "N/A")
-    cols3[4].markdown(ind_card("Supertrend", st_lbl, "", st_c), unsafe_allow_html=True)
     psar_bull = adv.get("psar_bull", True)
-    cols3[5].markdown(ind_card("Parabolic SAR",
-        "Bullish" if psar_bull else "Bearish", "", "#26a69a" if psar_bull else "#ef5350"),
-        unsafe_allow_html=True)
+
+    indicator_cards = [
+        ind_card("RSI (14)", f"{rsi:.1f}", "Overbought" if rsi > 70 else "Oversold" if rsi < 30 else "Neutral", rsi_c),
+        ind_card("MACD", f"{macd:.4f}", f"Sig {macd_sig:.4f}", macd_c),
+        ind_card("Stoch RSI K", f"{stk:.1f}", f"D {std:.1f}", stk_c),
+        ind_card("CCI (20)", f"{cci:.1f}", "Overbought" if cci > 100 else "Oversold" if cci < -100 else "Neutral", cci_c),
+        ind_card("ADX (14)", f"{adx:.1f}", "Strong" if adx > 30 else "Weak", adx_c),
+        ind_card("ROC (12)", f"{roc:.2f}%", "", roc_c),
+        ind_card("EMA 9", fmt_price(ema9, symbol), "🟢 Bull" if ema9 > ema21 else "🔴 Bear", "#26a69a" if ema9 > ema21 else "#ef5350"),
+        ind_card("EMA 21", fmt_price(ema21, symbol), f"Gap {abs(ema9-ema21)/ema21*100:.2f}%" if ema21 else "", "#26a69a" if ema9 > ema21 else "#ef5350"),
+        ind_card("EMA 50", fmt_price(ema50, symbol), "↑ Bullish" if close > ema50 else "↓ Bearish", "#26a69a" if close > ema50 else "#ef5350"),
+        ind_card("EMA 200", fmt_price(ema200, symbol), "Above" if close > ema200 else "Below", "#26a69a" if close > ema200 else "#ef5350"),
+        ind_card("VWAP", fmt_price(vwap, symbol), "Above" if close > vwap else "Below", "#26a69a" if close > vwap else "#ef5350"),
+        ind_card("SMA 20", fmt_price(sma20, symbol), "Above" if close > sma20 else "Below", "#26a69a" if close > sma20 else "#ef5350"),
+        ind_card("MFI (14)", f"{mfi:.1f}", "Overbought" if mfi > 80 else "Oversold" if mfi < 20 else "Neutral", mfi_c),
+        ind_card("CMF (20)", f"{cmf:.3f}", "Inflow" if cmf > 0 else "Outflow", cmf_c),
+        ind_card("OBV", format_large_number(abs(obv)).replace("$", ""), "↑" if obv > 0 else "↓", "#26a69a" if obv > 0 else "#ef5350"),
+        ind_card("BB %B", f"{bb_pct:.1f}%", "", bb_c),
+        ind_card("Supertrend", st_lbl, "", st_c),
+        ind_card("Parabolic SAR", "Bullish" if psar_bull else "Bearish", "", "#26a69a" if psar_bull else "#ef5350"),
+    ]
+    st.markdown(f"<div class='dashboard-grid indicator-grid'>{''.join(indicator_cards)}</div>", unsafe_allow_html=True)
 
     st.divider()
 
@@ -1228,7 +1756,7 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
 
     chart_xmin = df.index[-min(200, len(df))]
     fig.update_layout(
-        height=900,
+        height=720,
         showlegend=True,
         legend=dict(orientation="h", yanchor="bottom", y=1.01, xanchor="right", x=1,
                     font=dict(size=10)),
@@ -1364,7 +1892,7 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
                       annotation_text="EQ", annotation_position="right")
 
     fig.update_layout(
-        height=580, xaxis_rangeslider_visible=False,
+        height=480, xaxis_rangeslider_visible=False,
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         margin=dict(l=10, r=10, t=30, b=10),
         showlegend=False,
@@ -1440,17 +1968,13 @@ def render_orderbook(ob: dict, symbol: str):
         render_empty_state("Order book data unavailable.")
         return
     
-    if ob.get("source") in {"unavailable", "synthetic"}:
-        render_notice_badge(
-            "Live order book unavailable. Showing fallback synthetic order book data.",
-            kind="warning",
-        )
+    source_notice = orderbook_source_message(ob)
+    if source_notice:
+        message, kind = source_notice
+        render_notice_badge(message, kind=kind)
 
-    src = ob.get("source", "")
-    if src == "synthetic":
-        st.caption("⚠️ Showing synthetic order book (Binance rate-limited)")
-
-    st.markdown(render_section_header(f"Live Order Book — {symbol}", f"Source: {src or 'Live'}"), unsafe_allow_html=True)
+    src_label = orderbook_source_label(ob)
+    st.markdown(render_section_header(f"Order Book — {symbol}", f"Source: {src_label}"), unsafe_allow_html=True)
 
     imb = ob["imbalance"]
     imb_label = "Bid dominant" if imb > 0 else "Ask dominant"
@@ -1474,7 +1998,7 @@ def render_orderbook(ob: dict, symbol: str):
     # ── Bid / Ask tables side by side ──────────────────────────────────────
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown("<div class='table-card'><h5 style='margin:0 0 12px;color:#e2e8f0'>🟢 Top Bids</h5></div>", unsafe_allow_html=True)
+        st.markdown("<div class='table-card'><h5 style='margin:0 0 10px;color:var(--text)'>🟢 Top Bids</h5></div>", unsafe_allow_html=True)
         bids_df = pd.DataFrame(ob["bids"]).rename(
             columns={"price":"Price","size":"Size","cumulative":"Cumulative","value":"Value ($)"})
         bids_df["Price"]      = bids_df["Price"].apply(lambda x: fmt_price(x, symbol))
@@ -1485,7 +2009,7 @@ def render_orderbook(ob: dict, symbol: str):
                      width="stretch", hide_index=True)
 
     with col2:
-        st.markdown("<div class='table-card'><h5 style='margin:0 0 12px;color:#e2e8f0'>🔴 Top Asks</h5></div>", unsafe_allow_html=True)
+        st.markdown("<div class='table-card'><h5 style='margin:0 0 10px;color:var(--text)'>🔴 Top Asks</h5></div>", unsafe_allow_html=True)
         asks_df = pd.DataFrame(ob["asks"]).rename(
             columns={"price":"Price","size":"Size","cumulative":"Cumulative","value":"Value ($)"})
         asks_df["Price"]      = asks_df["Price"].apply(lambda x: fmt_price(x, symbol))
@@ -1516,7 +2040,7 @@ def render_orderbook(ob: dict, symbol: str):
         line=dict(color="#ef5350", width=2),
     ))
     fig.update_layout(
-        height=320, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        height=260, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         margin=dict(l=0, r=0, t=20, b=0),
         xaxis_title="Price", yaxis_title="Cumulative Volume",
     )
@@ -1529,7 +2053,7 @@ def render_orderbook(ob: dict, symbol: str):
         marker_color="#26a69a", name="Bids"))
     fig2.add_trace(go.Bar(x=["Sell Pressure"], y=[ob["sell_pct"]],
         marker_color="#ef5350", name="Asks"))
-    fig2.update_layout(height=180, paper_bgcolor="rgba(0,0,0,0)",
+    fig2.update_layout(height=145, paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0,r=0,t=10,b=0),
         showlegend=False, yaxis=dict(range=[0,100], ticksuffix="%"))
     st.plotly_chart(fig2, width="stretch")
@@ -1650,8 +2174,8 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Institutional Dark"):
         ),
     ))
     fig.update_layout(
-        height=320,
-        margin=dict(l=0, r=0, t=10, b=0),
+        height=250,
+        margin=dict(l=0, r=0, t=6, b=0),
         paper_bgcolor="rgba(0,0,0,0)",
     )
     st.plotly_chart(fig, width="stretch")
@@ -1759,9 +2283,7 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
 
     st.divider()
     st.subheader("🤖 ML Predictions")
-    if ml_result is None:
-        st.warning("ML: No predictions available")
-    else:
+    if render_ml_prediction_state(ml_result):
         direction = ml_result.get("direction", "?")
         prob      = ml_result.get("combined_probability", 0.5)
         dir_c     = "#26a69a" if direction == "UP" else "#ef5350"
@@ -1786,9 +2308,16 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
             fig = px.bar(fi_df.tail(10), x="Importance", y="Feature", orientation="h",
                          title="Top Feature Importances", color="Importance",
                          color_continuous_scale="teal")
-            fig.update_layout(height=240, paper_bgcolor="rgba(0,0,0,0)",
+            fig.update_layout(height=200, paper_bgcolor="rgba(0,0,0,0)",
                               plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0,r=0,t=40,b=0))
             st.plotly_chart(fig, width="stretch")
+
+        cache_status = ml_result.get("_cache_status")
+        elapsed_ms = ml_result.get("_elapsed_ms")
+        if cache_status == "cached":
+            st.caption("ML prediction reused from the current session cache.")
+        elif elapsed_ms is not None:
+            st.caption(f"ML prediction refreshed in {elapsed_ms / 1000:.1f}s.")
 
 
 # ── Tab 7: Backtest ───────────────────────────────────────────────────────────
@@ -1798,35 +2327,70 @@ def render_backtest(df, cfg, symbol):
         render_empty_state("Backtest requires market data. Select a valid symbol and timeframe.")
         return
     st.markdown(render_section_header("Strategy Backtester", "Simulate trade performance with premium risk controls"), unsafe_allow_html=True)
+    init_widget_from_query("bt_run_sl", "bt_run_sl", cfg["stop_loss_pct"] * 100, lambda v: qp_float("bt_run_sl", cfg["stop_loss_pct"] * 100, 0.5, 10.0))
+    init_widget_from_query("bt_run_tp", "bt_run_tp", cfg["take_profit_pct"] * 100, lambda v: qp_float("bt_run_tp", cfg["take_profit_pct"] * 100, 1.0, 20.0))
+    init_widget_from_query("bt_run_cap", "bt_run_cap", float(cfg["capital"]), lambda v: qp_float("bt_run_cap", float(cfg["capital"]), 5.0, 1_000_000.0))
+    init_widget_from_query("bt_run_pos", "bt_run_pos", int(cfg["bt_pos_size"] * 100), lambda v: qp_int("bt_run_pos", int(cfg["bt_pos_size"] * 100), 5, 50, 5))
+
     bc1, bc2 = st.columns(2)
     with bc1:
-        bt_sl  = st.slider("Stop Loss %",   0.5, 10.0, cfg["stop_loss_pct"]*100,  0.5) / 100
-        bt_tp  = st.slider("Take Profit %", 1.0, 20.0, cfg["take_profit_pct"]*100, 0.5) / 100
+        bt_sl_pct = st.slider("Stop Loss %", 0.5, 10.0, step=0.5, key="bt_run_sl")
+        bt_tp_pct = st.slider("Take Profit %", 1.0, 20.0, step=0.5, key="bt_run_tp")
     with bc2:
-        bt_cap = st.number_input("Starting Capital ($)", 5.0, 1_000_000.0, float(cfg["capital"]), 1.0, format="%.2f")
+        bt_cap = st.number_input("Starting Capital ($)", 5.0, 1_000_000.0, step=1.0, format="%.2f", key="bt_run_cap")
         if bt_cap < 5:
             st.error("⚠️ Minimum capital is $5.00")
             bt_cap = 5.0
-        bt_pos = st.slider("Position Size %", 5, 50, int(cfg["bt_pos_size"]*100), 5) / 100
+        bt_pos_pct = st.slider("Position Size %", 5, 50, step=5, key="bt_run_pos")
+
+    qp_set("bt_run_sl", bt_sl_pct)
+    qp_set("bt_run_tp", bt_tp_pct)
+    qp_set("bt_run_cap", bt_cap)
+    qp_set("bt_run_pos", bt_pos_pct)
+    bt_sl = bt_sl_pct / 100
+    bt_tp = bt_tp_pct / 100
+    bt_pos = bt_pos_pct / 100
+
+    bt_key = backtest_cache_key(symbol, cfg.get("timeframe", "1h"), cfg["limit"], bt_cap, bt_sl, bt_tp, bt_pos)
+    bt_cache = st.session_state.setdefault("bt_result_cache", {})
 
     if st.button("▶️ Run Backtest", type="primary"):
-        with st.spinner("Preparing full dataset for backtest…"):
-            try:
-                full_df = load_full_data(symbol, cfg.get("timeframe", "1h"), cfg["limit"])
-            except Exception:
-                full_df = df
-        with st.spinner("Running backtest…"):
-            bt_r = run_backtest(full_df, initial_capital=bt_cap,
-                                stop_loss_pct=bt_sl, take_profit_pct=bt_tp,
-                                position_size_pct=bt_pos)
+        status = st.empty()
+        with status.container():
+            if bt_key in bt_cache:
+                render_compact_state("Loading cached result…", "Backtest settings unchanged")
+            else:
+                render_compact_state("Calculating…", "Preparing full dataset and strategy results")
+        start = time.perf_counter()
+        bt_r = bt_cache.get(bt_key)
+        if bt_r is None:
+            bt_r = load_backtest_result(
+                symbol, cfg.get("timeframe", "1h"), cfg["limit"],
+                bt_cap, bt_sl, bt_tp, bt_pos,
+            )
+            bt_cache[bt_key] = bt_r
+            trim_session_cache("bt_result_cache")
         st.session_state["bt_result"] = bt_r
-        st.success("Done!")
+        st.session_state["bt_result_key"] = bt_key
+        status.empty()
+        elapsed = time.perf_counter() - start
+        st.success(f"Done in {elapsed:.1f}s")
 
-    if "bt_result" not in st.session_state:
-        st.info("Configure parameters above and click **Run Backtest**.")
+    if st.session_state.get("bt_result_key") != bt_key:
+        if bt_key in bt_cache:
+            st.session_state["bt_result"] = bt_cache[bt_key]
+            st.session_state["bt_result_key"] = bt_key
+            render_compact_state("Loading cached result…", "Backtest settings unchanged")
+        else:
+            st.info("Configure parameters above and click **Run Backtest**.")
+            return
+
+    bt_result = st.session_state.get("bt_result")
+    if not isinstance(bt_result, dict):
+        render_empty_state("Backtest result unavailable.")
         return
 
-    m = st.session_state["bt_result"]["metrics"]
+    m = bt_result["metrics"]
     if m["total_trades"] == 0:
         st.warning("No trades generated. Try different SL/TP or more candles.")
         return
@@ -1843,19 +2407,19 @@ def render_backtest(df, cfg, symbol):
         unsafe_allow_html=True,
     )
 
-    eq = st.session_state["bt_result"]["equity_curve"].reset_index()
+    eq = bt_result["equity_curve"].reset_index()
     if len(eq):
         fig = go.Figure(go.Scatter(x=eq["timestamp"], y=eq["equity"],
             fill="tozeroy", fillcolor="rgba(38,166,154,0.10)",
             line=dict(color="#26a69a", width=2), name="Portfolio"))
-        fig.update_layout(height=260, title="Equity Curve",
+        fig.update_layout(height=220, title="Equity Curve",
             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
             yaxis=dict(tickprefix="$", gridcolor="rgba(255,255,255,0.04)"),
             xaxis=dict(gridcolor="rgba(255,255,255,0.04)"),
             margin=dict(l=0, r=0, t=40, b=0))
         st.plotly_chart(fig, width="stretch")
 
-    trades = st.session_state["bt_result"]["trades"]
+    trades = bt_result["trades"]
     if trades:
         td = pd.DataFrame(trades)
         td["pnl_pct"] = (td["pnl_pct"] * 100).round(2)
@@ -1933,24 +2497,36 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
 
     st.divider()
     st.subheader("Position Sizing Calculator")
+    init_widget_from_query("rc", "pf_cap", float(capital), lambda v: qp_float("pf_cap", float(capital), 5.0, 1_000_000.0))
+    init_widget_from_query("re", "pf_entry", float(close), lambda v: qp_float("pf_entry", float(close), 0.000001, 1_000_000.0))
+    init_widget_from_query("rsl", "pf_sl", float(risk["stop_loss"]), lambda v: qp_float("pf_sl", float(risk["stop_loss"]), 0.000001, 1_000_000.0))
+    init_widget_from_query("rtp", "pf_tp", float(risk["take_profit"]), lambda v: qp_float("pf_tp", float(risk["take_profit"]), 0.000001, 1_000_000.0))
+    init_widget_from_query("rrp", "pf_risk", 1.0, lambda v: qp_float("pf_risk", 1.0, 0.1, 5.0))
+    init_widget_from_query("rmp", "pf_max", 25, lambda v: qp_int("pf_max", 25, 5, 50, 5))
+
     r1, r2 = st.columns(2)
     with r1:
-        custom_cap   = st.number_input("Capital ($)", 5.0, 1_000_000.0, float(capital), 1.0, format="%.2f", key="rc")
+        custom_cap   = st.number_input("Capital ($)", 5.0, 1_000_000.0, step=1.0, format="%.2f", key="rc")
         if custom_cap < 5:
             st.error("⚠️ Minimum capital is $5.00")
             custom_cap = 5.0
-        custom_entry = st.number_input("Entry Price", 0.000001, 1_000_000.0, float(close), key="re",
-                                       format="%.6f")
-        custom_sl    = st.number_input("Stop Loss", 0.000001, 1_000_000.0, float(risk["stop_loss"]),
-                                       key="rsl", format="%.6f")
+        custom_entry = st.number_input("Entry Price", 0.000001, 1_000_000.0, key="re", format="%.6f")
+        custom_sl    = st.number_input("Stop Loss", 0.000001, 1_000_000.0, key="rsl", format="%.6f")
     with r2:
-        custom_tp    = st.number_input("Take Profit", 0.000001, 1_000_000.0, float(risk["take_profit"]),
-                                       key="rtp", format="%.6f")
-        custom_risk  = st.slider("Risk per Trade %", 0.1, 5.0, 1.0, 0.1, key="rrp") / 100
-        custom_maxp  = st.slider("Max Position %",   5,   50,  25,  5,   key="rmp") / 100
+        custom_tp    = st.number_input("Take Profit", 0.000001, 1_000_000.0, key="rtp", format="%.6f")
+        custom_risk_pct = st.slider("Risk per Trade %", 0.1, 5.0, step=0.1, key="rrp")
+        custom_maxp_pct = st.slider("Max Position %", 5, 50, step=5, key="rmp")
 
-    from src.risk.risk_manager import calculate_position_size
-    sz     = calculate_position_size(custom_cap, custom_entry, custom_sl, custom_risk, custom_maxp)
+    qp_set("pf_cap", custom_cap)
+    qp_set("pf_entry", custom_entry)
+    qp_set("pf_sl", custom_sl)
+    qp_set("pf_tp", custom_tp)
+    qp_set("pf_risk", custom_risk_pct)
+    qp_set("pf_max", custom_maxp_pct)
+    custom_risk = custom_risk_pct / 100
+    custom_maxp = custom_maxp_pct / 100
+
+    sz     = load_position_size_cached(custom_cap, custom_entry, custom_sl, custom_risk, custom_maxp)
     rr_c   = abs(custom_tp - custom_entry) / abs(custom_entry - custom_sl) if abs(custom_entry - custom_sl) > 0 else 0
     q1, q2, q3, q4 = st.columns(4)
     q1.metric("Units",          f"{sz['units']:.6f}")
@@ -1987,7 +2563,7 @@ def render_fear_greed_gauge(fg: dict):
         },
     ))
     fig.update_layout(
-        height=200, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        height=160, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         margin=dict(l=15, r=15, t=30, b=5), font={"color": "white"},
     )
     st.plotly_chart(fig, width="stretch")
@@ -2083,51 +2659,46 @@ def main():
     # ── Tabs ────────────────────────────────────────────────────────────────
 
     render_header()
+    active_tab = render_persistent_tabs()
+    render_tab_density_css(active_tab)
 
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = render_tabs()
-
-    with tab1:
+    if active_tab == "overview":
         render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg)
 
-    with tab2:
+    elif active_tab == "technical":
         render_technical(df, ind, adv, symbol, sr, cfg, fg)
 
-    with tab3:
+    elif active_tab == "smart_money":
         if "smc" not in st.session_state:
             with st.spinner("Loading Smart Money data…"):
                 st.session_state.smc = load_smc(symbol, timeframe, cfg["limit"])
         render_smart_money(df, st.session_state.smc, symbol)
 
-    with tab4:
-        if "ob" not in st.session_state:
+    elif active_tab == "order_book":
+        if "ob" not in st.session_state or st.session_state.get("ob_symbol") != symbol:
             with st.spinner("Fetching order book…"):
                 st.session_state.ob = load_orderbook(symbol)
+                st.session_state.ob_symbol = symbol
+        elif st.session_state.ob.get("source") == "live":
+            st.session_state.ob = {**st.session_state.ob, "source": "cached"}
         render_orderbook(st.session_state.ob, symbol)
 
-    with tab5:
-        if "mtf" not in st.session_state:
+    elif active_tab == "multi_tf":
+        if "mtf" not in st.session_state or st.session_state.get("mtf_symbol") != symbol or st.session_state.get("mtf_timeframe") != timeframe:
             with st.spinner("Loading multi-timeframe analysis…"):
                 st.session_state.mtf = load_mtf_data(symbol, timeframe)
+                st.session_state.mtf_symbol = symbol
+                st.session_state.mtf_timeframe = timeframe
         render_mtf(st.session_state.mtf, symbol, cfg["theme"])
 
-    with tab6:
-        # PERF: Lazy load AI Signals - only compute when tab opened
+    elif active_tab == "ai_signals":
         if not is_tab_rendered("ai_signals"):
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.markdown("**🤖 Analyzing...**")
-                render_skeleton_loader("60px", 1)
-            with col2:
-                render_skeleton_loader("240px", 1)
-            with col3:
-                render_skeleton_loader("80px", 1)
             mark_tab_rendered("ai_signals")
-        
+
         with st.spinner("Loading sentiment…"):
             sentiment = load_news_sentiment(symbol)
         sentiment_score = sentiment.get("score", 0.0)
         fg_val = fg.get("value", 50)
-        # Use session-state heavy loaders if available (loaded when user opened those tabs)
         smc_used = st.session_state.get("smc", smc)
         ob_used = st.session_state.get("ob", ob)
         mtf_used = st.session_state.get("mtf", mtf)
@@ -2138,54 +2709,52 @@ def main():
             advanced=adv, smc=smc_used, mtf_overall=mtf_overall,
             orderbook=ob_used, fg_value=fg_val,
         )
-        risk = assess_risk(
+        risk = load_portfolio_risk(
             cfg["capital"], ind["close"],
             ind.get("atr", ind["close"] * 0.02),
             signal_result["confidence"],
-            cfg["risk_tolerance"],
+            cfg["risk_tolerance"], cfg["risk_reward"],
         )
-        risk["risk_reward"] = cfg["risk_reward"]
-        ml_result = None
+        ml_status = st.empty()
+        with ml_status.container():
+            if has_cached_ml_prediction(df, symbol, timeframe, cfg["limit"]):
+                render_compact_state("Loading cached result…", "ML prediction")
+            else:
+                render_compact_state("Calculating…", "ML prediction")
+        ml_result = get_cached_ml_prediction(df, symbol, timeframe, cfg["limit"])
+        ml_status.empty()
 
-        # persist for Portfolio tab
         st.session_state["signal_result"] = signal_result
         render_ai_signals(ind, adv, smc_used, mtf_used, ob_used, sentiment, fg,
                   signal_result, ml_result, risk, symbol, cfg)
 
-    with tab7:
-        # PERF: Lazy load Backtest - expensive computation only when tab opened
+    elif active_tab == "backtest":
         if not is_tab_rendered("backtest"):
-            col1, col2 = st.columns([1, 1])
-            with col1:
-                st.markdown("**🔬 Running Backtest...**")
-                render_skeleton_loader("150px", 2)
-            with col2:
-                render_skeleton_loader("360px", 1)
             mark_tab_rendered("backtest")
         render_backtest(df, cfg, symbol)
 
-    with tab8:
-        # PERF: Lazy load Portfolio - only compute when tab opened
+    elif active_tab == "portfolio":
         if not is_tab_rendered("portfolio"):
-            st.markdown("**📋 Loading Portfolio...**")
-            render_skeleton_loader("200px", 2)
             mark_tab_rendered("portfolio")
-        
+
+        portfolio_status = st.empty()
         if "signal_result" in st.session_state:
             signal_result = st.session_state.get("signal_result")
-            risk = assess_risk(cfg["capital"], ind["close"],
-                               ind.get("atr", ind["close"]*0.02),
-                               signal_result["confidence"], cfg["risk_tolerance"])
-            risk["risk_reward"] = cfg["risk_reward"]
+            with portfolio_status.container():
+                render_compact_state("Loading cached result…", "Portfolio risk")
         else:
+            with portfolio_status.container():
+                render_compact_state("Refreshing signal…", "Portfolio inputs")
             sentiment = load_news_sentiment(symbol)
             sentiment_score = sentiment.get("score", 0.0)
             signal_result = generate_signal(ind, sentiment_score, advanced=adv, smc=st.session_state.get("smc", smc))
-            risk = assess_risk(cfg["capital"], ind["close"],
-                               ind.get("atr", ind["close"]*0.02),
-                               signal_result["confidence"], cfg["risk_tolerance"])
-            risk["risk_reward"] = cfg["risk_reward"]
             st.session_state["signal_result"] = signal_result
+
+        risk = load_portfolio_risk(
+            cfg["capital"], ind["close"], ind.get("atr", ind["close"]*0.02),
+            signal_result["confidence"], cfg["risk_tolerance"], cfg["risk_reward"],
+        )
+        portfolio_status.empty()
         render_portfolio(signal_result, ind, risk, symbol, cfg["capital"])
 
     st.caption(
