@@ -314,6 +314,8 @@ def get_theme_css(theme_name: str) -> str:
     .stSidebar [data-testid="stWidgetLabel"] {{ margin-bottom: 0.14rem !important; }}
     .stSidebar .stSelectbox > div > div,
     .stSidebar .stNumberInput input,
+    .stSidebar [data-testid="stNumberInput"] [data-baseweb="input"],
+    .stSidebar [data-testid="stTextInput"] [data-baseweb="input"],
     .stSidebar [data-baseweb="select"] > div,
     .stSidebar [data-baseweb="input"] {{
       background: color-mix(in srgb, var(--input-bg) 88%, transparent) !important;
@@ -326,6 +328,8 @@ def get_theme_css(theme_name: str) -> str:
     }}
     .stSidebar .stSelectbox > div > div:hover,
     .stSidebar .stNumberInput input:hover,
+    .stSidebar [data-testid="stNumberInput"] [data-baseweb="input"]:hover,
+    .stSidebar [data-testid="stTextInput"] [data-baseweb="input"]:hover,
     .stSidebar [data-baseweb="select"] > div:hover {{
       border-color: var(--cg-green) !important;
       background: var(--input-bg) !important;
@@ -492,18 +496,44 @@ def get_theme_css(theme_name: str) -> str:
       border-color: var(--card-border) !important;
       caret-color: var(--accent) !important;
     }}
+    [data-testid="stTextInput"] [data-baseweb="input"],
+    [data-testid="stNumberInput"] [data-baseweb="input"],
+    [data-testid="stTextInput"] [data-baseweb="input"] > div,
+    [data-testid="stNumberInput"] [data-baseweb="input"] > div {{
+      background: var(--input-bg) !important;
+      color: var(--text) !important;
+      border-color: var(--card-border) !important;
+      border-radius: var(--radius-md) !important;
+      box-shadow: none !important;
+    }}
+    [data-testid="stTextInput"] [data-baseweb="input"]:hover,
+    [data-testid="stNumberInput"] [data-baseweb="input"]:hover,
+    [data-testid="stTextInput"] [data-baseweb="input"]:focus-within,
+    [data-testid="stNumberInput"] [data-baseweb="input"]:focus-within {{
+      border-color: var(--cg-green) !important;
+      box-shadow: 0 0 0 3px var(--cg-pos-weak) !important;
+    }}
     [data-testid="stNumberInput"] button,
     [data-testid="stNumberInput"] [role="button"],
     [data-testid="stNumberInput"] [data-baseweb="button"],
     [data-testid="stNumberInput"] [data-baseweb="base-input"] > div:last-child,
+    [data-testid="stNumberInput"] [data-baseweb="input"] button,
+    [data-testid="stNumberInput"] [data-baseweb="input"] [aria-label],
     [data-testid="stNumberInput"] [data-testid*="Step"] {{
       background: var(--input-bg) !important;
       color: var(--text) !important;
       border-color: var(--card-border) !important;
     }}
+    [data-testid="stNumberInput"] svg,
+    [data-testid="stTextInput"] svg {{
+      color: var(--muted) !important;
+      fill: currentColor !important;
+    }}
     [data-testid="stNumberInput"] button:hover,
     [data-testid="stNumberInput"] [role="button"]:hover,
     [data-testid="stNumberInput"] [data-baseweb="button"]:hover,
+    [data-testid="stNumberInput"] [data-baseweb="input"] button:hover,
+    [data-testid="stNumberInput"] [data-baseweb="input"] [aria-label]:hover,
     [data-testid="stNumberInput"] [data-testid*="Step"]:hover {{
       background: color-mix(in srgb, var(--accent) 10%, var(--input-bg)) !important;
       color: var(--text) !important;
@@ -614,9 +644,6 @@ def get_theme_css(theme_name: str) -> str:
     .mover-card .cg-name-text {{ display: none; }}
     #MainMenu,
     footer,
-    header[data-testid="stHeader"],
-    div[data-testid="stToolbar"],
-    div[data-testid="stDecoration"],
     div[data-testid="stStatusWidget"],
     div[data-testid="stDeployButton"],
     div[data-testid="stMainMenu"],
@@ -627,10 +654,58 @@ def get_theme_css(theme_name: str) -> str:
       visibility: hidden !important;
       pointer-events: none !important;
     }}
+    header[data-testid="stHeader"] {{
+      display: block !important;
+      visibility: visible !important;
+      pointer-events: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      height: 3rem !important;
+      min-height: 3rem !important;
+      z-index: 999998 !important;
+      overflow: visible !important;
+    }}
+    div[data-testid="stToolbar"],
+    div[data-testid="stDecoration"] {{
+      display: flex !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }}
+    [data-testid="stSidebarCollapsedControl"],
+    [data-testid="stSidebarCollapseButton"],
+    button[kind="header"],
+    button[aria-label*="sidebar" i],
+    button[title*="sidebar" i] {{
+      display: inline-flex !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: var(--text) !important;
+      background: color-mix(in srgb, var(--panel-bg) 82%, transparent) !important;
+      border: 1px solid var(--card-border) !important;
+      border-radius: var(--radius-md) !important;
+      box-shadow: 0 10px 24px rgba(2,6,23,0.24) !important;
+    }}
+    [data-testid="stSidebarCollapsedControl"] {{
+      position: fixed !important;
+      top: 0.72rem !important;
+      left: 0.72rem !important;
+      z-index: 999999 !important;
+    }}
     div[data-testid="stVerticalBlock"] {{ gap: var(--vertical-block-gap, 0.65rem) !important; }}
     div[data-testid="column"] {{ min-width: 0 !important; }}
     hr {{ margin: 0.75rem 0 !important; border-color: var(--card-border) !important; }}
     [data-testid="stExpander"] {{ border-color: var(--card-border) !important; border-radius: var(--radius-lg) !important; }}
+    [data-testid="stExpander"],
+    [data-testid="stForm"],
+    [data-testid="stForm"] > div {{
+      background: color-mix(in srgb, var(--panel-bg) 72%, transparent) !important;
+      color: var(--text) !important;
+      border-color: var(--card-border) !important;
+    }}
 
     div[role="radiogroup"] {{
       display: flex;
@@ -683,9 +758,22 @@ def get_theme_css(theme_name: str) -> str:
       padding: 0.72rem 0.95rem;
       font-weight: 750;
       border: 1px solid var(--card-border);
-      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+      background: var(--input-bg) !important;
+      color: var(--text) !important;
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
     }}
-    .stButton>button:hover {{ transform: translateY(-1px); border-color: var(--accent); box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 16%, transparent); }}
+    .stButton>button[kind="primary"],
+    .stButton>button[data-testid="baseButton-primary"] {{
+      background: var(--accent) !important;
+      border-color: var(--accent) !important;
+      color: var(--app-bg) !important;
+    }}
+    .stButton>button:hover {{ transform: translateY(-1px); background: color-mix(in srgb, var(--accent) 10%, var(--input-bg)) !important; color: var(--text) !important; border-color: var(--accent); box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 16%, transparent); }}
+    .stButton>button[kind="primary"]:hover,
+    .stButton>button[data-testid="baseButton-primary"]:hover {{
+      background: color-mix(in srgb, var(--accent) 86%, #ffffff) !important;
+      color: var(--app-bg) !important;
+    }}
     .stSidebar .stButton>button {{ width: 100%; }}
     [data-testid="stSelectbox"] [data-baseweb="select"] > div {{
       background: var(--input-bg) !important;
@@ -698,13 +786,35 @@ def get_theme_css(theme_name: str) -> str:
     [data-testid="stSelectbox"] [data-baseweb="select"] > div:hover {{
       border-color: var(--cg-green) !important;
     }}
+    [data-testid="stSelectbox"] [data-baseweb="select"] > div,
+    [data-testid="stSelectbox"] [data-baseweb="select"] > div > div,
+    [data-testid="stSelectbox"] [data-baseweb="select"] input,
+    [data-testid="stSelectbox"] [data-baseweb="select"] span {{
+      background-color: transparent !important;
+      color: var(--text) !important;
+      border-color: var(--card-border) !important;
+    }}
+    [data-testid="stSelectbox"] [data-baseweb="select"] input {{
+      caret-color: transparent !important;
+    }}
+    [data-testid="stSelectbox"] [data-baseweb="select"] svg {{
+      color: var(--muted) !important;
+      fill: currentColor !important;
+    }}
+    [data-testid="stSelectbox"] [data-baseweb="select"]:focus-within > div {{
+      border-color: var(--cg-green) !important;
+      box-shadow: 0 0 0 3px var(--cg-pos-weak) !important;
+    }}
     [data-baseweb="popover"],
     [data-baseweb="popover"] > div,
+    [data-baseweb="popover"] > div > div,
     [data-baseweb="menu"],
+    [data-baseweb="menu"] ul,
     [role="listbox"],
     [role="menu"],
     ul[role="listbox"],
     div[data-baseweb="select-dropdown"],
+    div[data-baseweb="select-dropdown"] > div,
     div[data-baseweb="select-dropdown"] ul {{
       background: var(--panel-bg) !important;
       color: var(--text) !important;
@@ -714,7 +824,8 @@ def get_theme_css(theme_name: str) -> str:
     [role="option"],
     [role="menuitem"],
     [data-baseweb="menu"] li,
-    [data-baseweb="select-dropdown"] li {{
+    [data-baseweb="select-dropdown"] li,
+    [data-baseweb="select-dropdown"] li > div {{
       background: var(--panel-bg) !important;
       color: var(--text) !important;
     }}
@@ -722,17 +833,31 @@ def get_theme_css(theme_name: str) -> str:
     [role="option"][aria-selected="true"],
     [role="menuitem"]:hover,
     [data-baseweb="menu"] li:hover,
-    [data-baseweb="select-dropdown"] li:hover {{
+    [data-baseweb="select-dropdown"] li:hover,
+    [data-baseweb="select-dropdown"] li:hover > div {{
       background: color-mix(in srgb, var(--accent) 13%, var(--panel-bg)) !important;
       color: var(--text) !important;
     }}
-    input, textarea, [data-baseweb="input"] input {{
+    [data-testid="stWidgetLabel"],
+    [data-testid="stWidgetLabel"] p {{
+      color: var(--text) !important;
+    }}
+    input, textarea, [data-baseweb="input"], [data-baseweb="input"] > div, [data-baseweb="input"] input {{
       background: var(--input-bg) !important;
       color: var(--text) !important;
       border-color: var(--card-border) !important;
       caret-color: var(--accent) !important;
     }}
     input::placeholder, textarea::placeholder {{ color: var(--subtle) !important; }}
+    [data-testid="stMarkdownContainer"] code,
+    [data-testid="stMarkdownContainer"] p code {{
+      background: color-mix(in srgb, var(--panel-bg) 86%, var(--accent) 10%) !important;
+      color: var(--success) !important;
+      border: 1px solid var(--card-border) !important;
+      border-radius: var(--radius-sm) !important;
+      padding: 0.12rem 0.34rem !important;
+      font-weight: 750 !important;
+    }}
     button:focus-visible, input:focus-visible, [role="button"]:focus-visible, [role="slider"]:focus-visible {{ outline: 2px solid var(--cg-green) !important; outline-offset: 2px !important; }}
     .stAlert {{ border-radius: var(--radius-md) !important; border: 1px solid var(--card-border) !important; }}
 
@@ -1005,6 +1130,78 @@ def render_empty_state(message: str = "Data unavailable.", icon: str = "⚠️")
         f"{icon} {message}</div>",
         unsafe_allow_html=True,
     )
+
+def dataframe_theme_styles(df: pd.DataFrame):
+    return (
+        df.style
+        .set_properties(
+            **{
+                "background-color": "#070B12",
+                "color": "#F3F5F7",
+                "border-color": "rgba(255,255,255,0.08)",
+            }
+        )
+        .set_table_styles(
+            [
+                {
+                    "selector": "th",
+                    "props": [
+                        ("background-color", "#0A1018"),
+                        ("color", "#A8B0BD"),
+                        ("border-color", "rgba(255,255,255,0.08)"),
+                    ],
+                }
+            ]
+        )
+    )
+
+
+def render_interactive_dataframe(
+    df: pd.DataFrame,
+    *,
+    column_config: dict | None = None,
+    column_order: list[str] | None = None,
+    height: int | None = None,
+    signed_columns: set[str] | None = None,
+) -> None:
+    signed_columns = signed_columns or set()
+    styler = dataframe_theme_styles(df)
+
+    def signed_style(value):
+        if pd.isna(value):
+            return ""
+        if isinstance(value, str):
+            lowered = value.lower()
+            if lowered in {"buy", "bullish", "bullish ob", "demand"} or value.startswith("+"):
+                return "color:#00E08A;font-weight:850"
+            if lowered in {"sell", "bearish", "bearish ob", "supply"} or value.startswith("-"):
+                return "color:#FF5C73;font-weight:850"
+            if lowered in {"hold", "neutral"}:
+                return "color:#FFB84D;font-weight:850"
+        try:
+            number = float(value)
+        except (TypeError, ValueError):
+            return ""
+        if number > 0:
+            return "color:#00E08A;font-weight:850"
+        if number < 0:
+            return "color:#FF5C73;font-weight:850"
+        return ""
+
+    for col in signed_columns:
+        if col in df.columns:
+            styler = styler.map(signed_style, subset=[col])
+
+    dataframe_kwargs = {
+        "width": "stretch",
+        "hide_index": True,
+        "column_order": column_order,
+        "column_config": column_config,
+    }
+    if height is not None:
+        dataframe_kwargs["height"] = height
+    st.dataframe(styler, **dataframe_kwargs)
+
 
 def render_compact_state(message: str, detail: str = "") -> None:
     detail_html = f"<span style='color:var(--muted);font-weight:500;margin-left:8px'>{detail}</span>" if detail else ""
@@ -1958,7 +2155,7 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
         }.get(value, "")
 
     styled_table = (
-        df_table.style
+        dataframe_theme_styles(df_table)
         .map(style_change, subset=["24h %"])
         .map(style_signal, subset=["Signal"])
     )
@@ -2453,7 +2650,7 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
             fvg_rows.append({"Type":"Bearish ↓","Top":fmt_price(f["top"],symbol),
                 "Bottom":fmt_price(f["bottom"],symbol),"Gap%":f"{f['gap_pct']:.3f}%"})
         if fvg_rows:
-            st.dataframe(pd.DataFrame(fvg_rows), width="stretch", hide_index=True)
+            render_interactive_dataframe(pd.DataFrame(fvg_rows), signed_columns={"Type"})
         else:
             st.info("No active FVGs detected.")
 
@@ -2467,7 +2664,7 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
             ob_rows.append({"Type":"Bearish OB","Top":fmt_price(o["top"],symbol),
                 "Bottom":fmt_price(o["bottom"],symbol)})
         if ob_rows:
-            st.dataframe(pd.DataFrame(ob_rows), width="stretch", hide_index=True)
+            render_interactive_dataframe(pd.DataFrame(ob_rows), signed_columns={"Type"})
         else:
             st.info("No active Order Blocks detected.")
 
@@ -2478,7 +2675,7 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
         liq_rows = [{"Type": "EQ High" if l.get("level",0) > df["close"].iloc[-1] else "EQ Low",
                      "Level": fmt_price(l["level"], symbol),
                      "Touches": l.get("touches", 0)} for l in liq[:8]]
-        st.dataframe(pd.DataFrame(liq_rows), width="stretch", hide_index=True)
+        render_interactive_dataframe(pd.DataFrame(liq_rows), column_config={"Touches": st.column_config.NumberColumn("Touches", format="%d")})
 
     # Supply/Demand
     supply = smc.get("supply_zones", [])
@@ -2493,7 +2690,7 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
             sd_rows.append({"Type":"Supply 🔴","Top":fmt_price(z["top"],symbol),
                 "Bottom":fmt_price(z["bottom"],symbol)})
         if sd_rows:
-            st.dataframe(pd.DataFrame(sd_rows), width="stretch", hide_index=True)
+            render_interactive_dataframe(pd.DataFrame(sd_rows), signed_columns={"Type"})
 
 
 # ── Tab 4: Order Book ─────────────────────────────────────────────────────────
@@ -2541,23 +2738,39 @@ def render_orderbook(ob: dict, symbol: str):
         st.markdown("<div class='table-card status-positive'><h5 style='margin:0 0 10px;color:var(--text)'>🟢 Top Bids</h5></div>", unsafe_allow_html=True)
         bids_df = pd.DataFrame(ob["bids"]).rename(
             columns={"price":"Price","size":"Size","cumulative":"Cumulative","value":"Value ($)"})
-        bids_df["Price"]      = bids_df["Price"].apply(lambda x: fmt_price(x, symbol))
-        bids_df["Size"]       = bids_df["Size"].round(4)
-        bids_df["Cumulative"] = bids_df["Cumulative"].round(4)
-        bids_df["Value ($)"]  = bids_df["Value ($)"].apply(lambda x: f"${x:,.1f}")
-        st.dataframe(bids_df[["Price","Size","Cumulative","Value ($)"]],
-                     width="stretch", hide_index=True)
+        bids_df["Price"]      = bids_df["Price"].astype(float)
+        bids_df["Size"]       = bids_df["Size"].astype(float).round(4)
+        bids_df["Cumulative"] = bids_df["Cumulative"].astype(float).round(4)
+        bids_df["Value ($)"]  = bids_df["Value ($)"].astype(float)
+        render_interactive_dataframe(
+            bids_df[["Price","Size","Cumulative","Value ($)"]],
+            column_config={
+                "Price": st.column_config.NumberColumn("Price", format="$%.2f"),
+                "Size": st.column_config.NumberColumn("Size", format="%.4f"),
+                "Cumulative": st.column_config.NumberColumn("Cumulative", format="%.4f"),
+                "Value ($)": st.column_config.NumberColumn("Value ($)", format="$%.1f"),
+            },
+            height=600,
+        )
 
     with col2:
         st.markdown("<div class='table-card status-negative'><h5 style='margin:0 0 10px;color:var(--text)'>🔴 Top Asks</h5></div>", unsafe_allow_html=True)
         asks_df = pd.DataFrame(ob["asks"]).rename(
             columns={"price":"Price","size":"Size","cumulative":"Cumulative","value":"Value ($)"})
-        asks_df["Price"]      = asks_df["Price"].apply(lambda x: fmt_price(x, symbol))
-        asks_df["Size"]       = asks_df["Size"].round(4)
-        asks_df["Cumulative"] = asks_df["Cumulative"].round(4)
-        asks_df["Value ($)"]  = asks_df["Value ($)"].apply(lambda x: f"${x:,.1f}")
-        st.dataframe(asks_df[["Price","Size","Cumulative","Value ($)"]],
-                     width="stretch", hide_index=True)
+        asks_df["Price"]      = asks_df["Price"].astype(float)
+        asks_df["Size"]       = asks_df["Size"].astype(float).round(4)
+        asks_df["Cumulative"] = asks_df["Cumulative"].astype(float).round(4)
+        asks_df["Value ($)"]  = asks_df["Value ($)"].astype(float)
+        render_interactive_dataframe(
+            asks_df[["Price","Size","Cumulative","Value ($)"]],
+            column_config={
+                "Price": st.column_config.NumberColumn("Price", format="$%.2f"),
+                "Size": st.column_config.NumberColumn("Size", format="%.4f"),
+                "Cumulative": st.column_config.NumberColumn("Cumulative", format="%.4f"),
+                "Value ($)": st.column_config.NumberColumn("Value ($)", format="$%.1f"),
+            },
+            height=600,
+        )
 
     # ── Depth chart ────────────────────────────────────────────────────────
     st.markdown("##### 📊 Depth Heatmap")
@@ -2979,8 +3192,17 @@ def render_backtest(df, cfg, symbol):
         td["entry"]   = td["entry"].round(6)
         td["exit"]    = td["exit"].round(6)
         st.caption("**Recent Trades**")
-        st.dataframe(td[["timestamp","entry","exit","pnl","pnl_pct","exit_reason"]].tail(20),
-                     width="stretch", hide_index=True)
+        render_interactive_dataframe(
+            td[["timestamp","entry","exit","pnl","pnl_pct","exit_reason"]].tail(20),
+            signed_columns={"pnl", "pnl_pct"},
+            column_config={
+                "entry": st.column_config.NumberColumn("entry", format="%.6f"),
+                "exit": st.column_config.NumberColumn("exit", format="%.6f"),
+                "pnl": st.column_config.NumberColumn("pnl", format="$%.2f"),
+                "pnl_pct": st.column_config.NumberColumn("pnl_pct", format="%+.2f%%"),
+            },
+            height=520,
+        )
 
 
 # ── Tab 8: Portfolio (Paper Trading) ──────────────────────────────────────────
@@ -3044,8 +3266,7 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
                 st.rerun()
 
     if st.session_state.paper_trades:
-        st.dataframe(pd.DataFrame(st.session_state.paper_trades),
-                     width="stretch", hide_index=True)
+        render_interactive_dataframe(pd.DataFrame(st.session_state.paper_trades), signed_columns={"signal"}, height=520)
 
     st.divider()
     st.subheader("Position Sizing Calculator")
