@@ -640,6 +640,48 @@ def get_theme_css(theme_name: str) -> str:
     .regime-driver span {{ display: block; color: var(--subtle); font-size: 0.55rem; font-weight: 850; text-transform: uppercase; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
     .indicator-grid {{ grid-template-columns: repeat(auto-fit, minmax(188px, 1fr)); gap: 16px; margin-top: 0.7rem; }}
     .indicator-grid .dashboard-card {{ min-height: 132px; align-items: center; justify-content: center; text-align: center; }}
+    .tech-command-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0.06rem 0 0.36rem; }}
+    .tech-command-title {{ color:var(--text); font-size:clamp(1.02rem,1.35vw,1.28rem); font-weight:950; line-height:1.1; }}
+    .tech-command-meta {{ color:var(--muted); font-size:0.72rem; font-weight:780; white-space:nowrap; }}
+    .tech-summary-card {{ border:1px solid var(--card-border); border-radius:var(--radius-md); background:linear-gradient(180deg,color-mix(in srgb,var(--card-bg) 94%,var(--panel-bg)),var(--card-bg)); box-shadow:0 9px 22px rgba(2,6,23,0.14); padding:9px 11px; margin:0.02rem 0 0.42rem; }}
+    .tech-summary-grid {{ display:grid; grid-template-columns:minmax(185px,0.42fr) minmax(420px,1.58fr); gap:9px; align-items:stretch; }}
+    .tech-bias-core {{ --tech-accent:var(--warning); position:relative; border:1px solid color-mix(in srgb,var(--tech-accent) 30%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 52%,transparent); padding:8px 10px 8px 12px; overflow:hidden; }}
+    .tech-bias-core::before {{ content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--tech-accent); }}
+    .tech-bias-core.status-positive {{ --tech-accent:var(--cg-green); }}
+    .tech-bias-core.status-negative {{ --tech-accent:var(--cg-red); }}
+    .tech-bias-core.status-warning, .tech-bias-core.status-neutral {{ --tech-accent:var(--warning); }}
+    .tech-label {{ color:var(--muted); font-size:0.56rem; font-weight:900; text-transform:uppercase; line-height:1.05; }}
+    .tech-bias-value {{ color:var(--tech-accent); font-size:clamp(1.08rem,1.45vw,1.36rem); font-weight:950; line-height:1.02; margin-top:4px; }}
+    .tech-bias-sub {{ color:var(--text); font-size:0.72rem; font-weight:820; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-gauge {{ margin-top:8px; }}
+    .tech-gauge-track {{ position:relative; height:8px; border-radius:999px; background:linear-gradient(90deg,var(--cg-red),var(--warning),var(--cg-green)); overflow:hidden; }}
+    .tech-gauge-marker {{ position:absolute; top:-3px; width:4px; height:14px; border-radius:999px; background:var(--text); box-shadow:0 0 0 2px color-mix(in srgb,var(--app-bg) 90%,transparent); transform:translateX(-2px); }}
+    .tech-gauge-scale {{ display:flex; justify-content:space-between; color:var(--subtle); font-size:0.52rem; font-weight:800; margin-top:5px; }}
+    .tech-health-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }}
+    .tech-health-chip {{ border:1px solid var(--card-border); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 54%,transparent); padding:7px 8px; min-height:58px; overflow:hidden; }}
+    .tech-health-chip span {{ display:block; color:var(--subtle); font-size:0.54rem; font-weight:900; text-transform:uppercase; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-health-chip strong {{ display:block; color:var(--text); font-size:0.82rem; font-weight:950; line-height:1.05; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-health-chip em {{ display:block; color:var(--muted); font-size:0.62rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-reasons {{ display:flex; flex-wrap:wrap; gap:5px; margin:0.1rem 0 0.45rem; }}
+    .tech-reason-chip {{ color:var(--text); background:color-mix(in srgb,var(--panel-bg) 62%,transparent); border:1px solid var(--card-border); border-radius:999px; padding:3px 8px; font-size:0.66rem; font-weight:850; white-space:nowrap; }}
+    .indicator-group {{ margin:0.24rem 0 0.58rem; }}
+    .indicator-group-head {{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 0.2rem; }}
+    .indicator-group-title {{ color:var(--text); font-size:0.86rem; font-weight:950; line-height:1.1; }}
+    .indicator-group-meta {{ color:var(--muted); font-size:0.64rem; font-weight:750; white-space:nowrap; }}
+    .indicator-group .indicator-grid {{ grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:8px; margin:0; }}
+    .indicator-group .dashboard-card {{ min-height:92px; padding:9px 10px !important; }}
+    .tech-chart-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin:0.18rem 0 0.1rem; }}
+    .tech-chart-title {{ color:var(--text); font-size:1rem; font-weight:950; line-height:1.1; }}
+    .tech-chart-meta {{ color:var(--muted); font-size:0.66rem; font-weight:760; }}
+    .tech-detail-grid {{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:0.45rem; }}
+    .tech-detail-card {{ border:1px solid var(--card-border); border-radius:var(--radius-md); background:linear-gradient(180deg,color-mix(in srgb,var(--card-bg) 94%,var(--panel-bg)),var(--card-bg)); box-shadow:0 8px 20px rgba(2,6,23,0.12); padding:10px 11px; }}
+    .tech-detail-title {{ color:var(--text); font-size:0.98rem; font-weight:950; margin-bottom:8px; }}
+    .tech-metric-grid {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }}
+    .tech-mini-metric {{ border:1px solid var(--card-border); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 54%,transparent); padding:6px 7px; min-height:48px; overflow:hidden; }}
+    .tech-mini-metric span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-mini-metric strong {{ display:block; color:var(--text); font-size:0.76rem; font-weight:920; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-level-list {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px; margin-top:7px; }}
+    .tech-level {{ color:var(--muted); border:1px solid var(--card-border); border-radius:999px; padding:3px 6px; font-size:0.58rem; font-weight:850; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
     .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); white-space: nowrap; }}
     .metric-pill.buy {{ background: var(--cg-pos-weak); color: var(--cg-green); }}
     .metric-pill.sell {{ background: var(--cg-neg-weak); color: var(--cg-red); }}
@@ -1122,6 +1164,11 @@ def get_theme_css(theme_name: str) -> str:
       .block-container {{ padding-inline: 0.75rem !important; }}
       .dashboard-grid {{ grid-template-columns: 1fr; }}
       .overview-summary-grid, .indicator-grid {{ grid-template-columns: 1fr; }}
+      .tech-command-head, .indicator-group-head, .tech-chart-head {{ align-items:flex-start; flex-direction:column; gap:3px; }}
+      .tech-command-meta, .indicator-group-meta, .tech-chart-meta {{ white-space:normal; }}
+      .tech-summary-grid, .tech-detail-grid {{ grid-template-columns:1fr; }}
+      .tech-health-grid, .tech-metric-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
+      .tech-level-list {{ grid-template-columns:1fr; }}
       .overview-heading {{ align-items: flex-start; flex-direction: column; gap: 3px; }}
       .overview-heading-meta {{ white-space: normal; }}
       .ai-brief-head, .compact-section-head {{ align-items: flex-start; flex-direction: column; gap: 3px; }}
@@ -2782,19 +2829,32 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
     if not ind or not isinstance(ind, dict):
         render_empty_state("Technical indicators unavailable.")
         return
-    # ── Indicator summary ──────────────────────────────────────────────────
-    st.markdown(render_section_header(
-        "Technical Dashboard",
-        "Compact professional indicators, chart overlays, and support/resistance insights."
-    ), unsafe_allow_html=True)
-    bullish_cross = ind.get("ema_bullish_cross", False)
-    bearish_cross = ind.get("ema_bearish_cross", False)
-    if bullish_cross:
-        st.success("🟢 **EMA 9 × EMA 21 Bullish Crossover** on latest candle")
-    elif bearish_cross:
-        st.error("🔴 **EMA 9 × EMA 21 Bearish Crossover** on latest candle")
 
     close = ind["close"]
+    rsi = ind["rsi"]
+    macd = ind["macd"]
+    macd_sig = ind["macd_signal"]
+    stk = adv.get("stochrsi_k", 50)
+    std = adv.get("stochrsi_d", 50)
+    cci = adv.get("cci", 0)
+    adx = adv.get("adx", 25)
+    roc = adv.get("roc", 0)
+    ema9 = ind.get("ema_9", close)
+    ema21 = ind.get("ema_21", close)
+    ema50 = ind.get("ema_50", close)
+    ema200 = ind.get("ema_200", close)
+    vwap = adv.get("vwap", close)
+    sma20 = adv.get("sma_20", close)
+    mfi = adv.get("mfi", 50)
+    cmf = adv.get("cmf", 0)
+    obv = adv.get("obv", 0)
+    atr = ind.get("atr")
+    bb_pct = ind.get("bb_pct", 0.5) * 100
+    st_dir = adv.get("supertrend_dir", 0)
+    st_lbl = "Bullish" if st_dir == 1 else ("Bearish" if st_dir == -1 else "N/A")
+    psar_bull = adv.get("psar_bull", True)
+    bullish_cross = ind.get("ema_bullish_cross", False)
+    bearish_cross = ind.get("ema_bearish_cross", False)
 
     def ind_card(label, val_str, sub="", color="#ccc"):
         return (
@@ -2805,108 +2865,200 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
             f"</div>"
         )
 
-    rsi = ind["rsi"]
+    def mini_metric(label: str, value: str) -> str:
+        return f"<div class='tech-mini-metric'><span>{html.escape(label)}</span><strong>{html.escape(value)}</strong></div>"
+
+    rsi_label = "Overbought" if rsi > 70 else "Oversold" if rsi < 30 else "Healthy" if 40 <= rsi <= 65 else "Neutral"
     rsi_c = "#FF5C73" if rsi > 70 else ("#00E08A" if rsi < 30 else "#FFB84D")
-    macd  = ind["macd"]
-    macd_sig = ind["macd_signal"]
-    macd_c   = "#00E08A" if macd > macd_sig else "#FF5C73"
-
-    stk  = adv.get("stochrsi_k", 50)
-    std  = adv.get("stochrsi_d", 50)
+    macd_c = "#00E08A" if macd > macd_sig else "#FF5C73"
     stk_c = "#FF5C73" if stk > 80 else ("#00E08A" if stk < 20 else "#FFB84D")
-    cci = adv.get("cci", 0)
     cci_c = "#FF5C73" if cci > 100 else ("#00E08A" if cci < -100 else "#FFB84D")
-    adx = adv.get("adx", 25)
     adx_c = "#00E08A" if adx > 30 else "#7B8596"
-    roc = adv.get("roc", 0)
     roc_c = "#00E08A" if roc > 0 else "#FF5C73"
-    ema9  = ind.get("ema_9", close)
-    ema21 = ind.get("ema_21", close)
-    ema50 = ind.get("ema_50", close)
-    ema200 = ind.get("ema_200", close)
-    vwap = adv.get("vwap", close)
-    sma20 = adv.get("sma_20", close)
-    mfi = adv.get("mfi", 50)
     mfi_c = "#FF5C73" if mfi > 80 else ("#00E08A" if mfi < 20 else "#FFB84D")
-    cmf = adv.get("cmf", 0)
     cmf_c = "#00E08A" if cmf > 0.05 else ("#FF5C73" if cmf < -0.05 else "#FFB84D")
-    obv = adv.get("obv", 0)
-    bb_pct = ind.get("bb_pct", 0.5) * 100
     bb_c = "#FF5C73" if bb_pct > 80 else ("#00E08A" if bb_pct < 20 else "#FFB84D")
-    st_dir = adv.get("supertrend_dir", 0)
     st_c = "#00E08A" if st_dir == 1 else ("#FF5C73" if st_dir == -1 else "#7B8596")
-    st_lbl = "Bullish" if st_dir == 1 else ("Bearish" if st_dir == -1 else "N/A")
-    psar_bull = adv.get("psar_bull", True)
 
-    indicator_cards = [
-        ind_card("RSI (14)", f"{rsi:.1f}", "Overbought" if rsi > 70 else "Oversold" if rsi < 30 else "Neutral", rsi_c),
-        ind_card("MACD", f"{macd:.4f}", f"Sig {macd_sig:.4f}", macd_c),
+    score = 50
+    score += 10 if ema9 > ema21 else -10
+    score += 10 if close > ema50 else -10
+    score += 14 if close > ema200 else -14
+    score += 12 if macd > macd_sig else -12
+    score += 8 if 40 <= rsi <= 65 else -8 if rsi > 75 or rsi < 25 else 0
+    score += 8 if st_dir == 1 else -8 if st_dir == -1 else 0
+    score += 6 if psar_bull else -6
+    score += 5 if cmf > 0.05 else -5 if cmf < -0.05 else 0
+    score += 4 if obv > 0 else -4 if obv < 0 else 0
+    if adx > 30:
+        score += 5 if close > ema200 else -5
+    direction_score = int(round(max(0, min(100, score))))
+    technical_bias = "Bullish" if direction_score >= 60 else "Bearish" if direction_score <= 40 else "Neutral"
+    direction_state = "Strong Bullish" if direction_score >= 82 else "Bullish" if direction_score >= 62 else "Strong Bearish" if direction_score <= 18 else "Bearish" if direction_score <= 38 else "Neutral"
+    confidence = int(round(min(95, max(45, 50 + abs(direction_score - 50) * 0.9))))
+    bias_status = "positive" if technical_bias == "Bullish" else "negative" if technical_bias == "Bearish" else "warning"
+
+    trend_status = "Bullish trend" if close > ema200 and ema9 > ema21 else "Bearish trend" if close < ema200 and ema9 < ema21 else "Mixed trend"
+    momentum_status = "Bullish momentum" if macd > macd_sig and roc > 0 else "Bearish momentum" if macd < macd_sig and roc < 0 else "Mixed momentum"
+    volatility_status = "Upper band stretch" if bb_pct > 80 else "Lower band stretch" if bb_pct < 20 else "Normal range"
+    volume_flow = "Inflow" if cmf > 0.05 else "Outflow" if cmf < -0.05 else "Balanced"
+
+    reasons = []
+    reasons.append("Price above EMA200" if close > ema200 else "Price below EMA200")
+    reasons.append("MACD bullish" if macd > macd_sig else "MACD bearish")
+    reasons.append("RSI healthy" if 35 <= rsi <= 70 else "RSI stretched")
+    reasons.append("Supertrend bullish" if st_dir == 1 else "Supertrend bearish" if st_dir == -1 else "Supertrend neutral")
+    reasons.append("CMF inflow" if cmf > 0 else "CMF outflow")
+    reason_html = "".join(f"<span class='tech-reason-chip'>{html.escape(reason)}</span>" for reason in reasons)
+
+    st.markdown(
+        "<div class='tech-command-head'>"
+        f"<div class='tech-command-title'>Technical Command Center</div>"
+        f"<div class='tech-command-meta'>{html.escape(symbol)} · {cfg.get('timeframe', '1h')} · {len(df)} candles</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        "<div class='tech-summary-card'>"
+        "<div class='tech-summary-grid'>"
+        f"<div class='tech-bias-core {card_status_class(status=bias_status)}'>"
+        "<div class='tech-label'>Technical Bias</div>"
+        f"<div class='tech-bias-value'>{technical_bias}</div>"
+        f"<div class='tech-bias-sub'>Confidence {confidence}% · {direction_state}</div>"
+        "<div class='tech-gauge'><div class='tech-gauge-track'>"
+        f"<div class='tech-gauge-marker' style='left:{direction_score}%'></div></div>"
+        "<div class='tech-gauge-scale'><span>Strong Bearish</span><span>Neutral</span><span>Strong Bullish</span></div></div>"
+        "</div>"
+        "<div class='tech-health-grid'>"
+        f"<div class='tech-health-chip'><span>Trend Status</span><strong>{html.escape(trend_status)}</strong><em>EMA 9/21/200</em></div>"
+        f"<div class='tech-health-chip'><span>Momentum Status</span><strong>{html.escape(momentum_status)}</strong><em>RSI {rsi:.1f} · ROC {roc:.2f}%</em></div>"
+        f"<div class='tech-health-chip'><span>Volatility Status</span><strong>{html.escape(volatility_status)}</strong><em>BB %B {bb_pct:.1f}%</em></div>"
+        f"<div class='tech-health-chip'><span>Volume Flow</span><strong>{html.escape(volume_flow)}</strong><em>CMF {cmf:.3f}</em></div>"
+        "</div></div></div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Why this technical bias?</div>"
+        f"<div class='compact-section-meta'>Score {direction_score}/100</div></div>"
+        f"<div class='tech-reasons'>{reason_html}</div>",
+        unsafe_allow_html=True,
+    )
+
+    if bullish_cross:
+        st.success("EMA 9 x EMA 21 bullish crossover on latest candle")
+    elif bearish_cross:
+        st.error("EMA 9 x EMA 21 bearish crossover on latest candle")
+
+    momentum_cards = [
+        ind_card("RSI (14)", f"{rsi:.1f}", rsi_label, rsi_c),
         ind_card("Stoch RSI K", f"{stk:.1f}", f"D {std:.1f}", stk_c),
-        ind_card("CCI (20)", f"{cci:.1f}", "Overbought" if cci > 100 else "Oversold" if cci < -100 else "Neutral", cci_c),
-        ind_card("ADX (14)", f"{adx:.1f}", "Strong" if adx > 30 else "Weak", adx_c),
-        ind_card("ROC (12)", f"{roc:.2f}%", "", roc_c),
-        ind_card("EMA 9", fmt_price(ema9, symbol), "🟢 Bull" if ema9 > ema21 else "🔴 Bear", "#00E08A" if ema9 > ema21 else "#FF5C73"),
-        ind_card("EMA 21", fmt_price(ema21, symbol), f"Gap {abs(ema9-ema21)/ema21*100:.2f}%" if ema21 else "", "#00E08A" if ema9 > ema21 else "#FF5C73"),
-        ind_card("EMA 50", fmt_price(ema50, symbol), "↑ Bullish" if close > ema50 else "↓ Bearish", "#00E08A" if close > ema50 else "#FF5C73"),
-        ind_card("EMA 200", fmt_price(ema200, symbol), "Above" if close > ema200 else "Below", "#00E08A" if close > ema200 else "#FF5C73"),
-        ind_card("VWAP", fmt_price(vwap, symbol), "Above" if close > vwap else "Below", "#00E08A" if close > vwap else "#FF5C73"),
-        ind_card("SMA 20", fmt_price(sma20, symbol), "Above" if close > sma20 else "Below", "#00E08A" if close > sma20 else "#FF5C73"),
+        ind_card("ROC (12)", f"{roc:.2f}%", "Positive" if roc > 0 else "Negative", roc_c),
         ind_card("MFI (14)", f"{mfi:.1f}", "Overbought" if mfi > 80 else "Oversold" if mfi < 20 else "Neutral", mfi_c),
-        ind_card("CMF (20)", f"{cmf:.3f}", "Inflow" if cmf > 0 else "Outflow", cmf_c),
-        ind_card("OBV", format_large_number(abs(obv)).replace("$", ""), "↑" if obv > 0 else "↓", "#00E08A" if obv > 0 else "#FF5C73"),
-        ind_card("BB %B", f"{bb_pct:.1f}%", "", bb_c),
-        ind_card("Supertrend", st_lbl, "", st_c),
-        ind_card("Parabolic SAR", "Bullish" if psar_bull else "Bearish", "", "#00E08A" if psar_bull else "#FF5C73"),
+        ind_card("CCI (20)", f"{cci:.1f}", "Overbought" if cci > 100 else "Oversold" if cci < -100 else "Neutral", cci_c),
     ]
-    st.markdown(f"<div class='dashboard-grid indicator-grid'>{''.join(indicator_cards)}</div>", unsafe_allow_html=True)
+    trend_cards = [
+        ind_card("EMA 9", fmt_price(ema9, symbol), "Bull" if ema9 > ema21 else "Bear", "#00E08A" if ema9 > ema21 else "#FF5C73"),
+        ind_card("EMA 21", fmt_price(ema21, symbol), f"Gap {abs(ema9-ema21)/ema21*100:.2f}%" if ema21 else "", "#00E08A" if ema9 > ema21 else "#FF5C73"),
+        ind_card("EMA 50", fmt_price(ema50, symbol), "Bullish" if close > ema50 else "Bearish", "#00E08A" if close > ema50 else "#FF5C73"),
+        ind_card("EMA 200", fmt_price(ema200, symbol), "Above" if close > ema200 else "Below", "#00E08A" if close > ema200 else "#FF5C73"),
+        ind_card("SMA 20", fmt_price(sma20, symbol), "Above" if close > sma20 else "Below", "#00E08A" if close > sma20 else "#FF5C73"),
+        ind_card("Supertrend", st_lbl, "Trend filter", st_c),
+        ind_card("Parabolic SAR", "Bullish" if psar_bull else "Bearish", "Trailing regime", "#00E08A" if psar_bull else "#FF5C73"),
+        ind_card("ADX (14)", f"{adx:.1f}", "Strong" if adx > 30 else "Weak", adx_c),
+    ]
+    flow_cards = [
+        ind_card("OBV", format_large_number(abs(obv)).replace("$", ""), "Up" if obv > 0 else "Down", "#00E08A" if obv > 0 else "#FF5C73"),
+        ind_card("CMF (20)", f"{cmf:.3f}", "Inflow" if cmf > 0 else "Outflow", cmf_c),
+        ind_card("VWAP", fmt_price(vwap, symbol), "Above" if close > vwap else "Below", "#00E08A" if close > vwap else "#FF5C73"),
+    ]
+    volatility_cards = [
+        ind_card("BB %B", f"{bb_pct:.1f}%", volatility_status, bb_c),
+    ]
+    if atr is not None:
+        volatility_cards.append(ind_card("ATR (14)", fmt_price(float(atr), symbol), "Range proxy", "#FFB84D"))
+
+    groups = [
+        ("Momentum", "RSI, oscillators, rate of change", momentum_cards),
+        ("Trend", "EMA structure, trend filters, ADX", trend_cards),
+        ("Volume / Flow", "Participation and money flow", flow_cards),
+        ("Volatility", "Band position and range", volatility_cards),
+    ]
+    for title, meta, cards in groups:
+        st.markdown(
+            f"<div class='indicator-group'><div class='indicator-group-head'><div class='indicator-group-title'>{title}</div>"
+            f"<div class='indicator-group-meta'>{meta}</div></div>"
+            f"<div class='dashboard-grid indicator-grid'>{''.join(cards)}</div></div>",
+            unsafe_allow_html=True,
+        )
 
     st.divider()
 
-    # ── Chart ──────────────────────────────────────────────────────────────
     chart_col, fg_col = st.columns([3, 1])
     with chart_col:
-        st.markdown(f"### 📊 {symbol} Chart")
+        active_overlays = [name.replace('_', ' ').upper() for name, enabled in cfg.get("show", {}).items() if enabled]
+        overlay_text = ", ".join(active_overlays[:5]) if active_overlays else "Core OHLC, volume, RSI, MACD, MFI/CMF"
+        st.markdown(
+            f"<div class='tech-chart-head'><div class='tech-chart-title'>{html.escape(symbol)} Technical Chart</div>"
+            f"<div class='tech-chart-meta'>{html.escape(overlay_text)}</div></div>",
+            unsafe_allow_html=True,
+        )
         render_advanced_chart(df, symbol, sr, cfg["show"], adv)
     with fg_col:
-        st.markdown("#### 😨 Fear & Greed")
+        st.markdown("#### Fear & Greed")
         render_fear_greed_gauge(fg)
 
     st.divider()
 
-    # ── Support/Resistance ────────────────────────────────────────────────
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown("#### 📏 Support / Resistance")
-        nr = sr.get("nearest_resistance", 0)
-        ns = sr.get("nearest_support", 0)
-        st.markdown(f"🔴 **Resistance:** `{fmt_price(nr, symbol)}` (+{sr.get('resistance_pct',0):.2f}%)")
-        st.markdown(f"🟢 **Support:** `{fmt_price(ns, symbol)}` (-{sr.get('support_pct',0):.2f}%)")
-        for name, key in [("R2","pivot_r2"),("R1","pivot_r1"),("PP","pivot"),("S1","pivot_s1"),("S2","pivot_s2")]:
-            val = sr.get(key, 0)
-            c = "#FF5C73" if "R" in name else ("#FFB84D" if "PP" in name else "#00E08A")
-            st.markdown(f"<span style='color:{c}'><b>{name}</b>: {fmt_price(val, symbol)}</span>",
-                        unsafe_allow_html=True)
-    with c2:
-        st.markdown("#### 📊 Ichimoku Cloud")
-        ich_a = adv.get("ich_senkou_a", 0)
-        ich_b = adv.get("ich_senkou_b", 0)
-        ten   = adv.get("ich_tenkan", 0)
-        kij   = adv.get("ich_kijun", 0)
-        cloud_top    = max(ich_a, ich_b)
-        cloud_bottom = min(ich_a, ich_b)
-        cloud_color  = "#00E08A" if ich_a > ich_b else "#FF5C73"
-        cloud_label  = "Bullish Cloud" if ich_a > ich_b else "Bearish Cloud"
-        st.markdown(f"**Tenkan-sen (9):** `{fmt_price(ten, symbol)}`")
-        st.markdown(f"**Kijun-sen (26):** `{fmt_price(kij, symbol)}`")
-        st.markdown(f"**Senkou A:** `{fmt_price(ich_a, symbol)}`")
-        st.markdown(f"**Senkou B:** `{fmt_price(ich_b, symbol)}`")
-        st.markdown(f"<span style='color:{cloud_color}'><b>Cloud:</b> {cloud_label} "
-                    f"({fmt_price(cloud_bottom, symbol)} – {fmt_price(cloud_top, symbol)})</span>",
-                    unsafe_allow_html=True)
-        pos = ("Above cloud 🚀" if close > cloud_top
-               else "Below cloud 📉" if close < cloud_bottom
-               else "Inside cloud ⚠️")
-        st.markdown(f"**Price position:** {pos}")
+    nr = sr.get("nearest_resistance", 0)
+    ns = sr.get("nearest_support", 0)
+    resistance_pct = sr.get("resistance_pct", 0)
+    support_pct = sr.get("support_pct", 0)
+    nearest_label = "Resistance" if resistance_pct <= support_pct else "Support"
+    nearest_distance = min(resistance_pct, support_pct)
+    sr_bias = "Breakout watch" if resistance_pct <= 1.5 else "Rejection risk" if support_pct <= 1.5 else "Range"
+
+    ich_a = adv.get("ich_senkou_a", 0)
+    ich_b = adv.get("ich_senkou_b", 0)
+    ten = adv.get("ich_tenkan", 0)
+    kij = adv.get("ich_kijun", 0)
+    cloud_top = max(ich_a, ich_b)
+    cloud_bottom = min(ich_a, ich_b)
+    cloud_label = "Bullish Cloud" if ich_a > ich_b else "Bearish Cloud"
+    cloud_status = "Above cloud" if close > cloud_top else "Below cloud" if close < cloud_bottom else "Inside cloud"
+    tk_status = "Tenkan above Kijun" if ten > kij else "Tenkan below Kijun" if ten < kij else "Tenkan equals Kijun"
+    ich_bias = "Bullish" if ich_a > ich_b and close > cloud_top and ten >= kij else "Bearish" if ich_a < ich_b and close < cloud_bottom and ten <= kij else "Mixed"
+
+    level_html = "".join(
+        f"<span class='tech-level'>{name}: {fmt_price(sr.get(key, 0), symbol)}</span>"
+        for name, key in [("R2", "pivot_r2"), ("R1", "pivot_r1"), ("PP", "pivot"), ("S1", "pivot_s1"), ("S2", "pivot_s2")]
+    )
+    sr_metrics = "".join([
+        mini_metric("Current Price", fmt_price(close, symbol)),
+        mini_metric("Nearest Support", fmt_price(ns, symbol)),
+        mini_metric("Nearest Resistance", fmt_price(nr, symbol)),
+        mini_metric("Nearest Distance", f"{nearest_distance:.2f}% to {nearest_label}"),
+        mini_metric("Bias", sr_bias),
+        mini_metric("Range Width", f"{(resistance_pct + support_pct):.2f}%"),
+    ])
+    ich_metrics = "".join([
+        mini_metric("Cloud Status", cloud_label),
+        mini_metric("Price Position", cloud_status),
+        mini_metric("Tenkan / Kijun", tk_status),
+        mini_metric("Ichimoku Bias", ich_bias),
+        mini_metric("Senkou A", fmt_price(ich_a, symbol)),
+        mini_metric("Senkou B", fmt_price(ich_b, symbol)),
+    ])
+    st.markdown(
+        "<div class='tech-detail-grid'>"
+        "<div class='tech-detail-card'><div class='tech-detail-title'>Support / Resistance</div>"
+        f"<div class='tech-metric-grid'>{sr_metrics}</div><div class='tech-level-list'>{level_html}</div></div>"
+        "<div class='tech-detail-card'><div class='tech-detail-title'>Ichimoku Cloud</div>"
+        f"<div class='tech-metric-grid'>{ich_metrics}</div></div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
 
 def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, adv: dict):
