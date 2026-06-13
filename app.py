@@ -465,7 +465,9 @@ def get_theme_css(theme_name: str) -> str:
       padding: 7px 8px;
       overflow: hidden;
       box-shadow: 0 8px 18px rgba(2,6,23,0.12);
+      cursor: default;
     }}
+    .opportunity-card:hover {{ border-color: color-mix(in srgb, var(--opp-accent) 44%, var(--card-border)); background: var(--card-bg-hover); }}
     .opportunity-card::before {{ content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--opp-accent); }}
     .opportunity-card.status-positive {{ --opp-accent: var(--cg-green); }}
     .opportunity-card.status-negative {{ --opp-accent: var(--cg-red); }}
@@ -482,7 +484,7 @@ def get_theme_css(theme_name: str) -> str:
     .overview-signal-pill.sell {{ color: var(--cg-red); background: var(--cg-neg-weak); }}
     .overview-signal-pill.hold {{ color: var(--warning); background: color-mix(in srgb, var(--warning) 14%, transparent); }}
     .opportunity-reason {{ color: var(--muted); font-size: 0.62rem; font-weight: 700; margin-top: 3px; line-height: 1.08; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
-    .scanner-summary {{ display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin: 0.02rem 0 0.18rem; }}
+    .scanner-summary {{ display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin: 0.01rem 0 0.12rem; }}
     .scanner-summary span {{ color: var(--text); background: color-mix(in srgb, var(--panel-bg) 62%, transparent); border: 1px solid var(--card-border); border-radius: 999px; padding: 3px 7px; font-size: 0.68rem; font-weight: 850; white-space: nowrap; }}
     .market-intel-card {{
       border: 1px solid var(--card-border);
@@ -525,6 +527,45 @@ def get_theme_css(theme_name: str) -> str:
     .market-intel-chip span {{ display: block; color: var(--subtle); font-size: 0.54rem; font-weight: 900; text-transform: uppercase; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
     .market-intel-chip strong {{ display: block; color: var(--text); font-size: 0.82rem; font-weight: 950; line-height: 1.05; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
     .market-intel-chip em {{ display: block; color: var(--muted); font-size: 0.62rem; font-style: normal; font-weight: 720; line-height: 1.08; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .direction-gauge {{
+      margin: 0 0 8px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--panel-bg) 48%, transparent);
+      padding: 7px 8px;
+    }}
+    .direction-gauge-top {{ display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 6px; }}
+    .direction-gauge-label {{ color: var(--muted); font-size: 0.56rem; font-weight: 900; text-transform: uppercase; }}
+    .direction-gauge-value {{ color: var(--text); font-size: 0.86rem; font-weight: 950; }}
+    .direction-track {{ position: relative; height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--cg-red), var(--warning), var(--cg-green)); overflow: hidden; }}
+    .direction-marker {{ position: absolute; top: -3px; width: 4px; height: 14px; border-radius: 999px; background: var(--text); box-shadow: 0 0 0 2px color-mix(in srgb, var(--app-bg) 90%, transparent); transform: translateX(-2px); }}
+    .direction-scale {{ display: flex; justify-content: space-between; color: var(--subtle); font-size: 0.52rem; font-weight: 800; margin-top: 5px; }}
+    .reason-list {{ display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }}
+    .reason-chip {{ color: var(--muted); background: color-mix(in srgb, var(--panel-bg) 62%, transparent); border: 1px solid var(--card-border); border-radius: 999px; padding: 2px 6px; font-size: 0.55rem; font-weight: 800; white-space: nowrap; }}
+    .coin-intel-card {{
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--card-bg) 94%, var(--panel-bg)), var(--card-bg));
+      box-shadow: 0 7px 18px rgba(2,6,23,0.12);
+      padding: 7px 9px;
+      margin: 0.04rem 0 0.14rem;
+    }}
+    .coin-intel-grid {{ display: grid; grid-template-columns: minmax(180px, 0.4fr) minmax(420px, 1.6fr); gap: 7px; align-items: stretch; }}
+    .coin-intel-identity {{ display: flex; align-items: center; gap: 8px; min-width: 0; }}
+    .coin-intel-identity .coin-logo {{ width: 26px; height: 26px; flex-basis: 26px; }}
+    .coin-intel-symbol {{ color: var(--text); font-size: 0.94rem; font-weight: 950; line-height: 1.05; }}
+    .coin-intel-name {{ color: var(--muted); font-size: 0.66rem; font-weight: 750; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .coin-intel-price {{ color: var(--text); font-size: 0.8rem; font-weight: 900; margin-top: 5px; }}
+    .coin-intel-summary {{ color: var(--muted); font-size: 0.68rem; font-weight: 720; line-height: 1.18; margin-top: 5px; }}
+    .intel-metrics {{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }}
+    .intel-metric {{ border: 1px solid var(--card-border); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--panel-bg) 54%, transparent); padding: 5px 6px; min-height: 42px; overflow: hidden; }}
+    .intel-metric span {{ display: block; color: var(--subtle); font-size: 0.52rem; font-weight: 900; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .intel-metric strong {{ display: block; color: var(--text); font-size: 0.76rem; font-weight: 920; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .smart-badges {{ display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }}
+    .smart-badge {{ border: 1px solid var(--card-border); border-radius: 999px; background: color-mix(in srgb, var(--panel-bg) 60%, transparent); padding: 2px 6px; font-size: 0.55rem; font-weight: 900; color: var(--text); white-space: nowrap; }}
+    .smart-badge.positive {{ color: var(--cg-green); background: var(--cg-pos-weak); }}
+    .smart-badge.negative {{ color: var(--cg-red); background: var(--cg-neg-weak); }}
+    .smart-badge.warning {{ color: var(--warning); background: color-mix(in srgb, var(--warning) 14%, transparent); }}
     .market-status-strip {{
       display: grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -826,7 +867,8 @@ def get_theme_css(theme_name: str) -> str:
     .mover-card .cg-symbol-cell {{ min-width: 0; gap: 7px; }}
     .mover-card .coin-logo {{ width: 19px; height: 19px; flex-basis: 19px; }}
     .mover-card .cg-name-text {{ display: none; }}
-    .scanner-head {{ display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0.04rem 0 0.12rem; }}
+    .mover-card:hover {{ border-color: color-mix(in srgb, var(--card-accent) 44%, var(--card-border)); }}
+    .scanner-head {{ display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0.02rem 0 0.08rem; }}
     .scanner-title {{ color: var(--text); font-size: 0.95rem; font-weight: 900; line-height: 1.1; }}
     .scanner-status-line {{
       display: flex;
@@ -1089,6 +1131,8 @@ def get_theme_css(theme_name: str) -> str:
       .market-intel-meta {{ white-space: normal; }}
       .market-intel-body {{ grid-template-columns: 1fr; }}
       .market-intel-chips {{ grid-template-columns: 1fr; }}
+      .coin-intel-grid {{ grid-template-columns: 1fr; }}
+      .intel-metrics {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
       .market-status-strip {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
       .opportunity-grid {{ grid-template-columns: 1fr; }}
       .regime-card {{ grid-template-columns: 1fr; }}
@@ -2388,6 +2432,69 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
             return "Signal engine accumulation"
         return "Balanced risk-adjusted setup"
 
+    def row_reasons(row: pd.Series) -> list[str]:
+        reasons = []
+        if row.get("EMA 200") is not None and not pd.isna(row.get("EMA 200")):
+            reasons.append("Above EMA200" if row.get("Price", 0) > row.get("EMA 200") else "Below EMA200")
+        if row.get("MACD") is not None and not pd.isna(row.get("MACD")):
+            reasons.append("Bullish MACD" if row.get("MACD") > 0 else "Bearish MACD")
+        if row.get("RSI") is not None and not pd.isna(row.get("RSI")):
+            rsi_value = float(row.get("RSI"))
+            reasons.append("RSI healthy" if 35 <= rsi_value <= 70 else "RSI stretched")
+        if float(row.get("24h %", 0) or 0) >= 0:
+            reasons.append("Positive momentum")
+        else:
+            reasons.append("Negative momentum")
+        return reasons[:4]
+
+    def row_trend(row: pd.Series) -> str:
+        if row.get("EMA 200") is not None and not pd.isna(row.get("EMA 200")):
+            return "Bullish" if row.get("Price", 0) > row.get("EMA 200") else "Bearish"
+        return "Neutral"
+
+    def ema_status(row: pd.Series) -> str:
+        if row.get("EMA 200") is None or pd.isna(row.get("EMA 200")):
+            return "N/A"
+        return "Bullish" if row.get("Price", 0) > row.get("EMA 200") else "Bearish"
+
+    def rsi_status(row: pd.Series) -> str:
+        if row.get("RSI") is None or pd.isna(row.get("RSI")):
+            return "N/A"
+        rsi_value = float(row.get("RSI"))
+        if rsi_value > 70:
+            return "Overbought"
+        if rsi_value < 30:
+            return "Oversold"
+        return "Healthy"
+
+    def macd_status(row: pd.Series) -> str:
+        if row.get("MACD") is None or pd.isna(row.get("MACD")):
+            return "N/A"
+        return "Bullish" if row.get("MACD") > 0 else "Bearish" if row.get("MACD") < 0 else "Neutral"
+
+    def volume_status(row: pd.Series) -> str:
+        if not total_volume:
+            return "N/A"
+        avg_volume = total_volume / max(tracked_count, 1)
+        return "Rising" if row.get("Volume 24h", 0) >= avg_volume else "Quiet"
+
+    def badge_status(value: str) -> str:
+        value = str(value).lower()
+        if any(term in value for term in ("bull", "healthy", "rising", "buy", "strong")):
+            return "positive"
+        if any(term in value for term in ("bear", "overbought", "oversold", "sell", "negative")):
+            return "negative"
+        return "warning"
+
+    def ai_summary(row: pd.Series) -> str:
+        trend_text = "above EMA200" if ema_status(row) == "Bullish" else "below EMA200" if ema_status(row) == "Bearish" else "without EMA200 confirmation"
+        momentum_text = "positive momentum" if float(row.get("24h %", 0) or 0) >= 0 else "negative momentum"
+        return (
+            f"{row.get('Symbol', 'Asset')} is trading {trend_text} with {momentum_text}. "
+            f"RSI remains {rsi_status(row).lower()} and MACD trend remains {macd_status(row).lower()}. "
+            f"Current signal bias remains {row.get('Signal', 'N/A')}."
+        )
+
     sorted_strength = df_master.sort_values(
         by=["AI Score", "Conf %", "24h %", "Market Cap"],
         ascending=[False, False, False, False],
@@ -2397,6 +2504,31 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
     top_symbols = top_strength["Symbol"].tolist()
     top_text = ", ".join(top_symbols[:-1]) + (f" and {top_symbols[-1]}" if len(top_symbols) > 1 else (top_symbols[0] if top_symbols else "N/A"))
     momentum_word = "positive" if momentum_score >= 60 else "negative" if momentum_score < 45 else "mixed"
+    direction_raw = (
+        momentum_score * 0.35
+        + (breadth_pct if breadth_total else 50) * 0.25
+        + ai_conviction * 0.20
+        + fg_num * 0.10
+        + ((buy_count - sell_count + signal_total) / (signal_total * 2)) * 100 * 0.10
+    )
+    direction_score = int(round(max(0, min(100, direction_raw))))
+    if direction_score >= 82:
+        direction_state = "Strong Bullish"
+    elif direction_score >= 62:
+        direction_state = "Bullish"
+    elif direction_score <= 18:
+        direction_state = "Strong Bearish"
+    elif direction_score <= 38:
+        direction_state = "Bearish"
+    else:
+        direction_state = "Neutral"
+    direction_status = "positive" if "Bullish" in direction_state else "negative" if "Bearish" in direction_state else "warning"
+    market_summary = (
+        f"Market remains {regime.lower()} despite {str(fg_cl).lower()} sentiment. "
+        f"Momentum leadership is concentrated in {top_text}."
+        if regime == "Bullish"
+        else f"Trend conditions remain {regime.lower()}. {breadth_detail}."
+    )
     market_chips = [
         ("Market Breadth", breadth_value, breadth_detail),
         ("Momentum Score", f"{momentum_score}/100", momentum_word.title()),
@@ -2412,7 +2544,15 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
     st.markdown(
         "<div class='market-intel-card'>"
         "<div class='market-intel-head'><div class='market-intel-title'>Market Intelligence</div>"
-        f"<div class='market-intel-meta'>{tracked_count} assets · 1h scan · Market Cap sort</div></div>"
+        f"<div class='market-intel-meta'>{html.escape(market_summary)}</div></div>"
+        f"<div class='direction-gauge {card_status_class(status=direction_status)}'>"
+        "<div class='direction-gauge-top'><div><div class='direction-gauge-label'>Market Direction</div>"
+        f"<div class='direction-gauge-value'>{html.escape(direction_state)}</div></div>"
+        f"<div class='market-intel-meta'>Confidence {confidence}%</div></div>"
+        "<div class='direction-track'>"
+        f"<div class='direction-marker' style='left:{direction_score}%'></div></div>"
+        "<div class='direction-scale'><span>Strong Bearish</span><span>Neutral</span><span>Strong Bullish</span></div>"
+        "</div>"
         "<div class='market-intel-body'>"
         f"<div class='market-intel-core {card_status_class(status=regime_status)}'>"
         "<div class='market-intel-label'>Market Regime</div>"
@@ -2429,12 +2569,14 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
         signal = row.get("Signal", "N/A")
         signal_cls = overview_signal_class(signal)
         status = "positive" if signal == SIGNAL_BUY else "negative" if signal == SIGNAL_SELL else "warning"
+        reasons_html = "".join(f"<span class='reason-chip'>{html.escape(reason)}</span>" for reason in row_reasons(row))
         opportunity_cards.append(
             f"<div class='opportunity-card {card_status_class(status=status)}'>"
             f"<div class='opportunity-top'>{render_coin_identity(row['Pair'], cg_data.get(row['Pair'], {}))}<span class='opportunity-rank'>#{rank}</span></div>"
             f"<div class='opportunity-mid'><div class='opportunity-score'>AI Score {int(row['AI Score'])}</div>"
             f"<span class='overview-signal-pill {signal_cls}'>{html.escape(display_signal(row))}</span></div>"
             f"<div class='opportunity-reason'>{html.escape(opportunity_reason(row))}</div>"
+            f"<div class='reason-list'>{reasons_html}</div>"
             f"</div>"
         )
     st.markdown(
@@ -2443,7 +2585,6 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
         f"<div class='opportunity-grid'>{''.join(opportunity_cards)}</div>",
         unsafe_allow_html=True,
     )
-
     movers = df_master.sort_values("24h %", ascending=False, kind="mergesort")
     top_gainers = movers.head(3)
     top_losers = movers.tail(3).sort_values("24h %", ascending=True, kind="mergesort")
@@ -2463,6 +2604,64 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
                 f"</div>"
             )
     st.markdown(f"<div class='mover-grid'>{''.join(mover_cards)}</div>", unsafe_allow_html=True)
+    coin_options = df_master["Pair"].tolist()
+    if coin_options:
+        selected_default = st.session_state.get("overview_selected_coin", coin_options[0])
+        if selected_default not in coin_options:
+            selected_default = coin_options[0]
+        selected_pair = st.selectbox(
+            "Inspect coin",
+            coin_options,
+            index=coin_options.index(selected_default),
+            key="overview_coin_inspector",
+            format_func=lambda pair: base_symbol(pair),
+        )
+        st.session_state.overview_selected_coin = selected_pair
+        selected_row = df_master.loc[df_master["Pair"] == selected_pair].iloc[0]
+        selected_cg = cg_data.get(selected_pair, {})
+        signal_cls = overview_signal_class(selected_row.get("Signal", "N/A"))
+        metric_items = [
+            ("24h Change", f"{selected_row['24h %']:+.2f}%"),
+            ("AI Score", f"{int(selected_row['AI Score'])}"),
+            ("Signal", str(selected_row.get("Signal", "N/A"))),
+            ("Confidence", "N/A" if pd.isna(selected_row.get("Conf %")) else f"{selected_row['Conf %']:.0f}%"),
+            ("Market Trend", row_trend(selected_row)),
+            ("EMA Status", ema_status(selected_row)),
+            ("RSI Status", rsi_status(selected_row)),
+            ("MACD Status", macd_status(selected_row)),
+        ]
+        metrics_html = "".join(
+            f"<div class='intel-metric'><span>{html.escape(label)}</span><strong>{html.escape(value)}</strong></div>"
+            for label, value in metric_items
+        )
+        badge_items = [
+            ("EMA200", ema_status(selected_row)),
+            ("Momentum", "Strong" if selected_row.get("AI Score", 0) >= 80 else "Mixed" if selected_row.get("AI Score", 0) >= 50 else "Weak"),
+            ("RSI", rsi_status(selected_row)),
+            ("Volume", volume_status(selected_row)),
+            ("Signal", str(selected_row.get("Signal", "N/A"))),
+        ]
+        badges_html = "".join(
+            f"<span class='smart-badge {badge_status(value)}'>{html.escape(label)} · {html.escape(str(value))}</span>"
+            for label, value in badge_items
+        )
+        logo = coin_logo_url(selected_pair, selected_cg)
+        logo_html = f"<img class='coin-logo' src='{html.escape(logo, quote=True)}' alt='{base_symbol(selected_pair)} logo'>" if logo else f"<span class='coin-logo coin-logo-fallback'>{html.escape(base_symbol(selected_pair)[:2])}</span>"
+        st.markdown(
+            "<div class='coin-intel-card'>"
+            "<div class='market-intel-head'><div class='market-intel-title'>Coin Intelligence</div>"
+            f"<div class='market-intel-meta'>Selected from Overview scanner</div></div>"
+            "<div class='coin-intel-grid'>"
+            "<div>"
+            f"<div class='coin-intel-identity'>{logo_html}<div><div class='coin-intel-symbol'>{html.escape(base_symbol(selected_pair))}</div>"
+            f"<div class='coin-intel-name'>{html.escape(str(selected_cg.get('name', selected_row.get('Name', base_symbol(selected_pair)))))} </div></div></div>"
+            f"<div class='coin-intel-price'>{fmt_price(selected_row['Price'], selected_pair)} <span class='overview-signal-pill {signal_cls}'>{html.escape(str(selected_row.get('Signal', 'N/A')))}</span></div>"
+            f"<div class='coin-intel-summary'>{html.escape(ai_summary(selected_row))}</div>"
+            "</div>"
+            f"<div><div class='intel-metrics'>{metrics_html}</div><div class='smart-badges'>{badges_html}</div></div>"
+            "</div></div>",
+            unsafe_allow_html=True,
+        )
 
     st.markdown(
         f"<div class='scanner-head'><div class='scanner-title'>Market Scanner</div>"
