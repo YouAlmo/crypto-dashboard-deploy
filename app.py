@@ -418,8 +418,270 @@ def get_theme_css(theme_name: str) -> str:
     .metric-val {{ font-variant-numeric: tabular-nums; }}
     .metric-subtitle {{ font-size: 0.74rem; color: var(--muted); margin-top: 1px; line-height: 1.28; font-weight: 550; }}
     .overview-summary-grid {{ grid-template-columns: repeat(4, minmax(210px, 1fr)); }}
+    .overview-heading {{
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0.05rem 0 0.38rem;
+    }}
+    .overview-heading-title {{ color: var(--text); font-size: clamp(1.02rem,1.35vw,1.28rem); font-weight: 900; line-height: 1.1; }}
+    .overview-heading-meta {{ color: var(--muted); font-size: 0.75rem; font-weight: 700; white-space: nowrap; }}
+    .ai-brief-card {{
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--card-bg) 94%, var(--panel-bg)), var(--card-bg));
+      box-shadow: 0 8px 20px rgba(2,6,23,0.14);
+      padding: 9px 11px;
+      margin: 0.02rem 0 0.42rem;
+    }}
+    .ai-brief-head {{ display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 5px; }}
+    .ai-brief-title {{ color: var(--text); font-size: 0.94rem; font-weight: 900; line-height: 1.1; }}
+    .ai-brief-state {{ color: var(--muted); font-size: 0.68rem; font-weight: 800; white-space: nowrap; }}
+    .ai-brief-lines {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }}
+    .ai-brief-line {{
+      color: var(--text);
+      background: color-mix(in srgb, var(--panel-bg) 52%, transparent);
+      border: 1px solid color-mix(in srgb, var(--card-border) 82%, transparent);
+      border-radius: var(--radius-sm);
+      padding: 6px 7px;
+      font-size: 0.7rem;
+      font-weight: 720;
+      line-height: 1.15;
+      min-height: 38px;
+      overflow: hidden;
+    }}
+    .compact-section-head {{ display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0.08rem 0 0.14rem; }}
+    .compact-section-title {{ color: var(--text); font-size: 0.88rem; font-weight: 900; line-height: 1.1; }}
+    .compact-section-meta {{ color: var(--muted); font-size: 0.66rem; font-weight: 750; white-space: nowrap; }}
+    .opportunity-grid {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin: 0.08rem 0 0.28rem; }}
+    .opportunity-card {{
+      --opp-accent: var(--muted);
+      position: relative;
+      min-height: 68px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      background: linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 94%, var(--table-header-bg)));
+      padding: 7px 8px;
+      overflow: hidden;
+      box-shadow: 0 8px 18px rgba(2,6,23,0.12);
+      cursor: default;
+    }}
+    .opportunity-card:hover {{ border-color: color-mix(in srgb, var(--opp-accent) 44%, var(--card-border)); background: var(--card-bg-hover); }}
+    .opportunity-card::before {{ content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--opp-accent); }}
+    .opportunity-card.status-positive {{ --opp-accent: var(--cg-green); }}
+    .opportunity-card.status-negative {{ --opp-accent: var(--cg-red); }}
+    .opportunity-card.status-warning, .opportunity-card.status-neutral {{ --opp-accent: var(--warning); }}
+    .opportunity-top {{ display: flex; align-items: center; justify-content: space-between; gap: 8px; }}
+    .opportunity-card .cg-symbol-cell {{ min-width: 0; gap: 8px; }}
+    .opportunity-card .coin-logo {{ width: 22px; height: 22px; flex-basis: 22px; }}
+    .opportunity-card .cg-name-text {{ display: none; }}
+    .opportunity-rank {{ color: var(--subtle); font-size: 0.58rem; font-weight: 900; }}
+    .opportunity-mid {{ display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 4px; }}
+    .opportunity-score {{ color: var(--text); font-size: 0.84rem; font-weight: 950; font-variant-numeric: tabular-nums; }}
+    .overview-signal-pill {{ border-radius: 999px; border: 1px solid var(--card-border); padding: 2px 6px; font-size: 0.56rem; font-weight: 950; white-space: nowrap; }}
+    .overview-signal-pill.buy {{ color: var(--cg-green); background: var(--cg-pos-weak); }}
+    .overview-signal-pill.sell {{ color: var(--cg-red); background: var(--cg-neg-weak); }}
+    .overview-signal-pill.hold {{ color: var(--warning); background: color-mix(in srgb, var(--warning) 14%, transparent); }}
+    .opportunity-reason {{ color: var(--muted); font-size: 0.62rem; font-weight: 700; margin-top: 3px; line-height: 1.08; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .scanner-summary {{ display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin: 0.01rem 0 0.12rem; }}
+    .scanner-summary span {{ color: var(--text); background: color-mix(in srgb, var(--panel-bg) 62%, transparent); border: 1px solid var(--card-border); border-radius: 999px; padding: 3px 7px; font-size: 0.68rem; font-weight: 850; white-space: nowrap; }}
+    .market-intel-card {{
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--card-bg) 94%, var(--panel-bg)), var(--card-bg));
+      box-shadow: 0 9px 22px rgba(2,6,23,0.14);
+      padding: 9px 11px;
+      margin: 0.02rem 0 0.36rem;
+    }}
+    .market-intel-head {{ display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 7px; }}
+    .market-intel-title {{ color: var(--text); font-size: 0.98rem; font-weight: 950; line-height: 1.1; }}
+    .market-intel-meta {{ color: var(--muted); font-size: 0.68rem; font-weight: 800; white-space: nowrap; }}
+    .market-intel-body {{ display: grid; grid-template-columns: minmax(170px, 0.42fr) minmax(420px, 1.58fr); gap: 9px; align-items: stretch; }}
+    .market-intel-core {{
+      --intel-accent: var(--warning);
+      position: relative;
+      border: 1px solid color-mix(in srgb, var(--intel-accent) 28%, var(--card-border));
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--panel-bg) 52%, transparent);
+      padding: 8px 10px 8px 12px;
+      min-height: 66px;
+      overflow: hidden;
+    }}
+    .market-intel-core::before {{ content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--intel-accent); }}
+    .market-intel-core.status-positive {{ --intel-accent: var(--cg-green); }}
+    .market-intel-core.status-negative {{ --intel-accent: var(--cg-red); }}
+    .market-intel-core.status-warning, .market-intel-core.status-neutral {{ --intel-accent: var(--warning); }}
+    .market-intel-label {{ color: var(--muted); font-size: 0.56rem; font-weight: 900; text-transform: uppercase; line-height: 1.05; }}
+    .market-intel-value {{ color: var(--intel-accent); font-size: clamp(1.08rem,1.45vw,1.36rem); font-weight: 950; line-height: 1.02; margin-top: 4px; }}
+    .market-intel-sub {{ color: var(--text); font-size: 0.72rem; font-weight: 820; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .market-intel-chips {{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }}
+    .market-intel-chip {{
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--panel-bg) 54%, transparent);
+      padding: 7px 8px;
+      min-height: 66px;
+      overflow: hidden;
+    }}
+    .market-intel-chip span {{ display: block; color: var(--subtle); font-size: 0.54rem; font-weight: 900; text-transform: uppercase; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .market-intel-chip strong {{ display: block; color: var(--text); font-size: 0.82rem; font-weight: 950; line-height: 1.05; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .market-intel-chip em {{ display: block; color: var(--muted); font-size: 0.62rem; font-style: normal; font-weight: 720; line-height: 1.08; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .direction-gauge {{
+      margin: 0 0 8px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--panel-bg) 48%, transparent);
+      padding: 7px 8px;
+    }}
+    .direction-gauge-top {{ display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 6px; }}
+    .direction-gauge-label {{ color: var(--muted); font-size: 0.56rem; font-weight: 900; text-transform: uppercase; }}
+    .direction-gauge-value {{ color: var(--text); font-size: 0.86rem; font-weight: 950; }}
+    .direction-track {{ position: relative; height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--cg-red), var(--warning), var(--cg-green)); overflow: hidden; }}
+    .direction-marker {{ position: absolute; top: -3px; width: 4px; height: 14px; border-radius: 999px; background: var(--text); box-shadow: 0 0 0 2px color-mix(in srgb, var(--app-bg) 90%, transparent); transform: translateX(-2px); }}
+    .direction-scale {{ display: flex; justify-content: space-between; color: var(--subtle); font-size: 0.52rem; font-weight: 800; margin-top: 5px; }}
+    .reason-list {{ display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }}
+    .reason-chip {{ color: var(--muted); background: color-mix(in srgb, var(--panel-bg) 62%, transparent); border: 1px solid var(--card-border); border-radius: 999px; padding: 2px 6px; font-size: 0.55rem; font-weight: 800; white-space: nowrap; }}
+    .coin-intel-card {{
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--card-bg) 94%, var(--panel-bg)), var(--card-bg));
+      box-shadow: 0 7px 18px rgba(2,6,23,0.12);
+      padding: 7px 9px;
+      margin: 0.04rem 0 0.14rem;
+    }}
+    .coin-intel-grid {{ display: grid; grid-template-columns: minmax(180px, 0.4fr) minmax(420px, 1.6fr); gap: 7px; align-items: stretch; }}
+    .coin-intel-identity {{ display: flex; align-items: center; gap: 8px; min-width: 0; }}
+    .coin-intel-identity .coin-logo {{ width: 26px; height: 26px; flex-basis: 26px; }}
+    .coin-intel-symbol {{ color: var(--text); font-size: 0.94rem; font-weight: 950; line-height: 1.05; }}
+    .coin-intel-name {{ color: var(--muted); font-size: 0.66rem; font-weight: 750; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .coin-intel-price {{ color: var(--text); font-size: 0.8rem; font-weight: 900; margin-top: 5px; }}
+    .coin-intel-summary {{ color: var(--muted); font-size: 0.68rem; font-weight: 720; line-height: 1.18; margin-top: 5px; }}
+    .intel-metrics {{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }}
+    .intel-metric {{ border: 1px solid var(--card-border); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--panel-bg) 54%, transparent); padding: 5px 6px; min-height: 42px; overflow: hidden; }}
+    .intel-metric span {{ display: block; color: var(--subtle); font-size: 0.52rem; font-weight: 900; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .intel-metric strong {{ display: block; color: var(--text); font-size: 0.76rem; font-weight: 920; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .smart-badges {{ display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }}
+    .smart-badge {{ border: 1px solid var(--card-border); border-radius: 999px; background: color-mix(in srgb, var(--panel-bg) 60%, transparent); padding: 2px 6px; font-size: 0.55rem; font-weight: 900; color: var(--text); white-space: nowrap; }}
+    .smart-badge.positive {{ color: var(--cg-green); background: var(--cg-pos-weak); }}
+    .smart-badge.negative {{ color: var(--cg-red); background: var(--cg-neg-weak); }}
+    .smart-badge.warning {{ color: var(--warning); background: color-mix(in srgb, var(--warning) 14%, transparent); }}
+    .market-status-strip {{
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0.12rem 0 0.48rem;
+    }}
+    .market-status-item {{
+      --strip-accent: var(--muted);
+      position: relative;
+      min-height: 56px;
+      padding: 7px 9px 7px 10px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--card-bg) 88%, var(--panel-bg));
+      box-shadow: 0 6px 14px rgba(2,6,23,0.12);
+      overflow: hidden;
+    }}
+    .market-status-item::before {{
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 3px;
+      background: var(--strip-accent);
+    }}
+    .market-status-item.status-positive {{ --strip-accent: var(--cg-green); }}
+    .market-status-item.status-negative {{ --strip-accent: var(--cg-red); }}
+    .market-status-item.status-warning, .market-status-item.status-neutral {{ --strip-accent: var(--warning); }}
+    .market-status-label {{ color: var(--muted); font-size: 0.58rem; font-weight: 850; text-transform: uppercase; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .market-status-value {{ color: var(--text); font-size: clamp(0.9rem,1.02vw,1.05rem); font-weight: 900; line-height: 1.05; margin-top: 5px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }}
+    .market-status-detail {{ color: var(--subtle); font-size: 0.64rem; font-weight: 650; line-height: 1.12; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .regime-card {{
+      --regime-accent: var(--warning);
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(170px, 0.58fr) minmax(360px, 1.42fr);
+      gap: 10px;
+      align-items: center;
+      margin: 0.18rem 0 0.5rem;
+      padding: 9px 11px 9px 13px;
+      border: 1px solid color-mix(in srgb, var(--regime-accent) 28%, var(--card-border));
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--regime-accent) 9%, transparent), transparent 36%), linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 94%, var(--table-header-bg)));
+      box-shadow: 0 10px 22px rgba(2,6,23,0.14);
+      overflow: hidden;
+    }}
+    .regime-card::before {{
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: var(--regime-accent);
+    }}
+    .regime-card.status-positive {{ --regime-accent: var(--cg-green); }}
+    .regime-card.status-negative {{ --regime-accent: var(--cg-red); }}
+    .regime-card.status-warning, .regime-card.status-neutral {{ --regime-accent: var(--warning); }}
+    .regime-label {{ color: var(--muted); font-size: 0.58rem; font-weight: 850; text-transform: uppercase; }}
+    .regime-value {{ color: var(--regime-accent); font-size: clamp(1.05rem,1.42vw,1.34rem); font-weight: 950; line-height: 1.02; margin-top: 3px; }}
+    .regime-confidence {{ color: var(--text); font-size: 0.72rem; font-weight: 800; margin-top: 4px; }}
+    .regime-drivers {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }}
+    .regime-driver {{
+      min-height: 44px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--panel-bg) 56%, transparent);
+      padding: 7px 8px;
+      color: var(--text);
+      font-size: 0.72rem;
+      font-weight: 760;
+      line-height: 1.16;
+      overflow: hidden;
+    }}
+    .regime-driver span {{ display: block; color: var(--subtle); font-size: 0.55rem; font-weight: 850; text-transform: uppercase; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
     .indicator-grid {{ grid-template-columns: repeat(auto-fit, minmax(188px, 1fr)); gap: 16px; margin-top: 0.7rem; }}
     .indicator-grid .dashboard-card {{ min-height: 132px; align-items: center; justify-content: center; text-align: center; }}
+    .tech-command-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0.06rem 0 0.36rem; }}
+    .tech-command-title {{ color:var(--text); font-size:clamp(1.02rem,1.35vw,1.28rem); font-weight:950; line-height:1.1; }}
+    .tech-command-meta {{ color:var(--muted); font-size:0.72rem; font-weight:780; white-space:nowrap; }}
+    .tech-summary-card {{ border:1px solid var(--card-border); border-radius:var(--radius-md); background:linear-gradient(180deg,color-mix(in srgb,var(--card-bg) 94%,var(--panel-bg)),var(--card-bg)); box-shadow:0 9px 22px rgba(2,6,23,0.14); padding:9px 11px; margin:0.02rem 0 0.42rem; }}
+    .tech-summary-grid {{ display:grid; grid-template-columns:minmax(185px,0.42fr) minmax(420px,1.58fr); gap:9px; align-items:stretch; }}
+    .tech-bias-core {{ --tech-accent:var(--warning); position:relative; border:1px solid color-mix(in srgb,var(--tech-accent) 30%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 52%,transparent); padding:8px 10px 8px 12px; overflow:hidden; }}
+    .tech-bias-core::before {{ content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--tech-accent); }}
+    .tech-bias-core.status-positive {{ --tech-accent:var(--cg-green); }}
+    .tech-bias-core.status-negative {{ --tech-accent:var(--cg-red); }}
+    .tech-bias-core.status-warning, .tech-bias-core.status-neutral {{ --tech-accent:var(--warning); }}
+    .tech-label {{ color:var(--muted); font-size:0.56rem; font-weight:900; text-transform:uppercase; line-height:1.05; }}
+    .tech-bias-value {{ color:var(--tech-accent); font-size:clamp(1.08rem,1.45vw,1.36rem); font-weight:950; line-height:1.02; margin-top:4px; }}
+    .tech-bias-sub {{ color:var(--text); font-size:0.72rem; font-weight:820; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-gauge {{ margin-top:8px; }}
+    .tech-gauge-track {{ position:relative; height:8px; border-radius:999px; background:linear-gradient(90deg,var(--cg-red),var(--warning),var(--cg-green)); overflow:hidden; }}
+    .tech-gauge-marker {{ position:absolute; top:-3px; width:4px; height:14px; border-radius:999px; background:var(--text); box-shadow:0 0 0 2px color-mix(in srgb,var(--app-bg) 90%,transparent); transform:translateX(-2px); }}
+    .tech-gauge-scale {{ display:flex; justify-content:space-between; color:var(--subtle); font-size:0.52rem; font-weight:800; margin-top:5px; }}
+    .tech-health-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }}
+    .tech-health-chip {{ border:1px solid var(--card-border); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 54%,transparent); padding:7px 8px; min-height:58px; overflow:hidden; }}
+    .tech-health-chip span {{ display:block; color:var(--subtle); font-size:0.54rem; font-weight:900; text-transform:uppercase; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-health-chip strong {{ display:block; color:var(--text); font-size:0.82rem; font-weight:950; line-height:1.05; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-health-chip em {{ display:block; color:var(--muted); font-size:0.62rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-reasons {{ display:flex; flex-wrap:wrap; gap:5px; margin:0.1rem 0 0.45rem; }}
+    .tech-reason-chip {{ color:var(--text); background:color-mix(in srgb,var(--panel-bg) 62%,transparent); border:1px solid var(--card-border); border-radius:999px; padding:3px 8px; font-size:0.66rem; font-weight:850; white-space:nowrap; }}
+    .indicator-group {{ margin:0.24rem 0 0.58rem; }}
+    .indicator-group-head {{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 0.2rem; }}
+    .indicator-group-title {{ color:var(--text); font-size:0.86rem; font-weight:950; line-height:1.1; }}
+    .indicator-group-meta {{ color:var(--muted); font-size:0.64rem; font-weight:750; white-space:nowrap; }}
+    .indicator-group .indicator-grid {{ grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:8px; margin:0; }}
+    .indicator-group .dashboard-card {{ min-height:92px; padding:9px 10px !important; }}
+    .tech-chart-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin:0.18rem 0 0.1rem; }}
+    .tech-chart-title {{ color:var(--text); font-size:1rem; font-weight:950; line-height:1.1; }}
+    .tech-chart-meta {{ color:var(--muted); font-size:0.66rem; font-weight:760; }}
+    .tech-detail-grid {{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:0.45rem; }}
+    .tech-detail-card {{ border:1px solid var(--card-border); border-radius:var(--radius-md); background:linear-gradient(180deg,color-mix(in srgb,var(--card-bg) 94%,var(--panel-bg)),var(--card-bg)); box-shadow:0 8px 20px rgba(2,6,23,0.12); padding:10px 11px; }}
+    .tech-detail-title {{ color:var(--text); font-size:0.98rem; font-weight:950; margin-bottom:8px; }}
+    .tech-metric-grid {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }}
+    .tech-mini-metric {{ border:1px solid var(--card-border); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 54%,transparent); padding:6px 7px; min-height:48px; overflow:hidden; }}
+    .tech-mini-metric span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-mini-metric strong {{ display:block; color:var(--text); font-size:0.76rem; font-weight:920; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-level-list {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px; margin-top:7px; }}
+    .tech-level {{ color:var(--muted); border:1px solid var(--card-border); border-radius:999px; padding:3px 6px; font-size:0.58rem; font-weight:850; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
     .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); white-space: nowrap; }}
     .metric-pill.buy {{ background: var(--cg-pos-weak); color: var(--cg-green); }}
     .metric-pill.sell {{ background: var(--cg-neg-weak); color: var(--cg-red); }}
@@ -622,26 +884,54 @@ def get_theme_css(theme_name: str) -> str:
     }}
     .mover-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin: 0.55rem 0 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+      gap: 7px;
+      margin: 0.14rem 0 0.3rem;
     }}
     .mover-card {{
-      min-height: 0 !important;
-      padding: 10px 12px !important;
-      border-radius: var(--radius-md) !important;
+      min-height: 72px !important;
+      padding: 8px 9px !important;
+      border-radius: var(--radius-sm) !important;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      align-items: stretch;
       justify-content: space-between;
-      gap: 12px;
+      gap: 5px;
       overflow: hidden !important;
     }}
-    .mover-card .metric-label {{ font-size: 0.64rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
-    .mover-card .metric-val {{ font-size: clamp(1rem,1.25vw,1.22rem) !important; margin-top: 2px !important; }}
-    .mover-card .metric-subtext {{ color: var(--muted); font-size: 0.74rem; text-align: right; font-weight: 650; }}
-    .mover-card .cg-symbol-cell {{ min-width: 0; gap: 8px; }}
-    .mover-card .coin-logo {{ width: 22px; height: 22px; flex-basis: 22px; }}
+    .mover-topline {{ display: flex; align-items: center; justify-content: space-between; gap: 7px; min-width: 0; }}
+    .mover-label {{ font-size: 0.52rem; font-weight: 900; text-transform: uppercase; border-radius: 999px; padding: 2px 6px; border: 1px solid var(--card-border); white-space: nowrap; }}
+    .status-positive .mover-label {{ color: var(--cg-green); background: var(--cg-pos-weak); }}
+    .status-negative .mover-label {{ color: var(--cg-red); background: var(--cg-neg-weak); }}
+    .mover-metric-row {{ display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }}
+    .mover-card .metric-val {{ font-size: clamp(0.95rem,1.22vw,1.12rem) !important; margin-top: 0 !important; }}
+    .mover-card .metric-subtext {{ color: var(--muted); font-size: 0.66rem; font-weight: 650; white-space: nowrap; }}
+    .mover-card .cg-symbol-cell {{ min-width: 0; gap: 7px; }}
+    .mover-card .coin-logo {{ width: 19px; height: 19px; flex-basis: 19px; }}
     .mover-card .cg-name-text {{ display: none; }}
+    .mover-card:hover {{ border-color: color-mix(in srgb, var(--card-accent) 44%, var(--card-border)); }}
+    .scanner-head {{ display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0.02rem 0 0.08rem; }}
+    .scanner-title {{ color: var(--text); font-size: 0.95rem; font-weight: 900; line-height: 1.1; }}
+    .scanner-status-line {{
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 650;
+      margin: 0;
+    }}
+    .scanner-status-line span {{
+      color: var(--text);
+      background: color-mix(in srgb, var(--panel-bg) 62%, transparent);
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      padding: 3px 7px;
+      font-weight: 800;
+      white-space: nowrap;
+    }}
     #MainMenu,
     footer,
     div[data-testid="stStatusWidget"],
@@ -874,6 +1164,28 @@ def get_theme_css(theme_name: str) -> str:
       .block-container {{ padding-inline: 0.75rem !important; }}
       .dashboard-grid {{ grid-template-columns: 1fr; }}
       .overview-summary-grid, .indicator-grid {{ grid-template-columns: 1fr; }}
+      .tech-command-head, .indicator-group-head, .tech-chart-head {{ align-items:flex-start; flex-direction:column; gap:3px; }}
+      .tech-command-meta, .indicator-group-meta, .tech-chart-meta {{ white-space:normal; }}
+      .tech-summary-grid, .tech-detail-grid {{ grid-template-columns:1fr; }}
+      .tech-health-grid, .tech-metric-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
+      .tech-level-list {{ grid-template-columns:1fr; }}
+      .overview-heading {{ align-items: flex-start; flex-direction: column; gap: 3px; }}
+      .overview-heading-meta {{ white-space: normal; }}
+      .ai-brief-head, .compact-section-head {{ align-items: flex-start; flex-direction: column; gap: 3px; }}
+      .ai-brief-state, .compact-section-meta {{ white-space: normal; }}
+      .ai-brief-lines {{ grid-template-columns: 1fr; }}
+      .market-intel-head {{ align-items: flex-start; flex-direction: column; gap: 3px; }}
+      .market-intel-meta {{ white-space: normal; }}
+      .market-intel-body {{ grid-template-columns: 1fr; }}
+      .market-intel-chips {{ grid-template-columns: 1fr; }}
+      .coin-intel-grid {{ grid-template-columns: 1fr; }}
+      .intel-metrics {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
+      .market-status-strip {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
+      .opportunity-grid {{ grid-template-columns: 1fr; }}
+      .regime-card {{ grid-template-columns: 1fr; }}
+      .regime-drivers {{ grid-template-columns: 1fr; }}
+      .scanner-head {{ align-items: flex-start; flex-direction: column; gap: 5px; }}
+      .scanner-status-line {{ justify-content: flex-start; }}
       div[role="radiogroup"] {{ gap: 6px; max-width: 100%; }}
       div[role="radiogroup"] label {{ flex: 0 0 auto; justify-content: center; }}
       .section-subtitle {{ font-size: 0.86rem; }}
@@ -896,7 +1208,7 @@ def render_app_header(theme_name: str) -> None:
             <div class='brand-mark'>SS</div>
             <div>
                 <h1>SuperSignal</h1>
-                <p>Institutional-grade crypto intelligence platform</p>
+                <p>Markets · Signals · Risk</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1989,100 +2301,60 @@ def render_sidebar(watchlist_symbols: list):
 
 # ── Tab 1: Overview ───────────────────────────────────────────────────────────
 
-def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg):
-    st.markdown(render_section_header(
-        "Market Overview",
-        "Premium crypto market pulse with institutional-grade sentiment, movers, and AI signal insights."
-    ), unsafe_allow_html=True)
-
-    all_prices = []
-    all_changes = []
-    total_mcap = 0
-    for sym in watchlist_symbols:
-        t = tickers.get(sym, {})
-        cg = cg_data.get(sym, {})
-        price = t.get("last", 0) or cg.get("current_price", 0)
-        change = t.get("percentage", 0) or cg.get("price_change_percentage_24h", 0)
-        cap = cg.get("market_cap", 0)
-        all_prices.append(price)
-        all_changes.append(change)
-        total_mcap += cap
-
-    avg_change = np.mean(all_changes) if all_changes else 0
-    buy_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_BUY)
-    sell_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_SELL)
-    hold_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_HOLD)
-    avg_conf = np.mean([sig.get("confidence", 0.0) for sig in signal_map.values()]) if signal_map else 0.0
-
-    mover_data = []
-    for sym in watchlist_symbols:
-        t = tickers.get(sym, {})
-        cg = cg_data.get(sym, {})
-        pct = t.get("percentage", 0) or cg.get("price_change_percentage_24h", 0)
-        mover_data.append((sym, pct, t.get("last", 0) or cg.get("current_price", 0)))
-    movers = sorted(mover_data, key=lambda x: x[1], reverse=True)
-    top_gainers = movers[:3]
-    top_losers = movers[-3:][::-1]
-
-    fg_val = fg.get("value", 50)
-    fg_c = get_fg_color(fg_val)
-    fg_cl = fg.get("classification", "Neutral")
-    ai_pulse_status = "positive" if buy_count > sell_count else "negative" if sell_count > buy_count else "warning"
-    fg_status = "negative" if fg_val < 25 else "warning" if fg_val < 55 else "positive" if fg_val >= 55 else "neutral"
-    st.markdown(
-        "<div class='dashboard-grid overview-summary-grid'>"
-        + render_dashboard_card(
-            "Total Watchlist Market Cap",
-            format_large_number(total_mcap),
-            "Aggregate value across tracked crypto assets.",
-            status="muted",
-        )
-        + render_dashboard_card(
-            "Avg 24h Change",
-            f"{avg_change:+.2f}%",
-            "Weighted performance across selected coins.",
-            status="positive" if avg_change > 0 else "negative" if avg_change < 0 else "neutral",
-        )
-        + render_dashboard_card(
-            "AI Market Pulse",
-            f"{buy_count} BUY / {sell_count} SELL",
-            f"{hold_count} Neutral · {avg_conf*100:.0f}% avg confidence",
-            status=ai_pulse_status,
-        )
-        + render_dashboard_card(
-            "Fear & Greed",
-            f"{fg_val}",
-            f"{get_fg_emoji(fg_cl)} {fg_cl}",
-            accent=fg_c,
-            status=fg_status,
-        )
-        + "</div>",
-        unsafe_allow_html=True,
+def render_market_status_item(title: str, value: str, detail: str = "", status: str = "muted") -> str:
+    card_class = card_status_class(status=status, value=value, label=title)
+    return (
+        f"<div class='market-status-item {card_class}'>"
+        f"<div class='market-status-label'>{html.escape(str(title))}</div>"
+        f"<div class='market-status-value'>{html.escape(str(value))}</div>"
+        f"<div class='market-status-detail'>{html.escape(str(detail))}</div>"
+        f"</div>"
     )
 
-    mover_cards = []
-    for sym, pct, price in top_gainers:
-        mover_cards.append(
-            f"<div class='dashboard-card mover-card status-positive'>"
-            f"<div><div class='metric-label'>{render_coin_identity(sym, cg_data.get(sym, {}))} Gainer</div>"
-            f"<div class='metric-val' style='color:var(--success)'>{pct:+.2f}%</div></div>"
-            f"<div class='metric-subtext'>{fmt_price(price, sym)}</div>"
-            f"</div>"
-        )
-    for sym, pct, price in top_losers:
-        mover_cards.append(
-            f"<div class='dashboard-card mover-card status-negative'>"
-            f"<div><div class='metric-label'>{render_coin_identity(sym, cg_data.get(sym, {}))} Loser</div>"
-            f"<div class='metric-val' style='color:var(--danger)'>{pct:+.2f}%</div></div>"
-            f"<div class='metric-subtext'>{fmt_price(price, sym)}</div>"
-            f"</div>"
-        )
-    st.markdown(f"<div class='mover-grid'>{''.join(mover_cards)}</div>", unsafe_allow_html=True)
 
-    st.markdown("### 📋 Market Scanner")
-    st.caption(f"{len(watchlist_symbols)} coins · sorted by Market Cap · indicators on 200-candle 1h OHLCV")
+def overview_ai_score(pct, rsi, macd, ema9, ema21, ema50, ema200, signal) -> int:
+    score = 50.0
+    try:
+        pct_value = float(pct or 0)
+        score += max(min(pct_value, 10), -10) * 1.4
+    except (TypeError, ValueError):
+        pass
 
+    if rsi is not None and not pd.isna(rsi):
+        rsi_value = float(rsi)
+        if 45 <= rsi_value <= 60:
+            score += 8
+        elif 60 < rsi_value <= 70:
+            score += 5
+        elif 30 <= rsi_value < 45:
+            score += 3
+        elif rsi_value > 70:
+            score -= 6
+        else:
+            score -= 4
+
+    if macd is not None and not pd.isna(macd):
+        macd_value = float(macd)
+        score += 8 if macd_value > 0 else -8 if macd_value < 0 else 0
+
+    if ema9 and ema21:
+        score += 7 if float(ema9) > float(ema21) else -7
+    if ema50 and ema200:
+        score += 7 if float(ema50) > float(ema200) else -7
+
+    if signal == SIGNAL_BUY:
+        score += 18
+    elif signal == SIGNAL_SELL:
+        score -= 18
+
+    return int(round(max(0, min(100, score))))
+
+
+def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg):
     rows = []
+    total_mcap = 0.0
+    total_volume = 0.0
+    all_changes = []
     for sym in watchlist_symbols:
         t       = tickers.get(sym, {})
         cg      = cg_data.get(sym, {})
@@ -2093,16 +2365,24 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
         pct   = t.get("percentage", 0) or cg.get("price_change_percentage_24h", 0)
         vol   = t.get("quoteVolume", 0) or cg.get("total_volume", 0)
         mcap  = cg.get("market_cap", 0)
-        sig   = sig_res.get("signal", "—")
+        sig   = sig_res.get("signal", "N/A")
         conf  = sig_res.get("confidence", 0.0)
 
         ema9  = ind.get("ema_9", 0)
         ema21 = ind.get("ema_21", 0)
+        ema50 = ind.get("ema_50")
+        ema200 = ind.get("ema_200")
+        rsi = ind.get("rsi")
+        macd = ind.get("macd")
         cross = (
-            "🟢 Bull X" if ind.get("ema_bullish_cross")
-            else "🔴 Bear X" if ind.get("ema_bearish_cross")
-            else ("↑" if ind.get("ema9_above_ema21") else "↓")
+            "Bull X" if ind.get("ema_bullish_cross")
+            else "Bear X" if ind.get("ema_bearish_cross")
+            else ("Above" if ind.get("ema9_above_ema21") else "Below")
         )
+        ai_score = overview_ai_score(pct, rsi, macd, ema9, ema21, ema50, ema200, sig)
+        total_mcap += float(mcap or 0)
+        total_volume += float(vol or 0)
+        all_changes.append(float(pct or 0))
         rows.append({
             "Logo":       coin_logo_url(sym, cg),
             "Symbol":     base_symbol(sym),
@@ -2112,23 +2392,362 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
             "24h %":      float(pct or 0),
             "Market Cap": float(mcap or 0),
             "Volume 24h": float(vol or 0),
-            "RSI":        float(ind.get("rsi")) if ind.get("rsi") is not None else None,
-            "MACD":       float(ind.get("macd")) if ind.get("macd") is not None else None,
+            "RSI":        float(rsi) if rsi is not None else None,
+            "MACD":       float(macd) if macd is not None else None,
             "EMA 9":      float(ema9) if ema9 else None,
             "EMA 21":     float(ema21) if ema21 else None,
-            "EMA 50":     float(ind.get("ema_50")) if ind.get("ema_50") else None,
-            "EMA 200":    float(ind.get("ema_200")) if ind.get("ema_200") else None,
+            "EMA 50":     float(ema50) if ema50 else None,
+            "EMA 200":    float(ema200) if ema200 else None,
             "Cross":      cross,
             "Signal":     sig,
+            "AI Score":   ai_score,
             "Conf %":     float(conf * 100) if conf else None,
         })
 
-    df_table = pd.DataFrame(rows)
-    search_query = st.text_input(
-        "Search/filter by symbol",
-        placeholder="Search BTC, ETH, Solana...",
-        key="market_scanner_search",
-    ).strip().lower()
+    df_master = pd.DataFrame(rows).sort_values("Market Cap", ascending=False, kind="mergesort")
+    tracked_count = len(watchlist_symbols)
+    avg_change = float(np.mean(all_changes)) if all_changes else 0.0
+    buy_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_BUY)
+    sell_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_SELL)
+    hold_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_HOLD)
+    signal_total = max(buy_count + sell_count + hold_count, 1)
+    avg_conf = float(np.mean([sig.get("confidence", 0.0) for sig in signal_map.values()])) if signal_map else 0.0
+    ai_conviction = int(round(avg_conf * 100))
+
+    rsi_values = [float(ind.get("rsi")) for ind in ind_map.values() if ind.get("rsi") is not None]
+    avg_rsi = float(np.mean(rsi_values)) if rsi_values else None
+    macd_values = [float(ind.get("macd")) for ind in ind_map.values() if ind.get("macd") is not None]
+    avg_macd = float(np.mean(macd_values)) if macd_values else None
+    ai_scores = df_master["AI Score"].dropna().astype(float).tolist() if "AI Score" in df_master else []
+    momentum_score = int(round(float(np.mean(ai_scores)))) if ai_scores else 50
+
+    ema200_ready = df_master.dropna(subset=["EMA 200"]) if "EMA 200" in df_master else pd.DataFrame()
+    above_ema200 = int((ema200_ready["Price"] > ema200_ready["EMA 200"]).sum()) if not ema200_ready.empty else 0
+    breadth_total = int(len(ema200_ready))
+    breadth_pct = int(round(above_ema200 / breadth_total * 100)) if breadth_total else 0
+    breadth_value = f"{breadth_pct}%" if breadth_total else "N/A"
+    breadth_detail = f"{above_ema200}/{breadth_total} above EMA200" if breadth_total else "EMA200 unavailable"
+
+    fg_val = fg.get("value", 50)
+    try:
+        fg_num = int(fg_val)
+    except (TypeError, ValueError):
+        fg_num = 50
+    fg_cl = fg.get("classification", "Neutral")
+
+    regime_points = 0
+    regime_points += 1 if avg_change > 0.25 else -1 if avg_change < -0.25 else 0
+    regime_points += 1 if buy_count > sell_count else -1 if sell_count > buy_count else 0
+    regime_points += 1 if fg_num >= 55 else -1 if fg_num < 35 else 0
+    if avg_rsi is not None:
+        regime_points += 1 if 45 <= avg_rsi <= 65 else -1 if avg_rsi > 72 or avg_rsi < 28 else 0
+    if avg_macd is not None:
+        regime_points += 1 if avg_macd > 0 else -1 if avg_macd < 0 else 0
+
+    regime = "Bullish" if regime_points >= 2 else "Bearish" if regime_points <= -2 else "Neutral"
+    regime_status = "positive" if regime == "Bullish" else "negative" if regime == "Bearish" else "warning"
+    dominance_edge = abs(buy_count - sell_count) / signal_total
+    confidence = int(round(min(95, max(45, 50 + abs(regime_points) * 8 + dominance_edge * 22 + avg_conf * 18))))
+    risk_score = 0
+    risk_score += 2 if momentum_score < 40 else 1 if momentum_score < 55 else 0
+    risk_score += 2 if breadth_total and breadth_pct < 35 else 1 if breadth_total and breadth_pct < 50 else 0
+    risk_score += 2 if fg_num < 25 else 1 if fg_num < 40 else 0
+    risk_score += 1 if sell_count > buy_count else 0
+    risk_level = "High" if risk_score >= 4 else "Low" if risk_score == 0 and momentum_score >= 62 and (not breadth_total or breadth_pct >= 55) else "Moderate"
+    risk_status = "negative" if risk_level == "High" else "positive" if risk_level == "Low" else "warning"
+
+    def overview_signal_class(signal: str) -> str:
+        return "buy" if signal == SIGNAL_BUY else "sell" if signal == SIGNAL_SELL else "hold"
+
+    def display_signal(row: pd.Series) -> str:
+        signal = row.get("Signal", "N/A")
+        score = float(row.get("AI Score", 0) or 0)
+        if signal == SIGNAL_BUY and score >= 85:
+            return "Strong Buy"
+        if signal == SIGNAL_SELL and score <= 30:
+            return "Strong Sell"
+        return str(signal).title() if signal in {SIGNAL_BUY, SIGNAL_SELL, SIGNAL_HOLD} else "N/A"
+
+    def opportunity_reason(row: pd.Series) -> str:
+        if row.get("Signal") == SIGNAL_BUY and row.get("EMA 50") and row.get("EMA 200") and row.get("EMA 50") > row.get("EMA 200"):
+            return "Momentum + EMA alignment"
+        if float(row.get("24h %", 0) or 0) > max(avg_change, 0):
+            return "High relative strength"
+        if row.get("MACD") is not None and not pd.isna(row.get("MACD")) and row.get("MACD") > 0:
+            return "Positive MACD momentum"
+        if row.get("Signal") == SIGNAL_BUY:
+            return "Signal engine accumulation"
+        return "Balanced risk-adjusted setup"
+
+    def row_reasons(row: pd.Series) -> list[str]:
+        reasons = []
+        if row.get("EMA 200") is not None and not pd.isna(row.get("EMA 200")):
+            reasons.append("Above EMA200" if row.get("Price", 0) > row.get("EMA 200") else "Below EMA200")
+        if row.get("MACD") is not None and not pd.isna(row.get("MACD")):
+            reasons.append("Bullish MACD" if row.get("MACD") > 0 else "Bearish MACD")
+        if row.get("RSI") is not None and not pd.isna(row.get("RSI")):
+            rsi_value = float(row.get("RSI"))
+            reasons.append("RSI healthy" if 35 <= rsi_value <= 70 else "RSI stretched")
+        if float(row.get("24h %", 0) or 0) >= 0:
+            reasons.append("Positive momentum")
+        else:
+            reasons.append("Negative momentum")
+        return reasons[:4]
+
+    def row_trend(row: pd.Series) -> str:
+        if row.get("EMA 200") is not None and not pd.isna(row.get("EMA 200")):
+            return "Bullish" if row.get("Price", 0) > row.get("EMA 200") else "Bearish"
+        return "Neutral"
+
+    def ema_status(row: pd.Series) -> str:
+        if row.get("EMA 200") is None or pd.isna(row.get("EMA 200")):
+            return "N/A"
+        return "Bullish" if row.get("Price", 0) > row.get("EMA 200") else "Bearish"
+
+    def rsi_status(row: pd.Series) -> str:
+        if row.get("RSI") is None or pd.isna(row.get("RSI")):
+            return "N/A"
+        rsi_value = float(row.get("RSI"))
+        if rsi_value > 70:
+            return "Overbought"
+        if rsi_value < 30:
+            return "Oversold"
+        return "Healthy"
+
+    def macd_status(row: pd.Series) -> str:
+        if row.get("MACD") is None or pd.isna(row.get("MACD")):
+            return "N/A"
+        return "Bullish" if row.get("MACD") > 0 else "Bearish" if row.get("MACD") < 0 else "Neutral"
+
+    def volume_status(row: pd.Series) -> str:
+        if not total_volume:
+            return "N/A"
+        avg_volume = total_volume / max(tracked_count, 1)
+        return "Rising" if row.get("Volume 24h", 0) >= avg_volume else "Quiet"
+
+    def badge_status(value: str) -> str:
+        value = str(value).lower()
+        if any(term in value for term in ("bull", "healthy", "rising", "buy", "strong")):
+            return "positive"
+        if any(term in value for term in ("bear", "overbought", "oversold", "sell", "negative")):
+            return "negative"
+        return "warning"
+
+    def ai_summary(row: pd.Series) -> str:
+        trend_text = "above EMA200" if ema_status(row) == "Bullish" else "below EMA200" if ema_status(row) == "Bearish" else "without EMA200 confirmation"
+        momentum_text = "positive momentum" if float(row.get("24h %", 0) or 0) >= 0 else "negative momentum"
+        return (
+            f"{row.get('Symbol', 'Asset')} is trading {trend_text} with {momentum_text}. "
+            f"RSI remains {rsi_status(row).lower()} and MACD trend remains {macd_status(row).lower()}. "
+            f"Current signal bias remains {row.get('Signal', 'N/A')}."
+        )
+
+    sorted_strength = df_master.sort_values(
+        by=["AI Score", "Conf %", "24h %", "Market Cap"],
+        ascending=[False, False, False, False],
+        kind="mergesort",
+    )
+    top_strength = sorted_strength.head(3)
+    top_symbols = top_strength["Symbol"].tolist()
+    top_text = ", ".join(top_symbols[:-1]) + (f" and {top_symbols[-1]}" if len(top_symbols) > 1 else (top_symbols[0] if top_symbols else "N/A"))
+    momentum_word = "positive" if momentum_score >= 60 else "negative" if momentum_score < 45 else "mixed"
+    direction_raw = (
+        momentum_score * 0.35
+        + (breadth_pct if breadth_total else 50) * 0.25
+        + ai_conviction * 0.20
+        + fg_num * 0.10
+        + ((buy_count - sell_count + signal_total) / (signal_total * 2)) * 100 * 0.10
+    )
+    direction_score = int(round(max(0, min(100, direction_raw))))
+    if direction_score >= 82:
+        direction_state = "Strong Bullish"
+    elif direction_score >= 62:
+        direction_state = "Bullish"
+    elif direction_score <= 18:
+        direction_state = "Strong Bearish"
+    elif direction_score <= 38:
+        direction_state = "Bearish"
+    else:
+        direction_state = "Neutral"
+    direction_status = "positive" if "Bullish" in direction_state else "negative" if "Bearish" in direction_state else "warning"
+    market_summary = (
+        f"Market remains {regime.lower()} despite {str(fg_cl).lower()} sentiment. "
+        f"Momentum leadership is concentrated in {top_text}."
+        if regime == "Bullish"
+        else f"Trend conditions remain {regime.lower()}. {breadth_detail}."
+    )
+    market_chips = [
+        ("Market Breadth", breadth_value, breadth_detail),
+        ("Momentum Score", f"{momentum_score}/100", momentum_word.title()),
+        ("AI Conviction", f"{ai_conviction}%", f"{buy_count} BUY / {sell_count} SELL"),
+        ("Fear & Greed", str(fg_num), str(fg_cl)),
+        ("Top Strength", top_text, "Ranked by AI Score"),
+    ]
+    chips_html = "".join(
+        f"<div class='market-intel-chip'><span>{html.escape(label)}</span>"
+        f"<strong>{html.escape(str(value))}</strong><em>{html.escape(str(detail))}</em></div>"
+        for label, value, detail in market_chips
+    )
+    st.markdown(
+        "<div class='market-intel-card'>"
+        "<div class='market-intel-head'><div class='market-intel-title'>Market Intelligence</div>"
+        f"<div class='market-intel-meta'>{html.escape(market_summary)}</div></div>"
+        f"<div class='direction-gauge {card_status_class(status=direction_status)}'>"
+        "<div class='direction-gauge-top'><div><div class='direction-gauge-label'>Market Direction</div>"
+        f"<div class='direction-gauge-value'>{html.escape(direction_state)}</div></div>"
+        f"<div class='market-intel-meta'>Confidence {confidence}%</div></div>"
+        "<div class='direction-track'>"
+        f"<div class='direction-marker' style='left:{direction_score}%'></div></div>"
+        "<div class='direction-scale'><span>Strong Bearish</span><span>Neutral</span><span>Strong Bullish</span></div>"
+        "</div>"
+        "<div class='market-intel-body'>"
+        f"<div class='market-intel-core {card_status_class(status=regime_status)}'>"
+        "<div class='market-intel-label'>Market Regime</div>"
+        f"<div class='market-intel-value'>{html.escape(regime)}</div>"
+        f"<div class='market-intel-sub'>Confidence {confidence}% · Risk {risk_level}</div>"
+        "</div>"
+        f"<div class='market-intel-chips'>{chips_html}</div>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
+
+    opportunity_cards = []
+    for rank, (_, row) in enumerate(top_strength.head(3).iterrows(), start=1):
+        signal = row.get("Signal", "N/A")
+        signal_cls = overview_signal_class(signal)
+        status = "positive" if signal == SIGNAL_BUY else "negative" if signal == SIGNAL_SELL else "warning"
+        reasons_html = "".join(f"<span class='reason-chip'>{html.escape(reason)}</span>" for reason in row_reasons(row))
+        opportunity_cards.append(
+            f"<div class='opportunity-card {card_status_class(status=status)}'>"
+            f"<div class='opportunity-top'>{render_coin_identity(row['Pair'], cg_data.get(row['Pair'], {}))}<span class='opportunity-rank'>#{rank}</span></div>"
+            f"<div class='opportunity-mid'><div class='opportunity-score'>AI Score {int(row['AI Score'])}</div>"
+            f"<span class='overview-signal-pill {signal_cls}'>{html.escape(display_signal(row))}</span></div>"
+            f"<div class='opportunity-reason'>{html.escape(opportunity_reason(row))}</div>"
+            f"<div class='reason-list'>{reasons_html}</div>"
+            f"</div>"
+        )
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Top Opportunities</div>"
+        "<div class='compact-section-meta'>Ranked by AI Score, confidence, strength</div></div>"
+        f"<div class='opportunity-grid'>{''.join(opportunity_cards)}</div>",
+        unsafe_allow_html=True,
+    )
+    movers = df_master.sort_values("24h %", ascending=False, kind="mergesort")
+    top_gainers = movers.head(3)
+    top_losers = movers.tail(3).sort_values("24h %", ascending=True, kind="mergesort")
+
+    mover_cards = []
+    for label, card_status, items in (("GAINER", "status-positive", top_gainers), ("LOSER", "status-negative", top_losers)):
+        for _, row in items.iterrows():
+            color_var = "var(--success)" if card_status == "status-positive" else "var(--danger)"
+            signal_cls = overview_signal_class(row.get("Signal", "N/A"))
+            mover_cards.append(
+                f"<div class='dashboard-card mover-card {card_status}'>"
+                f"<div class='mover-topline'>{render_coin_identity(row['Pair'], cg_data.get(row['Pair'], {}))}<span class='mover-label'>{label}</span></div>"
+                f"<div class='mover-metric-row'><div class='metric-val' style='color:{color_var}'>{row['24h %']:+.2f}%</div>"
+                f"<div class='metric-subtext'>{fmt_price(row['Price'], row['Pair'])}</div></div>"
+                f"<div class='mover-metric-row'><div class='metric-subtext'>AI Score {int(row['AI Score'])}</div>"
+                f"<span class='overview-signal-pill {signal_cls}'>{html.escape(str(row.get('Signal', 'N/A')))}</span></div>"
+                f"</div>"
+            )
+    st.markdown(f"<div class='mover-grid'>{''.join(mover_cards)}</div>", unsafe_allow_html=True)
+    coin_options = df_master["Pair"].tolist()
+    if coin_options:
+        selected_default = st.session_state.get("overview_selected_coin", coin_options[0])
+        if selected_default not in coin_options:
+            selected_default = coin_options[0]
+        selected_pair = st.selectbox(
+            "Inspect coin",
+            coin_options,
+            index=coin_options.index(selected_default),
+            key="overview_coin_inspector",
+            format_func=lambda pair: base_symbol(pair),
+        )
+        st.session_state.overview_selected_coin = selected_pair
+        selected_row = df_master.loc[df_master["Pair"] == selected_pair].iloc[0]
+        selected_cg = cg_data.get(selected_pair, {})
+        signal_cls = overview_signal_class(selected_row.get("Signal", "N/A"))
+        metric_items = [
+            ("24h Change", f"{selected_row['24h %']:+.2f}%"),
+            ("AI Score", f"{int(selected_row['AI Score'])}"),
+            ("Signal", str(selected_row.get("Signal", "N/A"))),
+            ("Confidence", "N/A" if pd.isna(selected_row.get("Conf %")) else f"{selected_row['Conf %']:.0f}%"),
+            ("Market Trend", row_trend(selected_row)),
+            ("EMA Status", ema_status(selected_row)),
+            ("RSI Status", rsi_status(selected_row)),
+            ("MACD Status", macd_status(selected_row)),
+        ]
+        metrics_html = "".join(
+            f"<div class='intel-metric'><span>{html.escape(label)}</span><strong>{html.escape(value)}</strong></div>"
+            for label, value in metric_items
+        )
+        badge_items = [
+            ("EMA200", ema_status(selected_row)),
+            ("Momentum", "Strong" if selected_row.get("AI Score", 0) >= 80 else "Mixed" if selected_row.get("AI Score", 0) >= 50 else "Weak"),
+            ("RSI", rsi_status(selected_row)),
+            ("Volume", volume_status(selected_row)),
+            ("Signal", str(selected_row.get("Signal", "N/A"))),
+        ]
+        badges_html = "".join(
+            f"<span class='smart-badge {badge_status(value)}'>{html.escape(label)} · {html.escape(str(value))}</span>"
+            for label, value in badge_items
+        )
+        logo = coin_logo_url(selected_pair, selected_cg)
+        logo_html = f"<img class='coin-logo' src='{html.escape(logo, quote=True)}' alt='{base_symbol(selected_pair)} logo'>" if logo else f"<span class='coin-logo coin-logo-fallback'>{html.escape(base_symbol(selected_pair)[:2])}</span>"
+        st.markdown(
+            "<div class='coin-intel-card'>"
+            "<div class='market-intel-head'><div class='market-intel-title'>Coin Intelligence</div>"
+            f"<div class='market-intel-meta'>Selected from Overview scanner</div></div>"
+            "<div class='coin-intel-grid'>"
+            "<div>"
+            f"<div class='coin-intel-identity'>{logo_html}<div><div class='coin-intel-symbol'>{html.escape(base_symbol(selected_pair))}</div>"
+            f"<div class='coin-intel-name'>{html.escape(str(selected_cg.get('name', selected_row.get('Name', base_symbol(selected_pair)))))} </div></div></div>"
+            f"<div class='coin-intel-price'>{fmt_price(selected_row['Price'], selected_pair)} <span class='overview-signal-pill {signal_cls}'>{html.escape(str(selected_row.get('Signal', 'N/A')))}</span></div>"
+            f"<div class='coin-intel-summary'>{html.escape(ai_summary(selected_row))}</div>"
+            "</div>"
+            f"<div><div class='intel-metrics'>{metrics_html}</div><div class='smart-badges'>{badges_html}</div></div>"
+            "</div></div>",
+            unsafe_allow_html=True,
+        )
+
+    st.markdown(
+        f"<div class='scanner-head'><div class='scanner-title'>Market Scanner</div>"
+        f"<div class='scanner-status-line'><span>{tracked_count} coins</span><span>Market Cap sort</span><span>1h candles</span><span>80 bars</span></div></div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<div class='scanner-summary'>"
+        f"<span>{tracked_count} assets scanned</span>"
+        f"<span>{buy_count} bullish</span>"
+        f"<span>{hold_count} neutral</span>"
+        f"<span>{sell_count} bearish</span>"
+        f"<span>Average AI Score: {momentum_score}</span>"
+        + "</div>",
+        unsafe_allow_html=True,
+    )
+
+    df_table = df_master.copy()
+    filter_col, search_col = st.columns([0.28, 0.72])
+    with filter_col:
+        quick_filter = st.selectbox(
+            "Quick filter",
+            ["All", "BUY", "HOLD", "SELL", "Gainers", "Losers"],
+            key="market_scanner_quick_filter",
+        )
+    with search_col:
+        search_query = st.text_input(
+            "Search/filter by symbol",
+            placeholder="Search BTC, ETH, Solana...",
+            key="market_scanner_search",
+        ).strip().lower()
+
+    if quick_filter in {"BUY", "HOLD", "SELL"}:
+        df_table = df_table.loc[df_table["Signal"] == quick_filter].copy()
+    elif quick_filter == "Gainers":
+        df_table = df_table.loc[df_table["24h %"] > 0].copy()
+    elif quick_filter == "Losers":
+        df_table = df_table.loc[df_table["24h %"] < 0].copy()
+
     if search_query:
         mask = (
             df_table["Symbol"].str.lower().str.contains(search_query, na=False)
@@ -2149,15 +2768,26 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
 
     def style_signal(value):
         return {
-            SIGNAL_BUY: "color:#00E08A;font-weight:900",
-            SIGNAL_SELL: "color:#FF5C73;font-weight:900",
-            SIGNAL_HOLD: "color:#FFB84D;font-weight:850",
+            SIGNAL_BUY: "background:rgba(0,224,138,0.14);color:#00E08A;font-weight:950",
+            SIGNAL_SELL: "background:rgba(255,92,115,0.14);color:#FF5C73;font-weight:950",
+            SIGNAL_HOLD: "background:rgba(255,184,77,0.14);color:#FFB84D;font-weight:900",
         }.get(value, "")
+
+    def style_ai_score(value):
+        if pd.isna(value):
+            return ""
+        value = float(value)
+        if value >= 66:
+            return "color:#00E08A;font-weight:900"
+        if value <= 34:
+            return "color:#FF5C73;font-weight:900"
+        return "color:#FFB84D;font-weight:850"
 
     styled_table = (
         dataframe_theme_styles(df_table)
         .map(style_change, subset=["24h %"])
         .map(style_signal, subset=["Signal"])
+        .map(style_ai_score, subset=["AI Score"])
     )
     st.dataframe(
         styled_table,
@@ -2166,7 +2796,7 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
         height=min(640, 72 + max(len(df_table), 1) * 42),
         column_order=[
             "Logo", "Symbol", "Name", "Price", "24h %", "Market Cap", "Volume 24h",
-            "RSI", "MACD", "EMA 9", "EMA 21", "EMA 50", "EMA 200", "Cross", "Signal", "Conf %",
+            "AI Score", "RSI", "MACD", "EMA 9", "EMA 21", "EMA 50", "EMA 200", "Cross", "Signal", "Conf %",
         ],
         column_config={
             "Logo": st.column_config.ImageColumn("", width="small"),
@@ -2176,6 +2806,7 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
             "24h %": st.column_config.NumberColumn("24h %", format="%+.2f%%"),
             "Market Cap": st.column_config.NumberColumn("Market Cap", format="$%.0f"),
             "Volume 24h": st.column_config.NumberColumn("Volume 24h", format="$%.0f"),
+            "AI Score": st.column_config.NumberColumn("AI Score", format="%d", width="small"),
             "RSI": st.column_config.NumberColumn("RSI", format="%.1f"),
             "MACD": st.column_config.NumberColumn("MACD", format="%.4f"),
             "EMA 9": st.column_config.NumberColumn("EMA 9", format="$%.4f"),
@@ -2198,19 +2829,32 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
     if not ind or not isinstance(ind, dict):
         render_empty_state("Technical indicators unavailable.")
         return
-    # ── Indicator summary ──────────────────────────────────────────────────
-    st.markdown(render_section_header(
-        "Technical Dashboard",
-        "Compact professional indicators, chart overlays, and support/resistance insights."
-    ), unsafe_allow_html=True)
-    bullish_cross = ind.get("ema_bullish_cross", False)
-    bearish_cross = ind.get("ema_bearish_cross", False)
-    if bullish_cross:
-        st.success("🟢 **EMA 9 × EMA 21 Bullish Crossover** on latest candle")
-    elif bearish_cross:
-        st.error("🔴 **EMA 9 × EMA 21 Bearish Crossover** on latest candle")
 
     close = ind["close"]
+    rsi = ind["rsi"]
+    macd = ind["macd"]
+    macd_sig = ind["macd_signal"]
+    stk = adv.get("stochrsi_k", 50)
+    std = adv.get("stochrsi_d", 50)
+    cci = adv.get("cci", 0)
+    adx = adv.get("adx", 25)
+    roc = adv.get("roc", 0)
+    ema9 = ind.get("ema_9", close)
+    ema21 = ind.get("ema_21", close)
+    ema50 = ind.get("ema_50", close)
+    ema200 = ind.get("ema_200", close)
+    vwap = adv.get("vwap", close)
+    sma20 = adv.get("sma_20", close)
+    mfi = adv.get("mfi", 50)
+    cmf = adv.get("cmf", 0)
+    obv = adv.get("obv", 0)
+    atr = ind.get("atr")
+    bb_pct = ind.get("bb_pct", 0.5) * 100
+    st_dir = adv.get("supertrend_dir", 0)
+    st_lbl = "Bullish" if st_dir == 1 else ("Bearish" if st_dir == -1 else "N/A")
+    psar_bull = adv.get("psar_bull", True)
+    bullish_cross = ind.get("ema_bullish_cross", False)
+    bearish_cross = ind.get("ema_bearish_cross", False)
 
     def ind_card(label, val_str, sub="", color="#ccc"):
         return (
@@ -2221,108 +2865,200 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
             f"</div>"
         )
 
-    rsi = ind["rsi"]
+    def mini_metric(label: str, value: str) -> str:
+        return f"<div class='tech-mini-metric'><span>{html.escape(label)}</span><strong>{html.escape(value)}</strong></div>"
+
+    rsi_label = "Overbought" if rsi > 70 else "Oversold" if rsi < 30 else "Healthy" if 40 <= rsi <= 65 else "Neutral"
     rsi_c = "#FF5C73" if rsi > 70 else ("#00E08A" if rsi < 30 else "#FFB84D")
-    macd  = ind["macd"]
-    macd_sig = ind["macd_signal"]
-    macd_c   = "#00E08A" if macd > macd_sig else "#FF5C73"
-
-    stk  = adv.get("stochrsi_k", 50)
-    std  = adv.get("stochrsi_d", 50)
+    macd_c = "#00E08A" if macd > macd_sig else "#FF5C73"
     stk_c = "#FF5C73" if stk > 80 else ("#00E08A" if stk < 20 else "#FFB84D")
-    cci = adv.get("cci", 0)
     cci_c = "#FF5C73" if cci > 100 else ("#00E08A" if cci < -100 else "#FFB84D")
-    adx = adv.get("adx", 25)
     adx_c = "#00E08A" if adx > 30 else "#7B8596"
-    roc = adv.get("roc", 0)
     roc_c = "#00E08A" if roc > 0 else "#FF5C73"
-    ema9  = ind.get("ema_9", close)
-    ema21 = ind.get("ema_21", close)
-    ema50 = ind.get("ema_50", close)
-    ema200 = ind.get("ema_200", close)
-    vwap = adv.get("vwap", close)
-    sma20 = adv.get("sma_20", close)
-    mfi = adv.get("mfi", 50)
     mfi_c = "#FF5C73" if mfi > 80 else ("#00E08A" if mfi < 20 else "#FFB84D")
-    cmf = adv.get("cmf", 0)
     cmf_c = "#00E08A" if cmf > 0.05 else ("#FF5C73" if cmf < -0.05 else "#FFB84D")
-    obv = adv.get("obv", 0)
-    bb_pct = ind.get("bb_pct", 0.5) * 100
     bb_c = "#FF5C73" if bb_pct > 80 else ("#00E08A" if bb_pct < 20 else "#FFB84D")
-    st_dir = adv.get("supertrend_dir", 0)
     st_c = "#00E08A" if st_dir == 1 else ("#FF5C73" if st_dir == -1 else "#7B8596")
-    st_lbl = "Bullish" if st_dir == 1 else ("Bearish" if st_dir == -1 else "N/A")
-    psar_bull = adv.get("psar_bull", True)
 
-    indicator_cards = [
-        ind_card("RSI (14)", f"{rsi:.1f}", "Overbought" if rsi > 70 else "Oversold" if rsi < 30 else "Neutral", rsi_c),
-        ind_card("MACD", f"{macd:.4f}", f"Sig {macd_sig:.4f}", macd_c),
+    score = 50
+    score += 10 if ema9 > ema21 else -10
+    score += 10 if close > ema50 else -10
+    score += 14 if close > ema200 else -14
+    score += 12 if macd > macd_sig else -12
+    score += 8 if 40 <= rsi <= 65 else -8 if rsi > 75 or rsi < 25 else 0
+    score += 8 if st_dir == 1 else -8 if st_dir == -1 else 0
+    score += 6 if psar_bull else -6
+    score += 5 if cmf > 0.05 else -5 if cmf < -0.05 else 0
+    score += 4 if obv > 0 else -4 if obv < 0 else 0
+    if adx > 30:
+        score += 5 if close > ema200 else -5
+    direction_score = int(round(max(0, min(100, score))))
+    technical_bias = "Bullish" if direction_score >= 60 else "Bearish" if direction_score <= 40 else "Neutral"
+    direction_state = "Strong Bullish" if direction_score >= 82 else "Bullish" if direction_score >= 62 else "Strong Bearish" if direction_score <= 18 else "Bearish" if direction_score <= 38 else "Neutral"
+    confidence = int(round(min(95, max(45, 50 + abs(direction_score - 50) * 0.9))))
+    bias_status = "positive" if technical_bias == "Bullish" else "negative" if technical_bias == "Bearish" else "warning"
+
+    trend_status = "Bullish trend" if close > ema200 and ema9 > ema21 else "Bearish trend" if close < ema200 and ema9 < ema21 else "Mixed trend"
+    momentum_status = "Bullish momentum" if macd > macd_sig and roc > 0 else "Bearish momentum" if macd < macd_sig and roc < 0 else "Mixed momentum"
+    volatility_status = "Upper band stretch" if bb_pct > 80 else "Lower band stretch" if bb_pct < 20 else "Normal range"
+    volume_flow = "Inflow" if cmf > 0.05 else "Outflow" if cmf < -0.05 else "Balanced"
+
+    reasons = []
+    reasons.append("Price above EMA200" if close > ema200 else "Price below EMA200")
+    reasons.append("MACD bullish" if macd > macd_sig else "MACD bearish")
+    reasons.append("RSI healthy" if 35 <= rsi <= 70 else "RSI stretched")
+    reasons.append("Supertrend bullish" if st_dir == 1 else "Supertrend bearish" if st_dir == -1 else "Supertrend neutral")
+    reasons.append("CMF inflow" if cmf > 0 else "CMF outflow")
+    reason_html = "".join(f"<span class='tech-reason-chip'>{html.escape(reason)}</span>" for reason in reasons)
+
+    st.markdown(
+        "<div class='tech-command-head'>"
+        f"<div class='tech-command-title'>Technical Command Center</div>"
+        f"<div class='tech-command-meta'>{html.escape(symbol)} · {cfg.get('timeframe', '1h')} · {len(df)} candles</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        "<div class='tech-summary-card'>"
+        "<div class='tech-summary-grid'>"
+        f"<div class='tech-bias-core {card_status_class(status=bias_status)}'>"
+        "<div class='tech-label'>Technical Bias</div>"
+        f"<div class='tech-bias-value'>{technical_bias}</div>"
+        f"<div class='tech-bias-sub'>Confidence {confidence}% · {direction_state}</div>"
+        "<div class='tech-gauge'><div class='tech-gauge-track'>"
+        f"<div class='tech-gauge-marker' style='left:{direction_score}%'></div></div>"
+        "<div class='tech-gauge-scale'><span>Strong Bearish</span><span>Neutral</span><span>Strong Bullish</span></div></div>"
+        "</div>"
+        "<div class='tech-health-grid'>"
+        f"<div class='tech-health-chip'><span>Trend Status</span><strong>{html.escape(trend_status)}</strong><em>EMA 9/21/200</em></div>"
+        f"<div class='tech-health-chip'><span>Momentum Status</span><strong>{html.escape(momentum_status)}</strong><em>RSI {rsi:.1f} · ROC {roc:.2f}%</em></div>"
+        f"<div class='tech-health-chip'><span>Volatility Status</span><strong>{html.escape(volatility_status)}</strong><em>BB %B {bb_pct:.1f}%</em></div>"
+        f"<div class='tech-health-chip'><span>Volume Flow</span><strong>{html.escape(volume_flow)}</strong><em>CMF {cmf:.3f}</em></div>"
+        "</div></div></div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Why this technical bias?</div>"
+        f"<div class='compact-section-meta'>Score {direction_score}/100</div></div>"
+        f"<div class='tech-reasons'>{reason_html}</div>",
+        unsafe_allow_html=True,
+    )
+
+    if bullish_cross:
+        st.success("EMA 9 x EMA 21 bullish crossover on latest candle")
+    elif bearish_cross:
+        st.error("EMA 9 x EMA 21 bearish crossover on latest candle")
+
+    momentum_cards = [
+        ind_card("RSI (14)", f"{rsi:.1f}", rsi_label, rsi_c),
         ind_card("Stoch RSI K", f"{stk:.1f}", f"D {std:.1f}", stk_c),
-        ind_card("CCI (20)", f"{cci:.1f}", "Overbought" if cci > 100 else "Oversold" if cci < -100 else "Neutral", cci_c),
-        ind_card("ADX (14)", f"{adx:.1f}", "Strong" if adx > 30 else "Weak", adx_c),
-        ind_card("ROC (12)", f"{roc:.2f}%", "", roc_c),
-        ind_card("EMA 9", fmt_price(ema9, symbol), "🟢 Bull" if ema9 > ema21 else "🔴 Bear", "#00E08A" if ema9 > ema21 else "#FF5C73"),
-        ind_card("EMA 21", fmt_price(ema21, symbol), f"Gap {abs(ema9-ema21)/ema21*100:.2f}%" if ema21 else "", "#00E08A" if ema9 > ema21 else "#FF5C73"),
-        ind_card("EMA 50", fmt_price(ema50, symbol), "↑ Bullish" if close > ema50 else "↓ Bearish", "#00E08A" if close > ema50 else "#FF5C73"),
-        ind_card("EMA 200", fmt_price(ema200, symbol), "Above" if close > ema200 else "Below", "#00E08A" if close > ema200 else "#FF5C73"),
-        ind_card("VWAP", fmt_price(vwap, symbol), "Above" if close > vwap else "Below", "#00E08A" if close > vwap else "#FF5C73"),
-        ind_card("SMA 20", fmt_price(sma20, symbol), "Above" if close > sma20 else "Below", "#00E08A" if close > sma20 else "#FF5C73"),
+        ind_card("ROC (12)", f"{roc:.2f}%", "Positive" if roc > 0 else "Negative", roc_c),
         ind_card("MFI (14)", f"{mfi:.1f}", "Overbought" if mfi > 80 else "Oversold" if mfi < 20 else "Neutral", mfi_c),
-        ind_card("CMF (20)", f"{cmf:.3f}", "Inflow" if cmf > 0 else "Outflow", cmf_c),
-        ind_card("OBV", format_large_number(abs(obv)).replace("$", ""), "↑" if obv > 0 else "↓", "#00E08A" if obv > 0 else "#FF5C73"),
-        ind_card("BB %B", f"{bb_pct:.1f}%", "", bb_c),
-        ind_card("Supertrend", st_lbl, "", st_c),
-        ind_card("Parabolic SAR", "Bullish" if psar_bull else "Bearish", "", "#00E08A" if psar_bull else "#FF5C73"),
+        ind_card("CCI (20)", f"{cci:.1f}", "Overbought" if cci > 100 else "Oversold" if cci < -100 else "Neutral", cci_c),
     ]
-    st.markdown(f"<div class='dashboard-grid indicator-grid'>{''.join(indicator_cards)}</div>", unsafe_allow_html=True)
+    trend_cards = [
+        ind_card("EMA 9", fmt_price(ema9, symbol), "Bull" if ema9 > ema21 else "Bear", "#00E08A" if ema9 > ema21 else "#FF5C73"),
+        ind_card("EMA 21", fmt_price(ema21, symbol), f"Gap {abs(ema9-ema21)/ema21*100:.2f}%" if ema21 else "", "#00E08A" if ema9 > ema21 else "#FF5C73"),
+        ind_card("EMA 50", fmt_price(ema50, symbol), "Bullish" if close > ema50 else "Bearish", "#00E08A" if close > ema50 else "#FF5C73"),
+        ind_card("EMA 200", fmt_price(ema200, symbol), "Above" if close > ema200 else "Below", "#00E08A" if close > ema200 else "#FF5C73"),
+        ind_card("SMA 20", fmt_price(sma20, symbol), "Above" if close > sma20 else "Below", "#00E08A" if close > sma20 else "#FF5C73"),
+        ind_card("Supertrend", st_lbl, "Trend filter", st_c),
+        ind_card("Parabolic SAR", "Bullish" if psar_bull else "Bearish", "Trailing regime", "#00E08A" if psar_bull else "#FF5C73"),
+        ind_card("ADX (14)", f"{adx:.1f}", "Strong" if adx > 30 else "Weak", adx_c),
+    ]
+    flow_cards = [
+        ind_card("OBV", format_large_number(abs(obv)).replace("$", ""), "Up" if obv > 0 else "Down", "#00E08A" if obv > 0 else "#FF5C73"),
+        ind_card("CMF (20)", f"{cmf:.3f}", "Inflow" if cmf > 0 else "Outflow", cmf_c),
+        ind_card("VWAP", fmt_price(vwap, symbol), "Above" if close > vwap else "Below", "#00E08A" if close > vwap else "#FF5C73"),
+    ]
+    volatility_cards = [
+        ind_card("BB %B", f"{bb_pct:.1f}%", volatility_status, bb_c),
+    ]
+    if atr is not None:
+        volatility_cards.append(ind_card("ATR (14)", fmt_price(float(atr), symbol), "Range proxy", "#FFB84D"))
+
+    groups = [
+        ("Momentum", "RSI, oscillators, rate of change", momentum_cards),
+        ("Trend", "EMA structure, trend filters, ADX", trend_cards),
+        ("Volume / Flow", "Participation and money flow", flow_cards),
+        ("Volatility", "Band position and range", volatility_cards),
+    ]
+    for title, meta, cards in groups:
+        st.markdown(
+            f"<div class='indicator-group'><div class='indicator-group-head'><div class='indicator-group-title'>{title}</div>"
+            f"<div class='indicator-group-meta'>{meta}</div></div>"
+            f"<div class='dashboard-grid indicator-grid'>{''.join(cards)}</div></div>",
+            unsafe_allow_html=True,
+        )
 
     st.divider()
 
-    # ── Chart ──────────────────────────────────────────────────────────────
     chart_col, fg_col = st.columns([3, 1])
     with chart_col:
-        st.markdown(f"### 📊 {symbol} Chart")
+        active_overlays = [name.replace('_', ' ').upper() for name, enabled in cfg.get("show", {}).items() if enabled]
+        overlay_text = ", ".join(active_overlays[:5]) if active_overlays else "Core OHLC, volume, RSI, MACD, MFI/CMF"
+        st.markdown(
+            f"<div class='tech-chart-head'><div class='tech-chart-title'>{html.escape(symbol)} Technical Chart</div>"
+            f"<div class='tech-chart-meta'>{html.escape(overlay_text)}</div></div>",
+            unsafe_allow_html=True,
+        )
         render_advanced_chart(df, symbol, sr, cfg["show"], adv)
     with fg_col:
-        st.markdown("#### 😨 Fear & Greed")
+        st.markdown("#### Fear & Greed")
         render_fear_greed_gauge(fg)
 
     st.divider()
 
-    # ── Support/Resistance ────────────────────────────────────────────────
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown("#### 📏 Support / Resistance")
-        nr = sr.get("nearest_resistance", 0)
-        ns = sr.get("nearest_support", 0)
-        st.markdown(f"🔴 **Resistance:** `{fmt_price(nr, symbol)}` (+{sr.get('resistance_pct',0):.2f}%)")
-        st.markdown(f"🟢 **Support:** `{fmt_price(ns, symbol)}` (-{sr.get('support_pct',0):.2f}%)")
-        for name, key in [("R2","pivot_r2"),("R1","pivot_r1"),("PP","pivot"),("S1","pivot_s1"),("S2","pivot_s2")]:
-            val = sr.get(key, 0)
-            c = "#FF5C73" if "R" in name else ("#FFB84D" if "PP" in name else "#00E08A")
-            st.markdown(f"<span style='color:{c}'><b>{name}</b>: {fmt_price(val, symbol)}</span>",
-                        unsafe_allow_html=True)
-    with c2:
-        st.markdown("#### 📊 Ichimoku Cloud")
-        ich_a = adv.get("ich_senkou_a", 0)
-        ich_b = adv.get("ich_senkou_b", 0)
-        ten   = adv.get("ich_tenkan", 0)
-        kij   = adv.get("ich_kijun", 0)
-        cloud_top    = max(ich_a, ich_b)
-        cloud_bottom = min(ich_a, ich_b)
-        cloud_color  = "#00E08A" if ich_a > ich_b else "#FF5C73"
-        cloud_label  = "Bullish Cloud" if ich_a > ich_b else "Bearish Cloud"
-        st.markdown(f"**Tenkan-sen (9):** `{fmt_price(ten, symbol)}`")
-        st.markdown(f"**Kijun-sen (26):** `{fmt_price(kij, symbol)}`")
-        st.markdown(f"**Senkou A:** `{fmt_price(ich_a, symbol)}`")
-        st.markdown(f"**Senkou B:** `{fmt_price(ich_b, symbol)}`")
-        st.markdown(f"<span style='color:{cloud_color}'><b>Cloud:</b> {cloud_label} "
-                    f"({fmt_price(cloud_bottom, symbol)} – {fmt_price(cloud_top, symbol)})</span>",
-                    unsafe_allow_html=True)
-        pos = ("Above cloud 🚀" if close > cloud_top
-               else "Below cloud 📉" if close < cloud_bottom
-               else "Inside cloud ⚠️")
-        st.markdown(f"**Price position:** {pos}")
+    nr = sr.get("nearest_resistance", 0)
+    ns = sr.get("nearest_support", 0)
+    resistance_pct = sr.get("resistance_pct", 0)
+    support_pct = sr.get("support_pct", 0)
+    nearest_label = "Resistance" if resistance_pct <= support_pct else "Support"
+    nearest_distance = min(resistance_pct, support_pct)
+    sr_bias = "Breakout watch" if resistance_pct <= 1.5 else "Rejection risk" if support_pct <= 1.5 else "Range"
+
+    ich_a = adv.get("ich_senkou_a", 0)
+    ich_b = adv.get("ich_senkou_b", 0)
+    ten = adv.get("ich_tenkan", 0)
+    kij = adv.get("ich_kijun", 0)
+    cloud_top = max(ich_a, ich_b)
+    cloud_bottom = min(ich_a, ich_b)
+    cloud_label = "Bullish Cloud" if ich_a > ich_b else "Bearish Cloud"
+    cloud_status = "Above cloud" if close > cloud_top else "Below cloud" if close < cloud_bottom else "Inside cloud"
+    tk_status = "Tenkan above Kijun" if ten > kij else "Tenkan below Kijun" if ten < kij else "Tenkan equals Kijun"
+    ich_bias = "Bullish" if ich_a > ich_b and close > cloud_top and ten >= kij else "Bearish" if ich_a < ich_b and close < cloud_bottom and ten <= kij else "Mixed"
+
+    level_html = "".join(
+        f"<span class='tech-level'>{name}: {fmt_price(sr.get(key, 0), symbol)}</span>"
+        for name, key in [("R2", "pivot_r2"), ("R1", "pivot_r1"), ("PP", "pivot"), ("S1", "pivot_s1"), ("S2", "pivot_s2")]
+    )
+    sr_metrics = "".join([
+        mini_metric("Current Price", fmt_price(close, symbol)),
+        mini_metric("Nearest Support", fmt_price(ns, symbol)),
+        mini_metric("Nearest Resistance", fmt_price(nr, symbol)),
+        mini_metric("Nearest Distance", f"{nearest_distance:.2f}% to {nearest_label}"),
+        mini_metric("Bias", sr_bias),
+        mini_metric("Range Width", f"{(resistance_pct + support_pct):.2f}%"),
+    ])
+    ich_metrics = "".join([
+        mini_metric("Cloud Status", cloud_label),
+        mini_metric("Price Position", cloud_status),
+        mini_metric("Tenkan / Kijun", tk_status),
+        mini_metric("Ichimoku Bias", ich_bias),
+        mini_metric("Senkou A", fmt_price(ich_a, symbol)),
+        mini_metric("Senkou B", fmt_price(ich_b, symbol)),
+    ])
+    st.markdown(
+        "<div class='tech-detail-grid'>"
+        "<div class='tech-detail-card'><div class='tech-detail-title'>Support / Resistance</div>"
+        f"<div class='tech-metric-grid'>{sr_metrics}</div><div class='tech-level-list'>{level_html}</div></div>"
+        "<div class='tech-detail-card'><div class='tech-detail-title'>Ichimoku Cloud</div>"
+        f"<div class='tech-metric-grid'>{ich_metrics}</div></div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
 
 def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, adv: dict):
