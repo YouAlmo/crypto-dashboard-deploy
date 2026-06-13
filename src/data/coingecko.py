@@ -31,6 +31,7 @@ FALLBACK_SYMBOLS = [
 def _parse_coin(coin: dict) -> dict:
     return {
         "name": coin.get("name", ""),
+        "image": coin.get("image", ""),
         "market_cap": float(coin.get("market_cap") or 0),
         "total_volume": float(coin.get("total_volume") or 0),
         "current_price": float(coin.get("current_price") or 0),
@@ -60,6 +61,7 @@ def _fallback_market_data() -> Dict[str, dict]:
     for sym in FALLBACK_SYMBOLS:
         data[sym] = {
             "name": sym.split("/")[0],
+            "image": "",
             "market_cap": 0,
             "total_volume": 0,
             "current_price": 0,
@@ -148,6 +150,7 @@ def fetch_top20_markets() -> Tuple[List[str], Dict]:
             else:
                 cg_data[pair] = {
                     "name": pair.split("/")[0],
+                    "image": "",
                     "market_cap": 0,
                     "total_volume": 0,
                     "current_price": 0,
