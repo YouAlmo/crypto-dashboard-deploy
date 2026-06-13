@@ -418,6 +418,185 @@ def get_theme_css(theme_name: str) -> str:
     .metric-val {{ font-variant-numeric: tabular-nums; }}
     .metric-subtitle {{ font-size: 0.74rem; color: var(--muted); margin-top: 1px; line-height: 1.28; font-weight: 550; }}
     .overview-summary-grid {{ grid-template-columns: repeat(4, minmax(210px, 1fr)); }}
+    .overview-heading {{
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0.05rem 0 0.38rem;
+    }}
+    .overview-heading-title {{ color: var(--text); font-size: clamp(1.02rem,1.35vw,1.28rem); font-weight: 900; line-height: 1.1; }}
+    .overview-heading-meta {{ color: var(--muted); font-size: 0.75rem; font-weight: 700; white-space: nowrap; }}
+    .ai-brief-card {{
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--card-bg) 94%, var(--panel-bg)), var(--card-bg));
+      box-shadow: 0 8px 20px rgba(2,6,23,0.14);
+      padding: 9px 11px;
+      margin: 0.02rem 0 0.42rem;
+    }}
+    .ai-brief-head {{ display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 5px; }}
+    .ai-brief-title {{ color: var(--text); font-size: 0.94rem; font-weight: 900; line-height: 1.1; }}
+    .ai-brief-state {{ color: var(--muted); font-size: 0.68rem; font-weight: 800; white-space: nowrap; }}
+    .ai-brief-lines {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }}
+    .ai-brief-line {{
+      color: var(--text);
+      background: color-mix(in srgb, var(--panel-bg) 52%, transparent);
+      border: 1px solid color-mix(in srgb, var(--card-border) 82%, transparent);
+      border-radius: var(--radius-sm);
+      padding: 6px 7px;
+      font-size: 0.7rem;
+      font-weight: 720;
+      line-height: 1.15;
+      min-height: 38px;
+      overflow: hidden;
+    }}
+    .compact-section-head {{ display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0.08rem 0 0.14rem; }}
+    .compact-section-title {{ color: var(--text); font-size: 0.88rem; font-weight: 900; line-height: 1.1; }}
+    .compact-section-meta {{ color: var(--muted); font-size: 0.66rem; font-weight: 750; white-space: nowrap; }}
+    .opportunity-grid {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin: 0.08rem 0 0.28rem; }}
+    .opportunity-card {{
+      --opp-accent: var(--muted);
+      position: relative;
+      min-height: 68px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      background: linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 94%, var(--table-header-bg)));
+      padding: 7px 8px;
+      overflow: hidden;
+      box-shadow: 0 8px 18px rgba(2,6,23,0.12);
+    }}
+    .opportunity-card::before {{ content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--opp-accent); }}
+    .opportunity-card.status-positive {{ --opp-accent: var(--cg-green); }}
+    .opportunity-card.status-negative {{ --opp-accent: var(--cg-red); }}
+    .opportunity-card.status-warning, .opportunity-card.status-neutral {{ --opp-accent: var(--warning); }}
+    .opportunity-top {{ display: flex; align-items: center; justify-content: space-between; gap: 8px; }}
+    .opportunity-card .cg-symbol-cell {{ min-width: 0; gap: 8px; }}
+    .opportunity-card .coin-logo {{ width: 22px; height: 22px; flex-basis: 22px; }}
+    .opportunity-card .cg-name-text {{ display: none; }}
+    .opportunity-rank {{ color: var(--subtle); font-size: 0.58rem; font-weight: 900; }}
+    .opportunity-mid {{ display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 4px; }}
+    .opportunity-score {{ color: var(--text); font-size: 0.84rem; font-weight: 950; font-variant-numeric: tabular-nums; }}
+    .overview-signal-pill {{ border-radius: 999px; border: 1px solid var(--card-border); padding: 2px 6px; font-size: 0.56rem; font-weight: 950; white-space: nowrap; }}
+    .overview-signal-pill.buy {{ color: var(--cg-green); background: var(--cg-pos-weak); }}
+    .overview-signal-pill.sell {{ color: var(--cg-red); background: var(--cg-neg-weak); }}
+    .overview-signal-pill.hold {{ color: var(--warning); background: color-mix(in srgb, var(--warning) 14%, transparent); }}
+    .opportunity-reason {{ color: var(--muted); font-size: 0.62rem; font-weight: 700; margin-top: 3px; line-height: 1.08; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .scanner-summary {{ display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin: 0.02rem 0 0.18rem; }}
+    .scanner-summary span {{ color: var(--text); background: color-mix(in srgb, var(--panel-bg) 62%, transparent); border: 1px solid var(--card-border); border-radius: 999px; padding: 3px 7px; font-size: 0.68rem; font-weight: 850; white-space: nowrap; }}
+    .market-intel-card {{
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--card-bg) 94%, var(--panel-bg)), var(--card-bg));
+      box-shadow: 0 9px 22px rgba(2,6,23,0.14);
+      padding: 9px 11px;
+      margin: 0.02rem 0 0.36rem;
+    }}
+    .market-intel-head {{ display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 7px; }}
+    .market-intel-title {{ color: var(--text); font-size: 0.98rem; font-weight: 950; line-height: 1.1; }}
+    .market-intel-meta {{ color: var(--muted); font-size: 0.68rem; font-weight: 800; white-space: nowrap; }}
+    .market-intel-body {{ display: grid; grid-template-columns: minmax(170px, 0.42fr) minmax(420px, 1.58fr); gap: 9px; align-items: stretch; }}
+    .market-intel-core {{
+      --intel-accent: var(--warning);
+      position: relative;
+      border: 1px solid color-mix(in srgb, var(--intel-accent) 28%, var(--card-border));
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--panel-bg) 52%, transparent);
+      padding: 8px 10px 8px 12px;
+      min-height: 66px;
+      overflow: hidden;
+    }}
+    .market-intel-core::before {{ content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--intel-accent); }}
+    .market-intel-core.status-positive {{ --intel-accent: var(--cg-green); }}
+    .market-intel-core.status-negative {{ --intel-accent: var(--cg-red); }}
+    .market-intel-core.status-warning, .market-intel-core.status-neutral {{ --intel-accent: var(--warning); }}
+    .market-intel-label {{ color: var(--muted); font-size: 0.56rem; font-weight: 900; text-transform: uppercase; line-height: 1.05; }}
+    .market-intel-value {{ color: var(--intel-accent); font-size: clamp(1.08rem,1.45vw,1.36rem); font-weight: 950; line-height: 1.02; margin-top: 4px; }}
+    .market-intel-sub {{ color: var(--text); font-size: 0.72rem; font-weight: 820; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .market-intel-chips {{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }}
+    .market-intel-chip {{
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--panel-bg) 54%, transparent);
+      padding: 7px 8px;
+      min-height: 66px;
+      overflow: hidden;
+    }}
+    .market-intel-chip span {{ display: block; color: var(--subtle); font-size: 0.54rem; font-weight: 900; text-transform: uppercase; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .market-intel-chip strong {{ display: block; color: var(--text); font-size: 0.82rem; font-weight: 950; line-height: 1.05; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .market-intel-chip em {{ display: block; color: var(--muted); font-size: 0.62rem; font-style: normal; font-weight: 720; line-height: 1.08; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .market-status-strip {{
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0.12rem 0 0.48rem;
+    }}
+    .market-status-item {{
+      --strip-accent: var(--muted);
+      position: relative;
+      min-height: 56px;
+      padding: 7px 9px 7px 10px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--card-bg) 88%, var(--panel-bg));
+      box-shadow: 0 6px 14px rgba(2,6,23,0.12);
+      overflow: hidden;
+    }}
+    .market-status-item::before {{
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 3px;
+      background: var(--strip-accent);
+    }}
+    .market-status-item.status-positive {{ --strip-accent: var(--cg-green); }}
+    .market-status-item.status-negative {{ --strip-accent: var(--cg-red); }}
+    .market-status-item.status-warning, .market-status-item.status-neutral {{ --strip-accent: var(--warning); }}
+    .market-status-label {{ color: var(--muted); font-size: 0.58rem; font-weight: 850; text-transform: uppercase; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .market-status-value {{ color: var(--text); font-size: clamp(0.9rem,1.02vw,1.05rem); font-weight: 900; line-height: 1.05; margin-top: 5px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }}
+    .market-status-detail {{ color: var(--subtle); font-size: 0.64rem; font-weight: 650; line-height: 1.12; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .regime-card {{
+      --regime-accent: var(--warning);
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(170px, 0.58fr) minmax(360px, 1.42fr);
+      gap: 10px;
+      align-items: center;
+      margin: 0.18rem 0 0.5rem;
+      padding: 9px 11px 9px 13px;
+      border: 1px solid color-mix(in srgb, var(--regime-accent) 28%, var(--card-border));
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--regime-accent) 9%, transparent), transparent 36%), linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--card-bg) 94%, var(--table-header-bg)));
+      box-shadow: 0 10px 22px rgba(2,6,23,0.14);
+      overflow: hidden;
+    }}
+    .regime-card::before {{
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: var(--regime-accent);
+    }}
+    .regime-card.status-positive {{ --regime-accent: var(--cg-green); }}
+    .regime-card.status-negative {{ --regime-accent: var(--cg-red); }}
+    .regime-card.status-warning, .regime-card.status-neutral {{ --regime-accent: var(--warning); }}
+    .regime-label {{ color: var(--muted); font-size: 0.58rem; font-weight: 850; text-transform: uppercase; }}
+    .regime-value {{ color: var(--regime-accent); font-size: clamp(1.05rem,1.42vw,1.34rem); font-weight: 950; line-height: 1.02; margin-top: 3px; }}
+    .regime-confidence {{ color: var(--text); font-size: 0.72rem; font-weight: 800; margin-top: 4px; }}
+    .regime-drivers {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }}
+    .regime-driver {{
+      min-height: 44px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--panel-bg) 56%, transparent);
+      padding: 7px 8px;
+      color: var(--text);
+      font-size: 0.72rem;
+      font-weight: 760;
+      line-height: 1.16;
+      overflow: hidden;
+    }}
+    .regime-driver span {{ display: block; color: var(--subtle); font-size: 0.55rem; font-weight: 850; text-transform: uppercase; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
     .indicator-grid {{ grid-template-columns: repeat(auto-fit, minmax(188px, 1fr)); gap: 16px; margin-top: 0.7rem; }}
     .indicator-grid .dashboard-card {{ min-height: 132px; align-items: center; justify-content: center; text-align: center; }}
     .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); white-space: nowrap; }}
@@ -622,26 +801,53 @@ def get_theme_css(theme_name: str) -> str:
     }}
     .mover-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin: 0.55rem 0 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+      gap: 7px;
+      margin: 0.14rem 0 0.3rem;
     }}
     .mover-card {{
-      min-height: 0 !important;
-      padding: 10px 12px !important;
-      border-radius: var(--radius-md) !important;
+      min-height: 72px !important;
+      padding: 8px 9px !important;
+      border-radius: var(--radius-sm) !important;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      align-items: stretch;
       justify-content: space-between;
-      gap: 12px;
+      gap: 5px;
       overflow: hidden !important;
     }}
-    .mover-card .metric-label {{ font-size: 0.64rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
-    .mover-card .metric-val {{ font-size: clamp(1rem,1.25vw,1.22rem) !important; margin-top: 2px !important; }}
-    .mover-card .metric-subtext {{ color: var(--muted); font-size: 0.74rem; text-align: right; font-weight: 650; }}
-    .mover-card .cg-symbol-cell {{ min-width: 0; gap: 8px; }}
-    .mover-card .coin-logo {{ width: 22px; height: 22px; flex-basis: 22px; }}
+    .mover-topline {{ display: flex; align-items: center; justify-content: space-between; gap: 7px; min-width: 0; }}
+    .mover-label {{ font-size: 0.52rem; font-weight: 900; text-transform: uppercase; border-radius: 999px; padding: 2px 6px; border: 1px solid var(--card-border); white-space: nowrap; }}
+    .status-positive .mover-label {{ color: var(--cg-green); background: var(--cg-pos-weak); }}
+    .status-negative .mover-label {{ color: var(--cg-red); background: var(--cg-neg-weak); }}
+    .mover-metric-row {{ display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }}
+    .mover-card .metric-val {{ font-size: clamp(0.95rem,1.22vw,1.12rem) !important; margin-top: 0 !important; }}
+    .mover-card .metric-subtext {{ color: var(--muted); font-size: 0.66rem; font-weight: 650; white-space: nowrap; }}
+    .mover-card .cg-symbol-cell {{ min-width: 0; gap: 7px; }}
+    .mover-card .coin-logo {{ width: 19px; height: 19px; flex-basis: 19px; }}
     .mover-card .cg-name-text {{ display: none; }}
+    .scanner-head {{ display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0.04rem 0 0.12rem; }}
+    .scanner-title {{ color: var(--text); font-size: 0.95rem; font-weight: 900; line-height: 1.1; }}
+    .scanner-status-line {{
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 650;
+      margin: 0;
+    }}
+    .scanner-status-line span {{
+      color: var(--text);
+      background: color-mix(in srgb, var(--panel-bg) 62%, transparent);
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      padding: 3px 7px;
+      font-weight: 800;
+      white-space: nowrap;
+    }}
     #MainMenu,
     footer,
     div[data-testid="stStatusWidget"],
@@ -874,6 +1080,21 @@ def get_theme_css(theme_name: str) -> str:
       .block-container {{ padding-inline: 0.75rem !important; }}
       .dashboard-grid {{ grid-template-columns: 1fr; }}
       .overview-summary-grid, .indicator-grid {{ grid-template-columns: 1fr; }}
+      .overview-heading {{ align-items: flex-start; flex-direction: column; gap: 3px; }}
+      .overview-heading-meta {{ white-space: normal; }}
+      .ai-brief-head, .compact-section-head {{ align-items: flex-start; flex-direction: column; gap: 3px; }}
+      .ai-brief-state, .compact-section-meta {{ white-space: normal; }}
+      .ai-brief-lines {{ grid-template-columns: 1fr; }}
+      .market-intel-head {{ align-items: flex-start; flex-direction: column; gap: 3px; }}
+      .market-intel-meta {{ white-space: normal; }}
+      .market-intel-body {{ grid-template-columns: 1fr; }}
+      .market-intel-chips {{ grid-template-columns: 1fr; }}
+      .market-status-strip {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
+      .opportunity-grid {{ grid-template-columns: 1fr; }}
+      .regime-card {{ grid-template-columns: 1fr; }}
+      .regime-drivers {{ grid-template-columns: 1fr; }}
+      .scanner-head {{ align-items: flex-start; flex-direction: column; gap: 5px; }}
+      .scanner-status-line {{ justify-content: flex-start; }}
       div[role="radiogroup"] {{ gap: 6px; max-width: 100%; }}
       div[role="radiogroup"] label {{ flex: 0 0 auto; justify-content: center; }}
       .section-subtitle {{ font-size: 0.86rem; }}
@@ -896,7 +1117,7 @@ def render_app_header(theme_name: str) -> None:
             <div class='brand-mark'>SS</div>
             <div>
                 <h1>SuperSignal</h1>
-                <p>Institutional-grade crypto intelligence platform</p>
+                <p>Markets · Signals · Risk</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1989,100 +2210,60 @@ def render_sidebar(watchlist_symbols: list):
 
 # ── Tab 1: Overview ───────────────────────────────────────────────────────────
 
-def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg):
-    st.markdown(render_section_header(
-        "Market Overview",
-        "Premium crypto market pulse with institutional-grade sentiment, movers, and AI signal insights."
-    ), unsafe_allow_html=True)
-
-    all_prices = []
-    all_changes = []
-    total_mcap = 0
-    for sym in watchlist_symbols:
-        t = tickers.get(sym, {})
-        cg = cg_data.get(sym, {})
-        price = t.get("last", 0) or cg.get("current_price", 0)
-        change = t.get("percentage", 0) or cg.get("price_change_percentage_24h", 0)
-        cap = cg.get("market_cap", 0)
-        all_prices.append(price)
-        all_changes.append(change)
-        total_mcap += cap
-
-    avg_change = np.mean(all_changes) if all_changes else 0
-    buy_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_BUY)
-    sell_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_SELL)
-    hold_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_HOLD)
-    avg_conf = np.mean([sig.get("confidence", 0.0) for sig in signal_map.values()]) if signal_map else 0.0
-
-    mover_data = []
-    for sym in watchlist_symbols:
-        t = tickers.get(sym, {})
-        cg = cg_data.get(sym, {})
-        pct = t.get("percentage", 0) or cg.get("price_change_percentage_24h", 0)
-        mover_data.append((sym, pct, t.get("last", 0) or cg.get("current_price", 0)))
-    movers = sorted(mover_data, key=lambda x: x[1], reverse=True)
-    top_gainers = movers[:3]
-    top_losers = movers[-3:][::-1]
-
-    fg_val = fg.get("value", 50)
-    fg_c = get_fg_color(fg_val)
-    fg_cl = fg.get("classification", "Neutral")
-    ai_pulse_status = "positive" if buy_count > sell_count else "negative" if sell_count > buy_count else "warning"
-    fg_status = "negative" if fg_val < 25 else "warning" if fg_val < 55 else "positive" if fg_val >= 55 else "neutral"
-    st.markdown(
-        "<div class='dashboard-grid overview-summary-grid'>"
-        + render_dashboard_card(
-            "Total Watchlist Market Cap",
-            format_large_number(total_mcap),
-            "Aggregate value across tracked crypto assets.",
-            status="muted",
-        )
-        + render_dashboard_card(
-            "Avg 24h Change",
-            f"{avg_change:+.2f}%",
-            "Weighted performance across selected coins.",
-            status="positive" if avg_change > 0 else "negative" if avg_change < 0 else "neutral",
-        )
-        + render_dashboard_card(
-            "AI Market Pulse",
-            f"{buy_count} BUY / {sell_count} SELL",
-            f"{hold_count} Neutral · {avg_conf*100:.0f}% avg confidence",
-            status=ai_pulse_status,
-        )
-        + render_dashboard_card(
-            "Fear & Greed",
-            f"{fg_val}",
-            f"{get_fg_emoji(fg_cl)} {fg_cl}",
-            accent=fg_c,
-            status=fg_status,
-        )
-        + "</div>",
-        unsafe_allow_html=True,
+def render_market_status_item(title: str, value: str, detail: str = "", status: str = "muted") -> str:
+    card_class = card_status_class(status=status, value=value, label=title)
+    return (
+        f"<div class='market-status-item {card_class}'>"
+        f"<div class='market-status-label'>{html.escape(str(title))}</div>"
+        f"<div class='market-status-value'>{html.escape(str(value))}</div>"
+        f"<div class='market-status-detail'>{html.escape(str(detail))}</div>"
+        f"</div>"
     )
 
-    mover_cards = []
-    for sym, pct, price in top_gainers:
-        mover_cards.append(
-            f"<div class='dashboard-card mover-card status-positive'>"
-            f"<div><div class='metric-label'>{render_coin_identity(sym, cg_data.get(sym, {}))} Gainer</div>"
-            f"<div class='metric-val' style='color:var(--success)'>{pct:+.2f}%</div></div>"
-            f"<div class='metric-subtext'>{fmt_price(price, sym)}</div>"
-            f"</div>"
-        )
-    for sym, pct, price in top_losers:
-        mover_cards.append(
-            f"<div class='dashboard-card mover-card status-negative'>"
-            f"<div><div class='metric-label'>{render_coin_identity(sym, cg_data.get(sym, {}))} Loser</div>"
-            f"<div class='metric-val' style='color:var(--danger)'>{pct:+.2f}%</div></div>"
-            f"<div class='metric-subtext'>{fmt_price(price, sym)}</div>"
-            f"</div>"
-        )
-    st.markdown(f"<div class='mover-grid'>{''.join(mover_cards)}</div>", unsafe_allow_html=True)
 
-    st.markdown("### 📋 Market Scanner")
-    st.caption(f"{len(watchlist_symbols)} coins · sorted by Market Cap · indicators on 200-candle 1h OHLCV")
+def overview_ai_score(pct, rsi, macd, ema9, ema21, ema50, ema200, signal) -> int:
+    score = 50.0
+    try:
+        pct_value = float(pct or 0)
+        score += max(min(pct_value, 10), -10) * 1.4
+    except (TypeError, ValueError):
+        pass
 
+    if rsi is not None and not pd.isna(rsi):
+        rsi_value = float(rsi)
+        if 45 <= rsi_value <= 60:
+            score += 8
+        elif 60 < rsi_value <= 70:
+            score += 5
+        elif 30 <= rsi_value < 45:
+            score += 3
+        elif rsi_value > 70:
+            score -= 6
+        else:
+            score -= 4
+
+    if macd is not None and not pd.isna(macd):
+        macd_value = float(macd)
+        score += 8 if macd_value > 0 else -8 if macd_value < 0 else 0
+
+    if ema9 and ema21:
+        score += 7 if float(ema9) > float(ema21) else -7
+    if ema50 and ema200:
+        score += 7 if float(ema50) > float(ema200) else -7
+
+    if signal == SIGNAL_BUY:
+        score += 18
+    elif signal == SIGNAL_SELL:
+        score -= 18
+
+    return int(round(max(0, min(100, score))))
+
+
+def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg):
     rows = []
+    total_mcap = 0.0
+    total_volume = 0.0
+    all_changes = []
     for sym in watchlist_symbols:
         t       = tickers.get(sym, {})
         cg      = cg_data.get(sym, {})
@@ -2093,16 +2274,24 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
         pct   = t.get("percentage", 0) or cg.get("price_change_percentage_24h", 0)
         vol   = t.get("quoteVolume", 0) or cg.get("total_volume", 0)
         mcap  = cg.get("market_cap", 0)
-        sig   = sig_res.get("signal", "—")
+        sig   = sig_res.get("signal", "N/A")
         conf  = sig_res.get("confidence", 0.0)
 
         ema9  = ind.get("ema_9", 0)
         ema21 = ind.get("ema_21", 0)
+        ema50 = ind.get("ema_50")
+        ema200 = ind.get("ema_200")
+        rsi = ind.get("rsi")
+        macd = ind.get("macd")
         cross = (
-            "🟢 Bull X" if ind.get("ema_bullish_cross")
-            else "🔴 Bear X" if ind.get("ema_bearish_cross")
-            else ("↑" if ind.get("ema9_above_ema21") else "↓")
+            "Bull X" if ind.get("ema_bullish_cross")
+            else "Bear X" if ind.get("ema_bearish_cross")
+            else ("Above" if ind.get("ema9_above_ema21") else "Below")
         )
+        ai_score = overview_ai_score(pct, rsi, macd, ema9, ema21, ema50, ema200, sig)
+        total_mcap += float(mcap or 0)
+        total_volume += float(vol or 0)
+        all_changes.append(float(pct or 0))
         rows.append({
             "Logo":       coin_logo_url(sym, cg),
             "Symbol":     base_symbol(sym),
@@ -2112,23 +2301,207 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
             "24h %":      float(pct or 0),
             "Market Cap": float(mcap or 0),
             "Volume 24h": float(vol or 0),
-            "RSI":        float(ind.get("rsi")) if ind.get("rsi") is not None else None,
-            "MACD":       float(ind.get("macd")) if ind.get("macd") is not None else None,
+            "RSI":        float(rsi) if rsi is not None else None,
+            "MACD":       float(macd) if macd is not None else None,
             "EMA 9":      float(ema9) if ema9 else None,
             "EMA 21":     float(ema21) if ema21 else None,
-            "EMA 50":     float(ind.get("ema_50")) if ind.get("ema_50") else None,
-            "EMA 200":    float(ind.get("ema_200")) if ind.get("ema_200") else None,
+            "EMA 50":     float(ema50) if ema50 else None,
+            "EMA 200":    float(ema200) if ema200 else None,
             "Cross":      cross,
             "Signal":     sig,
+            "AI Score":   ai_score,
             "Conf %":     float(conf * 100) if conf else None,
         })
 
-    df_table = pd.DataFrame(rows)
-    search_query = st.text_input(
-        "Search/filter by symbol",
-        placeholder="Search BTC, ETH, Solana...",
-        key="market_scanner_search",
-    ).strip().lower()
+    df_master = pd.DataFrame(rows).sort_values("Market Cap", ascending=False, kind="mergesort")
+    tracked_count = len(watchlist_symbols)
+    avg_change = float(np.mean(all_changes)) if all_changes else 0.0
+    buy_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_BUY)
+    sell_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_SELL)
+    hold_count = sum(1 for sig in signal_map.values() if sig.get("signal") == SIGNAL_HOLD)
+    signal_total = max(buy_count + sell_count + hold_count, 1)
+    avg_conf = float(np.mean([sig.get("confidence", 0.0) for sig in signal_map.values()])) if signal_map else 0.0
+    ai_conviction = int(round(avg_conf * 100))
+
+    rsi_values = [float(ind.get("rsi")) for ind in ind_map.values() if ind.get("rsi") is not None]
+    avg_rsi = float(np.mean(rsi_values)) if rsi_values else None
+    macd_values = [float(ind.get("macd")) for ind in ind_map.values() if ind.get("macd") is not None]
+    avg_macd = float(np.mean(macd_values)) if macd_values else None
+    ai_scores = df_master["AI Score"].dropna().astype(float).tolist() if "AI Score" in df_master else []
+    momentum_score = int(round(float(np.mean(ai_scores)))) if ai_scores else 50
+
+    ema200_ready = df_master.dropna(subset=["EMA 200"]) if "EMA 200" in df_master else pd.DataFrame()
+    above_ema200 = int((ema200_ready["Price"] > ema200_ready["EMA 200"]).sum()) if not ema200_ready.empty else 0
+    breadth_total = int(len(ema200_ready))
+    breadth_pct = int(round(above_ema200 / breadth_total * 100)) if breadth_total else 0
+    breadth_value = f"{breadth_pct}%" if breadth_total else "N/A"
+    breadth_detail = f"{above_ema200}/{breadth_total} above EMA200" if breadth_total else "EMA200 unavailable"
+
+    fg_val = fg.get("value", 50)
+    try:
+        fg_num = int(fg_val)
+    except (TypeError, ValueError):
+        fg_num = 50
+    fg_cl = fg.get("classification", "Neutral")
+
+    regime_points = 0
+    regime_points += 1 if avg_change > 0.25 else -1 if avg_change < -0.25 else 0
+    regime_points += 1 if buy_count > sell_count else -1 if sell_count > buy_count else 0
+    regime_points += 1 if fg_num >= 55 else -1 if fg_num < 35 else 0
+    if avg_rsi is not None:
+        regime_points += 1 if 45 <= avg_rsi <= 65 else -1 if avg_rsi > 72 or avg_rsi < 28 else 0
+    if avg_macd is not None:
+        regime_points += 1 if avg_macd > 0 else -1 if avg_macd < 0 else 0
+
+    regime = "Bullish" if regime_points >= 2 else "Bearish" if regime_points <= -2 else "Neutral"
+    regime_status = "positive" if regime == "Bullish" else "negative" if regime == "Bearish" else "warning"
+    dominance_edge = abs(buy_count - sell_count) / signal_total
+    confidence = int(round(min(95, max(45, 50 + abs(regime_points) * 8 + dominance_edge * 22 + avg_conf * 18))))
+    risk_score = 0
+    risk_score += 2 if momentum_score < 40 else 1 if momentum_score < 55 else 0
+    risk_score += 2 if breadth_total and breadth_pct < 35 else 1 if breadth_total and breadth_pct < 50 else 0
+    risk_score += 2 if fg_num < 25 else 1 if fg_num < 40 else 0
+    risk_score += 1 if sell_count > buy_count else 0
+    risk_level = "High" if risk_score >= 4 else "Low" if risk_score == 0 and momentum_score >= 62 and (not breadth_total or breadth_pct >= 55) else "Moderate"
+    risk_status = "negative" if risk_level == "High" else "positive" if risk_level == "Low" else "warning"
+
+    def overview_signal_class(signal: str) -> str:
+        return "buy" if signal == SIGNAL_BUY else "sell" if signal == SIGNAL_SELL else "hold"
+
+    def display_signal(row: pd.Series) -> str:
+        signal = row.get("Signal", "N/A")
+        score = float(row.get("AI Score", 0) or 0)
+        if signal == SIGNAL_BUY and score >= 85:
+            return "Strong Buy"
+        if signal == SIGNAL_SELL and score <= 30:
+            return "Strong Sell"
+        return str(signal).title() if signal in {SIGNAL_BUY, SIGNAL_SELL, SIGNAL_HOLD} else "N/A"
+
+    def opportunity_reason(row: pd.Series) -> str:
+        if row.get("Signal") == SIGNAL_BUY and row.get("EMA 50") and row.get("EMA 200") and row.get("EMA 50") > row.get("EMA 200"):
+            return "Momentum + EMA alignment"
+        if float(row.get("24h %", 0) or 0) > max(avg_change, 0):
+            return "High relative strength"
+        if row.get("MACD") is not None and not pd.isna(row.get("MACD")) and row.get("MACD") > 0:
+            return "Positive MACD momentum"
+        if row.get("Signal") == SIGNAL_BUY:
+            return "Signal engine accumulation"
+        return "Balanced risk-adjusted setup"
+
+    sorted_strength = df_master.sort_values(
+        by=["AI Score", "Conf %", "24h %", "Market Cap"],
+        ascending=[False, False, False, False],
+        kind="mergesort",
+    )
+    top_strength = sorted_strength.head(3)
+    top_symbols = top_strength["Symbol"].tolist()
+    top_text = ", ".join(top_symbols[:-1]) + (f" and {top_symbols[-1]}" if len(top_symbols) > 1 else (top_symbols[0] if top_symbols else "N/A"))
+    momentum_word = "positive" if momentum_score >= 60 else "negative" if momentum_score < 45 else "mixed"
+    market_chips = [
+        ("Market Breadth", breadth_value, breadth_detail),
+        ("Momentum Score", f"{momentum_score}/100", momentum_word.title()),
+        ("AI Conviction", f"{ai_conviction}%", f"{buy_count} BUY / {sell_count} SELL"),
+        ("Fear & Greed", str(fg_num), str(fg_cl)),
+        ("Top Strength", top_text, "Ranked by AI Score"),
+    ]
+    chips_html = "".join(
+        f"<div class='market-intel-chip'><span>{html.escape(label)}</span>"
+        f"<strong>{html.escape(str(value))}</strong><em>{html.escape(str(detail))}</em></div>"
+        for label, value, detail in market_chips
+    )
+    st.markdown(
+        "<div class='market-intel-card'>"
+        "<div class='market-intel-head'><div class='market-intel-title'>Market Intelligence</div>"
+        f"<div class='market-intel-meta'>{tracked_count} assets · 1h scan · Market Cap sort</div></div>"
+        "<div class='market-intel-body'>"
+        f"<div class='market-intel-core {card_status_class(status=regime_status)}'>"
+        "<div class='market-intel-label'>Market Regime</div>"
+        f"<div class='market-intel-value'>{html.escape(regime)}</div>"
+        f"<div class='market-intel-sub'>Confidence {confidence}% · Risk {risk_level}</div>"
+        "</div>"
+        f"<div class='market-intel-chips'>{chips_html}</div>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
+
+    opportunity_cards = []
+    for rank, (_, row) in enumerate(top_strength.head(3).iterrows(), start=1):
+        signal = row.get("Signal", "N/A")
+        signal_cls = overview_signal_class(signal)
+        status = "positive" if signal == SIGNAL_BUY else "negative" if signal == SIGNAL_SELL else "warning"
+        opportunity_cards.append(
+            f"<div class='opportunity-card {card_status_class(status=status)}'>"
+            f"<div class='opportunity-top'>{render_coin_identity(row['Pair'], cg_data.get(row['Pair'], {}))}<span class='opportunity-rank'>#{rank}</span></div>"
+            f"<div class='opportunity-mid'><div class='opportunity-score'>AI Score {int(row['AI Score'])}</div>"
+            f"<span class='overview-signal-pill {signal_cls}'>{html.escape(display_signal(row))}</span></div>"
+            f"<div class='opportunity-reason'>{html.escape(opportunity_reason(row))}</div>"
+            f"</div>"
+        )
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Top Opportunities</div>"
+        "<div class='compact-section-meta'>Ranked by AI Score, confidence, strength</div></div>"
+        f"<div class='opportunity-grid'>{''.join(opportunity_cards)}</div>",
+        unsafe_allow_html=True,
+    )
+
+    movers = df_master.sort_values("24h %", ascending=False, kind="mergesort")
+    top_gainers = movers.head(3)
+    top_losers = movers.tail(3).sort_values("24h %", ascending=True, kind="mergesort")
+
+    mover_cards = []
+    for label, card_status, items in (("GAINER", "status-positive", top_gainers), ("LOSER", "status-negative", top_losers)):
+        for _, row in items.iterrows():
+            color_var = "var(--success)" if card_status == "status-positive" else "var(--danger)"
+            signal_cls = overview_signal_class(row.get("Signal", "N/A"))
+            mover_cards.append(
+                f"<div class='dashboard-card mover-card {card_status}'>"
+                f"<div class='mover-topline'>{render_coin_identity(row['Pair'], cg_data.get(row['Pair'], {}))}<span class='mover-label'>{label}</span></div>"
+                f"<div class='mover-metric-row'><div class='metric-val' style='color:{color_var}'>{row['24h %']:+.2f}%</div>"
+                f"<div class='metric-subtext'>{fmt_price(row['Price'], row['Pair'])}</div></div>"
+                f"<div class='mover-metric-row'><div class='metric-subtext'>AI Score {int(row['AI Score'])}</div>"
+                f"<span class='overview-signal-pill {signal_cls}'>{html.escape(str(row.get('Signal', 'N/A')))}</span></div>"
+                f"</div>"
+            )
+    st.markdown(f"<div class='mover-grid'>{''.join(mover_cards)}</div>", unsafe_allow_html=True)
+
+    st.markdown(
+        f"<div class='scanner-head'><div class='scanner-title'>Market Scanner</div>"
+        f"<div class='scanner-status-line'><span>{tracked_count} coins</span><span>Market Cap sort</span><span>1h candles</span><span>80 bars</span></div></div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<div class='scanner-summary'>"
+        f"<span>{tracked_count} assets scanned</span>"
+        f"<span>{buy_count} bullish</span>"
+        f"<span>{hold_count} neutral</span>"
+        f"<span>{sell_count} bearish</span>"
+        f"<span>Average AI Score: {momentum_score}</span>"
+        + "</div>",
+        unsafe_allow_html=True,
+    )
+
+    df_table = df_master.copy()
+    filter_col, search_col = st.columns([0.28, 0.72])
+    with filter_col:
+        quick_filter = st.selectbox(
+            "Quick filter",
+            ["All", "BUY", "HOLD", "SELL", "Gainers", "Losers"],
+            key="market_scanner_quick_filter",
+        )
+    with search_col:
+        search_query = st.text_input(
+            "Search/filter by symbol",
+            placeholder="Search BTC, ETH, Solana...",
+            key="market_scanner_search",
+        ).strip().lower()
+
+    if quick_filter in {"BUY", "HOLD", "SELL"}:
+        df_table = df_table.loc[df_table["Signal"] == quick_filter].copy()
+    elif quick_filter == "Gainers":
+        df_table = df_table.loc[df_table["24h %"] > 0].copy()
+    elif quick_filter == "Losers":
+        df_table = df_table.loc[df_table["24h %"] < 0].copy()
+
     if search_query:
         mask = (
             df_table["Symbol"].str.lower().str.contains(search_query, na=False)
@@ -2149,15 +2522,26 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
 
     def style_signal(value):
         return {
-            SIGNAL_BUY: "color:#00E08A;font-weight:900",
-            SIGNAL_SELL: "color:#FF5C73;font-weight:900",
-            SIGNAL_HOLD: "color:#FFB84D;font-weight:850",
+            SIGNAL_BUY: "background:rgba(0,224,138,0.14);color:#00E08A;font-weight:950",
+            SIGNAL_SELL: "background:rgba(255,92,115,0.14);color:#FF5C73;font-weight:950",
+            SIGNAL_HOLD: "background:rgba(255,184,77,0.14);color:#FFB84D;font-weight:900",
         }.get(value, "")
+
+    def style_ai_score(value):
+        if pd.isna(value):
+            return ""
+        value = float(value)
+        if value >= 66:
+            return "color:#00E08A;font-weight:900"
+        if value <= 34:
+            return "color:#FF5C73;font-weight:900"
+        return "color:#FFB84D;font-weight:850"
 
     styled_table = (
         dataframe_theme_styles(df_table)
         .map(style_change, subset=["24h %"])
         .map(style_signal, subset=["Signal"])
+        .map(style_ai_score, subset=["AI Score"])
     )
     st.dataframe(
         styled_table,
@@ -2166,7 +2550,7 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
         height=min(640, 72 + max(len(df_table), 1) * 42),
         column_order=[
             "Logo", "Symbol", "Name", "Price", "24h %", "Market Cap", "Volume 24h",
-            "RSI", "MACD", "EMA 9", "EMA 21", "EMA 50", "EMA 200", "Cross", "Signal", "Conf %",
+            "AI Score", "RSI", "MACD", "EMA 9", "EMA 21", "EMA 50", "EMA 200", "Cross", "Signal", "Conf %",
         ],
         column_config={
             "Logo": st.column_config.ImageColumn("", width="small"),
@@ -2176,6 +2560,7 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
             "24h %": st.column_config.NumberColumn("24h %", format="%+.2f%%"),
             "Market Cap": st.column_config.NumberColumn("Market Cap", format="$%.0f"),
             "Volume 24h": st.column_config.NumberColumn("Volume 24h", format="$%.0f"),
+            "AI Score": st.column_config.NumberColumn("AI Score", format="%d", width="small"),
             "RSI": st.column_config.NumberColumn("RSI", format="%.1f"),
             "MACD": st.column_config.NumberColumn("MACD", format="%.4f"),
             "EMA 9": st.column_config.NumberColumn("EMA 9", format="$%.4f"),
