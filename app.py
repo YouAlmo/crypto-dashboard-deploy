@@ -763,6 +763,36 @@ def get_theme_css(theme_name: str) -> str:
     .tech-mini-value, .tech-mini-metric strong {{ display:block; color:var(--text); font-size:0.76rem; font-weight:920; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.12; writing-mode:horizontal-tb; text-orientation:mixed; }}
     .tech-level-list {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px; margin-top:7px; }}
     .tech-level {{ color:var(--muted); border:1px solid var(--card-border); border-radius:999px; padding:3px 6px; font-size:0.58rem; font-weight:850; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.1; writing-mode:horizontal-tb; text-orientation:mixed; }}
+    .order-command-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0.05rem 0 0.28rem; }}
+    .order-command-title {{ color:var(--text); font-size:clamp(1.02rem,1.35vw,1.28rem); font-weight:950; line-height:1.1; }}
+    .order-command-meta {{ color:var(--muted); font-size:0.72rem; font-weight:780; white-space:nowrap; }}
+    .order-command-card {{ border:1px solid var(--card-border); border-radius:var(--radius-md); background:linear-gradient(180deg,color-mix(in srgb,var(--card-bg) 94%,var(--panel-bg)),var(--card-bg)); box-shadow:0 9px 22px rgba(2,6,23,0.14); padding:9px 11px; margin:0.02rem 0 0.42rem; }}
+    .order-command-grid {{ display:grid; grid-template-columns:minmax(210px,0.44fr) minmax(520px,1.56fr); gap:9px; align-items:stretch; }}
+    .order-core {{ --order-accent:var(--warning); position:relative; border:1px solid color-mix(in srgb,var(--order-accent) 30%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 52%,transparent); padding:8px 10px 8px 12px; overflow:hidden; }}
+    .order-core::before {{ content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--order-accent); }}
+    .order-core.status-positive {{ --order-accent:var(--cg-green); }}
+    .order-core.status-negative {{ --order-accent:var(--cg-red); }}
+    .order-core.status-warning, .order-core.status-neutral {{ --order-accent:var(--warning); }}
+    .order-label {{ color:var(--muted); font-size:0.56rem; font-weight:900; text-transform:uppercase; line-height:1.05; }}
+    .order-value {{ color:var(--order-accent); font-size:clamp(1.05rem,1.38vw,1.32rem); font-weight:950; line-height:1.02; margin-top:4px; }}
+    .order-sub {{ color:var(--text); font-size:0.72rem; font-weight:820; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .order-gauge {{ margin-top:8px; }}
+    .order-gauge-track {{ position:relative; height:8px; border-radius:999px; background:linear-gradient(90deg,var(--cg-red),var(--warning),var(--cg-green)); overflow:hidden; }}
+    .order-gauge-marker {{ position:absolute; top:-3px; width:4px; height:14px; border-radius:999px; background:var(--text); box-shadow:0 0 0 2px color-mix(in srgb,var(--app-bg) 90%,transparent); transform:translateX(-2px); }}
+    .order-gauge-scale {{ display:flex; justify-content:space-between; color:var(--subtle); font-size:0.52rem; font-weight:800; margin-top:5px; }}
+    .order-health-grid {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; }}
+    .order-chip, .order-action-item {{ --order-chip-accent:var(--warning); border:1px solid color-mix(in srgb,var(--order-chip-accent) 25%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 54%,transparent); padding:7px 8px; min-height:56px; overflow:hidden; }}
+    .order-chip.status-positive, .order-action-item.status-positive {{ --order-chip-accent:var(--cg-green); }}
+    .order-chip.status-negative, .order-action-item.status-negative {{ --order-chip-accent:var(--cg-red); }}
+    .order-chip.status-warning, .order-chip.status-neutral, .order-action-item.status-warning, .order-action-item.status-neutral {{ --order-chip-accent:var(--warning); }}
+    .order-chip span, .order-action-item span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .order-chip strong, .order-action-item strong {{ display:block; color:var(--text); font-size:0.78rem; font-weight:950; line-height:1.08; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .order-chip em, .order-action-item em {{ display:block; color:var(--muted); font-size:0.58rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .order-reasons, .order-context-chips {{ display:flex; flex-wrap:wrap; gap:5px; margin:0.1rem 0 0.45rem; }}
+    .order-reason-chip, .order-context-chip {{ color:var(--text); background:color-mix(in srgb,var(--panel-bg) 62%,transparent); border:1px solid var(--card-border); border-radius:999px; padding:3px 8px; font-size:0.66rem; font-weight:850; white-space:nowrap; }}
+    .order-context-chip strong {{ color:var(--muted); font-size:0.58rem; font-weight:900; text-transform:uppercase; margin-right:4px; }}
+    .order-action-grid {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
+    .order-pressure-panel {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; margin:0.1rem 0 0.35rem; }}
     .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); white-space: nowrap; }}
     .metric-pill.buy {{ background: var(--cg-pos-weak); color: var(--cg-green); }}
     .metric-pill.sell {{ background: var(--cg-neg-weak); color: var(--cg-red); }}
@@ -1247,8 +1277,8 @@ def get_theme_css(theme_name: str) -> str:
       .overview-summary-grid, .indicator-grid {{ grid-template-columns: 1fr; }}
       .tech-command-head, .indicator-group-head, .tech-chart-head, .tech-control-row, .smc-command-head {{ align-items:flex-start; flex-direction:column; gap:5px; }}
       .tech-command-meta, .indicator-group-meta, .tech-chart-meta {{ white-space:normal; }}
-      .tech-summary-grid, .tech-detail-grid, .tech-action-grid, .tech-score-grid, .smc-command-grid, .smc-setup-grid, .smc-summary-grid {{ grid-template-columns:1fr; }}
-      .smc-health-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
+      .tech-summary-grid, .tech-detail-grid, .tech-action-grid, .tech-score-grid, .smc-command-grid, .smc-setup-grid, .smc-summary-grid, .order-command-grid, .order-action-grid, .order-pressure-panel {{ grid-template-columns:1fr; }}
+      .smc-health-grid, .order-health-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-checklist {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-health-grid, .tech-metric-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-level-list {{ grid-template-columns:1fr; }}
@@ -3938,11 +3968,11 @@ def render_orderbook(ob: dict, symbol: str):
     if not ob or not isinstance(ob, dict):
         render_empty_state("Order book data unavailable.")
         return
-    
+
     if "bids" not in ob or "asks" not in ob:
         render_empty_state("Order book data unavailable.")
         return
-    
+
     source_notice = orderbook_source_message(ob)
     if source_notice:
         message, kind = source_notice
@@ -3951,18 +3981,142 @@ def render_orderbook(ob: dict, symbol: str):
     src_label = orderbook_source_label(ob)
     st.markdown(render_section_header(f"Order Book — {symbol}", f"Source: {src_label}"), unsafe_allow_html=True)
 
-    imb = ob["imbalance"]
-    imb_label = "Bid dominant" if imb > 0 else "Ask dominant"
-    imb_badge = "buy" if imb > 0 else "sell"
-    spread_note = f"{ob['spread_pct']:.4f}% of price"
-    buy_pct = f"{ob['buy_pct']:.1f}%"
-    sell_pct = f"{ob['sell_pct']:.1f}%"
+    imb = float(ob.get("imbalance", 0) or 0)
+    buy_pressure = float(ob.get("buy_pct", 50) or 50)
+    sell_pressure = float(ob.get("sell_pct", 50) or 50)
+    spread_pct = float(ob.get("spread_pct", 0) or 0)
+    cum_delta = float(ob.get("cum_delta", 0) or 0)
+    spread = float(ob.get("spread", 0) or 0)
+
+    def order_status(value: str) -> str:
+        v = str(value).lower()
+        if any(term in v for term in ("bull", "buyer", "bid", "buying", "tight", "long", "low")):
+            return "positive"
+        if any(term in v for term in ("bear", "seller", "ask", "selling", "wide", "short", "high")):
+            return "negative"
+        return "warning"
+
+    def flow_card(label: str, value: str, detail: str, status: str = "warning") -> str:
+        return (
+            f"<div class='order-chip {card_status_class(status=status)}'>"
+            f"<span>{html.escape(str(label))}</span><strong>{html.escape(str(value))}</strong>"
+            f"<em>{html.escape(str(detail))}</em></div>"
+        )
+
+    def action_card(label: str, value: str, detail: str, status: str = "warning") -> str:
+        return (
+            f"<div class='order-action-item {card_status_class(status=status)}'>"
+            f"<span>{html.escape(str(label))}</span><strong>{html.escape(str(value))}</strong>"
+            f"<em>{html.escape(str(detail))}</em></div>"
+        )
+
+    pressure_component = (buy_pressure - sell_pressure) * 0.45
+    imbalance_component = imb * 100 * 0.30
+    delta_component = (15 if cum_delta > 0 else -15 if cum_delta < 0 else 0)
+    spread_penalty = -8 if spread_pct > 0.15 else -4 if spread_pct > 0.08 else 4 if spread_pct <= 0.04 else 0
+    flow_score = int(round(max(0, min(100, 50 + pressure_component + imbalance_component + delta_component + spread_penalty))))
+
+    order_flow_bias = "Bullish" if flow_score >= 65 else "Bearish" if flow_score <= 35 else "Neutral"
+    bias_status = "positive" if order_flow_bias == "Bullish" else "negative" if order_flow_bias == "Bearish" else "warning"
+    confidence = int(round(min(100, max(0, 45 + abs(flow_score - 50) * 1.1 + (8 if spread_pct <= 0.05 else -5 if spread_pct > 0.15 else 0)))))
+
+    liquidity_dominance = "Buyers" if buy_pressure - sell_pressure >= 8 else "Sellers" if sell_pressure - buy_pressure >= 8 else "Balanced"
+    spread_status = "Tight" if spread_pct <= 0.04 else "Wide" if spread_pct > 0.15 else "Normal"
+    depth_imbalance = "Bid Dominant" if imb >= 0.08 else "Ask Dominant" if imb <= -0.08 else "Balanced"
+    delta_status = "Net Buying" if cum_delta > 0 else "Net Selling" if cum_delta < 0 else "Neutral"
+
+    reasons = []
+    if liquidity_dominance == "Buyers":
+        reasons.append("Bid pressure dominant")
+    elif liquidity_dominance == "Sellers":
+        reasons.append("Ask pressure rising")
+    else:
+        reasons.append("Balanced book")
+    reasons.append("Positive cumulative delta" if cum_delta > 0 else "Negative cumulative delta" if cum_delta < 0 else "Neutral cumulative delta")
+    reasons.append("Tight spread" if spread_status == "Tight" else "Wide spread caution" if spread_status == "Wide" else "Normal spread")
+    if depth_imbalance == "Bid Dominant":
+        reasons.append("Bid depth dominant")
+    elif depth_imbalance == "Ask Dominant":
+        reasons.append("Ask depth dominant")
+    reasons_html = "".join(f"<span class='order-reason-chip'>{html.escape(r)}</span>" for r in reasons)
+
+    healthy_spread = spread_status in {"Tight", "Normal"}
+    if order_flow_bias == "Bullish" and healthy_spread:
+        preferred_setup = "Long pullback"
+        entry_context = "Bid support"
+    elif order_flow_bias == "Bearish" and healthy_spread:
+        preferred_setup = "Short bounce"
+        entry_context = "Ask resistance"
+    elif order_flow_bias == "Bullish":
+        preferred_setup = "Long only after spread tightens"
+        entry_context = "Bid support, spread caution"
+    elif order_flow_bias == "Bearish":
+        preferred_setup = "Short only after spread tightens"
+        entry_context = "Ask resistance, spread caution"
+    else:
+        preferred_setup = "Wait"
+        entry_context = "Balanced book"
+    invalidation = "Below best bid" if order_flow_bias == "Bullish" else "Above best ask" if order_flow_bias == "Bearish" else "Break of book balance"
+    risk = "High" if spread_status == "Wide" else "Low" if confidence >= 70 and spread_status == "Tight" else "Moderate"
+
+    st.markdown(
+        "<div class='order-command-head'>"
+        "<div class='order-command-title'>Order Flow Command Center</div>"
+        f"<div class='order-command-meta'>{html.escape(symbol)} / {html.escape(src_label)} / Confidence {confidence}%</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<div class='order-command-card'><div class='order-command-grid'>"
+        f"<div class='order-core {card_status_class(status=bias_status)}'>"
+        "<div class='order-label'>Order Flow Bias</div>"
+        f"<div class='order-value'>{html.escape(order_flow_bias)}</div>"
+        f"<div class='order-sub'>Score {flow_score}/100 / Confidence {confidence}%</div>"
+        "<div class='order-gauge'><div class='order-gauge-track'>"
+        f"<div class='order-gauge-marker' style='left:{flow_score}%'></div></div>"
+        "<div class='order-gauge-scale'><span>Bearish</span><span>Neutral</span><span>Bullish</span></div></div>"
+        "</div>"
+        "<div class='order-health-grid'>"
+        + flow_card("Liquidity Dominance", liquidity_dominance, f"Buy {buy_pressure:.1f}% / Sell {sell_pressure:.1f}%", order_status(liquidity_dominance))
+        + flow_card("Spread Status", spread_status, f"{spread_pct:.4f}% of price", order_status(spread_status))
+        + flow_card("Depth Imbalance", depth_imbalance, f"Imbalance {imb:+.3f}", order_status(depth_imbalance))
+        + flow_card("Delta Status", delta_status, f"{cum_delta:+,.4f}", order_status(delta_status))
+        + flow_card("Confidence", f"{confidence}/100", f"Risk {risk}", "positive" if confidence >= 70 else "warning" if confidence >= 45 else "negative")
+        + "</div></div></div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Why this order flow bias?</div>"
+        f"<div class='compact-section-meta'>Pressure {pressure_component:+.1f} / Depth {imbalance_component:+.1f} / Delta {delta_component:+.0f}</div></div>"
+        f"<div class='order-reasons'>{reasons_html}</div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Order Flow Action Plan</div>"
+        "<div class='compact-section-meta'>Display-only context from live book values</div></div>"
+        "<div class='order-action-grid'>"
+        + action_card("Bias", order_flow_bias, f"Score {flow_score}/100", bias_status)
+        + action_card("Preferred Setup", preferred_setup, f"Spread {spread_status.lower()}", order_status(order_flow_bias))
+        + action_card("Entry Context", entry_context, depth_imbalance, order_status(entry_context))
+        + action_card("Invalidation", invalidation, f"Bid {fmt_price(ob['best_bid'], symbol)} / Ask {fmt_price(ob['best_ask'], symbol)}", "warning")
+        + action_card("Risk", risk, f"Spread {spread_pct:.4f}%", "negative" if risk == "High" else "positive" if risk == "Low" else "warning")
+        + "</div>",
+        unsafe_allow_html=True,
+    )
+
+    imb_label = "Bid dominant" if imb > 0 else "Ask dominant" if imb < 0 else "Balanced"
+    imb_badge = "buy" if imb > 0 else "sell" if imb < 0 else "hold"
+    spread_note = f"{spread_pct:.4f}% of price"
+    buy_pct = f"{buy_pressure:.1f}%"
+    sell_pct = f"{sell_pressure:.1f}%"
     imbalance = f"{imb:+.3f}"
     st.markdown(
         "<div class='dashboard-grid'>"
         + render_metric_tile('Best Bid', fmt_price(ob['best_bid'], symbol), 'Near-term support', 'buy')
         + render_metric_tile('Best Ask', fmt_price(ob['best_ask'], symbol), 'Immediate resistance', 'sell')
-        + render_metric_tile('Spread', fmt_price(ob['spread'], symbol), spread_note, 'hold')
+        + render_metric_tile('Spread', fmt_price(spread, symbol), spread_note, 'hold')
         + render_metric_tile('Buy Pressure', buy_pct, 'Bid-side liquidity', 'buy')
         + render_metric_tile('Sell Pressure', sell_pct, 'Ask-side liquidity', 'sell')
         + render_metric_tile('Imbalance', imbalance, imb_label, imb_badge)
@@ -3970,16 +4124,16 @@ def render_orderbook(ob: dict, symbol: str):
         unsafe_allow_html=True,
     )
 
-    # ── Bid / Ask tables side by side ──────────────────────────────────────
+    # Bid / Ask tables side by side
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown("<div class='table-card status-positive'><h5 style='margin:0 0 10px;color:var(--text)'>🟢 Top Bids</h5></div>", unsafe_allow_html=True)
+        st.markdown("<div class='table-card status-positive'><h5 style='margin:0 0 10px;color:var(--text)'>Top Bids</h5></div>", unsafe_allow_html=True)
         bids_df = pd.DataFrame(ob["bids"]).rename(
             columns={"price":"Price","size":"Size","cumulative":"Cumulative","value":"Value ($)"})
-        bids_df["Price"]      = bids_df["Price"].astype(float)
-        bids_df["Size"]       = bids_df["Size"].astype(float).round(4)
+        bids_df["Price"] = bids_df["Price"].astype(float)
+        bids_df["Size"] = bids_df["Size"].astype(float).round(4)
         bids_df["Cumulative"] = bids_df["Cumulative"].astype(float).round(4)
-        bids_df["Value ($)"]  = bids_df["Value ($)"].astype(float)
+        bids_df["Value ($)"] = bids_df["Value ($)"].astype(float)
         render_interactive_dataframe(
             bids_df[["Price","Size","Cumulative","Value ($)"]],
             column_config={
@@ -3992,13 +4146,13 @@ def render_orderbook(ob: dict, symbol: str):
         )
 
     with col2:
-        st.markdown("<div class='table-card status-negative'><h5 style='margin:0 0 10px;color:var(--text)'>🔴 Top Asks</h5></div>", unsafe_allow_html=True)
+        st.markdown("<div class='table-card status-negative'><h5 style='margin:0 0 10px;color:var(--text)'>Top Asks</h5></div>", unsafe_allow_html=True)
         asks_df = pd.DataFrame(ob["asks"]).rename(
             columns={"price":"Price","size":"Size","cumulative":"Cumulative","value":"Value ($)"})
-        asks_df["Price"]      = asks_df["Price"].astype(float)
-        asks_df["Size"]       = asks_df["Size"].astype(float).round(4)
+        asks_df["Price"] = asks_df["Price"].astype(float)
+        asks_df["Size"] = asks_df["Size"].astype(float).round(4)
         asks_df["Cumulative"] = asks_df["Cumulative"].astype(float).round(4)
-        asks_df["Value ($)"]  = asks_df["Value ($)"].astype(float)
+        asks_df["Value ($)"] = asks_df["Value ($)"].astype(float)
         render_interactive_dataframe(
             asks_df[["Price","Size","Cumulative","Value ($)"]],
             column_config={
@@ -4010,14 +4164,26 @@ def render_orderbook(ob: dict, symbol: str):
             height=600,
         )
 
-    # ── Depth chart ────────────────────────────────────────────────────────
-    st.markdown("##### 📊 Depth Heatmap")
+    # Depth chart
+    context_html = "".join([
+        f"<span class='order-context-chip'><strong>Spread</strong>{html.escape(fmt_price(spread, symbol))}</span>",
+        f"<span class='order-context-chip'><strong>Bid pressure</strong>{buy_pressure:.1f}%</span>",
+        f"<span class='order-context-chip'><strong>Ask pressure</strong>{sell_pressure:.1f}%</span>",
+        f"<span class='order-context-chip'><strong>Imbalance</strong>{imb:+.3f}</span>",
+        f"<span class='order-context-chip'><strong>Delta</strong>{cum_delta:+,.2f}</span>",
+    ])
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Depth Heatmap</div>"
+        f"<div class='compact-section-meta'>{html.escape(depth_imbalance)} / {html.escape(spread_status)} spread</div></div>"
+        f"<div class='order-context-chips'>{context_html}</div>",
+        unsafe_allow_html=True,
+    )
     bids_list = ob["bids"]
     asks_list = ob["asks"]
     bid_prices = [b["price"] for b in bids_list]
     ask_prices = [a["price"] for a in asks_list]
-    bid_cum    = [b["cumulative"] for b in bids_list]
-    ask_cum    = [a["cumulative"] for a in asks_list]
+    bid_cum = [b["cumulative"] for b in bids_list]
+    ask_cum = [a["cumulative"] for a in asks_list]
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -4037,13 +4203,20 @@ def render_orderbook(ob: dict, symbol: str):
     )
     st.plotly_chart(fig, width="stretch")
 
-    # ── Buy/Sell pressure bar ──────────────────────────────────────────────
-    st.markdown("##### ⚖️ Buy / Sell Pressure")
+    # Buy/Sell pressure bar
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Buy / Sell Pressure</div>"
+        f"<div class='compact-section-meta'>{html.escape(liquidity_dominance)} controlling short-term flow</div></div>"
+        "<div class='order-pressure-panel'>"
+        + flow_card("Buy Pressure", f"{buy_pressure:.1f}%", "Bid-side liquidity", "positive")
+        + flow_card("Sell Pressure", f"{sell_pressure:.1f}%", "Ask-side liquidity", "negative")
+        + flow_card("Interpretation", liquidity_dominance, delta_status, order_status(liquidity_dominance))
+        + "</div>",
+        unsafe_allow_html=True,
+    )
     fig2 = go.Figure()
-    fig2.add_trace(go.Bar(x=["Buy Pressure"],  y=[ob["buy_pct"]],
-        marker_color="#00E08A", name="Bids"))
-    fig2.add_trace(go.Bar(x=["Sell Pressure"], y=[ob["sell_pct"]],
-        marker_color="#FF5C73", name="Asks"))
+    fig2.add_trace(go.Bar(x=["Buy Pressure"], y=[buy_pressure], marker_color="#00E08A", name="Bids"))
+    fig2.add_trace(go.Bar(x=["Sell Pressure"], y=[sell_pressure], marker_color="#FF5C73", name="Asks"))
     fig2.update_layout(height=145, paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0,r=0,t=10,b=0),
         showlegend=False, yaxis=dict(range=[0,100], ticksuffix="%"))
@@ -4053,13 +4226,14 @@ def render_orderbook(ob: dict, symbol: str):
         "<div class='dashboard-grid'>"
         + render_dashboard_card(
             "Cumulative Delta",
-            f"{ob['cum_delta']:+,.4f}",
-            "Net buying" if ob["cum_delta"] > 0 else "Net selling" if ob["cum_delta"] < 0 else "Balanced flow",
-            status="positive" if ob["cum_delta"] > 0 else "negative" if ob["cum_delta"] < 0 else "neutral",
+            f"{cum_delta:+,.4f}",
+            "Net buying" if cum_delta > 0 else "Net selling" if cum_delta < 0 else "Balanced flow",
+            status="positive" if cum_delta > 0 else "negative" if cum_delta < 0 else "neutral",
         )
         + "</div>",
         unsafe_allow_html=True,
     )
+
 
 # ── Tab 5: Multi-Timeframe ────────────────────────────────────────────────────
 
