@@ -638,6 +638,44 @@ def get_theme_css(theme_name: str) -> str:
       overflow: hidden;
     }}
     .regime-driver span {{ display: block; color: var(--subtle); font-size: 0.55rem; font-weight: 850; text-transform: uppercase; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .smc-command-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0.05rem 0 0.28rem; }}
+    .smc-command-title {{ color:var(--text); font-size:clamp(1.02rem,1.35vw,1.28rem); font-weight:950; line-height:1.1; }}
+    .smc-command-meta {{ color:var(--muted); font-size:0.72rem; font-weight:780; white-space:nowrap; }}
+    .smc-command-card {{ border:1px solid var(--card-border); border-radius:var(--radius-md); background:linear-gradient(180deg,color-mix(in srgb,var(--card-bg) 94%,var(--panel-bg)),var(--card-bg)); box-shadow:0 9px 22px rgba(2,6,23,0.14); padding:9px 11px; margin:0.02rem 0 0.42rem; }}
+    .smc-command-grid {{ display:grid; grid-template-columns:minmax(210px,0.46fr) minmax(480px,1.54fr); gap:9px; align-items:stretch; }}
+    .smc-core {{ --smc-accent:var(--warning); position:relative; border:1px solid color-mix(in srgb,var(--smc-accent) 30%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 52%,transparent); padding:8px 10px 8px 12px; overflow:hidden; }}
+    .smc-core::before {{ content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--smc-accent); }}
+    .smc-core.status-positive {{ --smc-accent:var(--cg-green); }}
+    .smc-core.status-negative {{ --smc-accent:var(--cg-red); }}
+    .smc-core.status-warning, .smc-core.status-neutral {{ --smc-accent:var(--warning); }}
+    .smc-label {{ color:var(--muted); font-size:0.56rem; font-weight:900; text-transform:uppercase; line-height:1.05; }}
+    .smc-value {{ color:var(--smc-accent); font-size:clamp(1.05rem,1.38vw,1.32rem); font-weight:950; line-height:1.02; margin-top:4px; }}
+    .smc-sub {{ color:var(--text); font-size:0.72rem; font-weight:820; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .smc-gauge {{ margin-top:8px; }}
+    .smc-gauge-track {{ position:relative; height:8px; border-radius:999px; background:linear-gradient(90deg,var(--cg-red),var(--warning),var(--cg-green)); overflow:hidden; }}
+    .smc-gauge-marker {{ position:absolute; top:-3px; width:4px; height:14px; border-radius:999px; background:var(--text); box-shadow:0 0 0 2px color-mix(in srgb,var(--app-bg) 90%,transparent); transform:translateX(-2px); }}
+    .smc-gauge-scale {{ display:flex; justify-content:space-between; color:var(--subtle); font-size:0.50rem; font-weight:800; margin-top:5px; }}
+    .smc-health-grid {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; }}
+    .smc-health-chip, .smc-setup-item {{ --smc-chip-accent:var(--warning); border:1px solid color-mix(in srgb,var(--smc-chip-accent) 25%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 54%,transparent); padding:7px 8px; min-height:56px; overflow:hidden; }}
+    .smc-health-chip.status-positive, .smc-setup-item.status-positive {{ --smc-chip-accent:var(--cg-green); }}
+    .smc-health-chip.status-negative, .smc-setup-item.status-negative {{ --smc-chip-accent:var(--cg-red); }}
+    .smc-health-chip.status-warning, .smc-health-chip.status-neutral, .smc-setup-item.status-warning, .smc-setup-item.status-neutral {{ --smc-chip-accent:var(--warning); }}
+    .smc-health-chip span, .smc-setup-item span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .smc-health-chip strong, .smc-setup-item strong {{ display:block; color:var(--text); font-size:0.78rem; font-weight:950; line-height:1.08; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .smc-health-chip em, .smc-setup-item em {{ display:block; color:var(--muted); font-size:0.58rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .smc-reasons {{ display:flex; flex-wrap:wrap; gap:5px; margin:0.1rem 0 0.45rem; }}
+    .smc-reason-chip {{ color:var(--text); background:color-mix(in srgb,var(--panel-bg) 62%,transparent); border:1px solid var(--card-border); border-radius:999px; padding:3px 8px; font-size:0.66rem; font-weight:850; white-space:nowrap; }}
+    .smc-setup-grid {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
+    .smc-summary-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.42rem; }}
+    .smc-summary-card {{ --smc-summary-accent:var(--warning); border:1px solid color-mix(in srgb,var(--smc-summary-accent) 26%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 56%,transparent); padding:7px 8px; min-height:54px; overflow:hidden; }}
+    .smc-summary-card.status-positive {{ --smc-summary-accent:var(--cg-green); }}
+    .smc-summary-card.status-negative {{ --smc-summary-accent:var(--cg-red); }}
+    .smc-summary-card.status-warning, .smc-summary-card.status-neutral {{ --smc-summary-accent:var(--warning); }}
+    .smc-summary-card span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .smc-summary-card strong {{ display:block; color:var(--smc-summary-accent); font-size:0.92rem; font-weight:950; line-height:1.04; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .smc-summary-card em {{ display:block; color:var(--muted); font-size:0.58rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .smc-empty-note {{ border:1px solid var(--card-border); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 56%,transparent); padding:10px 11px; color:var(--text); font-size:0.82rem; font-weight:850; line-height:1.25; }}
+    .smc-empty-note span {{ display:block; color:var(--muted); font-size:0.68rem; font-weight:720; margin-top:4px; }}
     .indicator-grid {{ grid-template-columns: repeat(auto-fit, minmax(188px, 1fr)); gap: 16px; margin-top: 0.7rem; }}
     .indicator-grid .dashboard-card {{ min-height: 132px; align-items: center; justify-content: center; text-align: center; }}
     .tech-command-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0.06rem 0 0.22rem; }}
@@ -1203,9 +1241,10 @@ def get_theme_css(theme_name: str) -> str:
       .block-container {{ padding-inline: 0.75rem !important; }}
       .dashboard-grid {{ grid-template-columns: 1fr; }}
       .overview-summary-grid, .indicator-grid {{ grid-template-columns: 1fr; }}
-      .tech-command-head, .indicator-group-head, .tech-chart-head, .tech-control-row {{ align-items:flex-start; flex-direction:column; gap:5px; }}
+      .tech-command-head, .indicator-group-head, .tech-chart-head, .tech-control-row, .smc-command-head {{ align-items:flex-start; flex-direction:column; gap:5px; }}
       .tech-command-meta, .indicator-group-meta, .tech-chart-meta {{ white-space:normal; }}
-      .tech-summary-grid, .tech-detail-grid, .tech-action-grid, .tech-score-grid {{ grid-template-columns:1fr; }}
+      .tech-summary-grid, .tech-detail-grid, .tech-action-grid, .tech-score-grid, .smc-command-grid, .smc-setup-grid, .smc-summary-grid {{ grid-template-columns:1fr; }}
+      .smc-health-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-checklist {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-health-grid, .tech-metric-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-level-list {{ grid-template-columns:1fr; }}
@@ -3463,48 +3502,196 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
         render_empty_state("Smart Money data unavailable. SMC analysis could not be loaded.")
         return
 
-    st.markdown(render_section_header(
-        "Smart Money Concepts",
-        "Institutional order flow, FVGs, liquidity zones and SMC insights in a premium dashboard."
-    ), unsafe_allow_html=True)
-
+    close = float(df["close"].iloc[-1])
+    recent = df.tail(200)
     pd_zone = smc.get("premium_discount", {})
-    zone    = pd_zone.get("current_zone", "N/A")
-    zone_c  = "#00E08A" if zone == "Discount" else ("#FF5C73" if zone == "Premium" else "#FFB84D")
+    zone = pd_zone.get("current_zone", "N/A")
+    zone_c = "#00E08A" if zone == "Discount" else ("#FF5C73" if zone == "Premium" else "#FFB84D")
     bull_fvg = smc.get("bull_fvg", [])
     bear_fvg = smc.get("bear_fvg", [])
-    bull_ob  = smc.get("bull_ob", [])
-    bear_ob  = smc.get("bear_ob", [])
+    bull_ob = smc.get("bull_ob", [])
+    bear_ob = smc.get("bear_ob", [])
     bos_bull = smc.get("bos_bull", [])
     bos_bear = smc.get("bos_bear", [])
-    choch_b  = smc.get("choch_bull", [])
+    choch_b = smc.get("choch_bull", [])
     choch_br = smc.get("choch_bear", [])
+    eq_highs = smc.get("equal_highs_above", [])
+    eq_lows = smc.get("equal_lows_below", [])
 
-    zone_status = "positive" if zone == "Discount" else "negative" if zone == "Premium" else "neutral"
+    def clamp(v: float, lo: float, hi: float) -> float:
+        return max(lo, min(hi, v))
+
+    def signed_ratio(pos: int, neg: int, weight: float) -> float:
+        total = pos + neg
+        if total <= 0:
+            return 0
+        return ((pos - neg) / total) * weight
+
+    def smc_state_status(value: str) -> str:
+        v = str(value).lower()
+        if any(term in v for term in ("accumulation", "bull", "buy-side", "long", "discount", "low", "active")):
+            return "positive"
+        if any(term in v for term in ("distribution", "bear", "sell-side", "short", "premium", "high")):
+            return "negative"
+        return "warning"
+
+    def summary_card(label: str, value: str, detail: str = "", status: str = "warning") -> str:
+        return (
+            f"<div class='smc-summary-card {card_status_class(status=status)}'>"
+            f"<span>{html.escape(str(label))}</span><strong>{html.escape(str(value))}</strong>"
+            f"<em>{html.escape(str(detail))}</em></div>"
+        )
+
+    def setup_item(label: str, value: str, detail: str = "", status: str = "warning") -> str:
+        return (
+            f"<div class='smc-setup-item {card_status_class(status=status)}'>"
+            f"<span>{html.escape(str(label))}</span><strong>{html.escape(str(value))}</strong>"
+            f"<em>{html.escape(str(detail))}</em></div>"
+        )
+
+    fvg_bias_score = signed_ratio(len(bull_fvg), len(bear_fvg), 20)
+    structure_bull = len(bos_bull) + len(choch_b)
+    structure_bear = len(bos_bear) + len(choch_br)
+    structure_score = signed_ratio(structure_bull, structure_bear, 25)
+    liquidity_score = signed_ratio(len(eq_highs), len(eq_lows), 20)
+    zone_score = 15 if zone == "Discount" else -15 if zone == "Premium" else 0
+    price_change = 0.0
+    volume_confirm = 0.0
+    if len(df) >= 12:
+        price_change = ((close - float(df["close"].iloc[-12])) / float(df["close"].iloc[-12])) * 100 if float(df["close"].iloc[-12]) else 0
+        recent_vol = float(df["volume"].tail(5).mean()) if "volume" in df.columns else 0
+        base_vol = float(df["volume"].tail(30).mean()) if "volume" in df.columns else 0
+        volume_confirm = 20 if price_change > 0 and recent_vol >= base_vol else -20 if price_change < 0 and recent_vol >= base_vol else 10 if price_change > 0 else -10 if price_change < 0 else 0
+    smc_score = int(round(clamp(50 + fvg_bias_score + structure_score + liquidity_score + zone_score + volume_confirm, 0, 100)))
+    institutional_bias = "Accumulation" if smc_score >= 65 else "Distribution" if smc_score <= 35 else "Neutral"
+    bias_status = "positive" if institutional_bias == "Accumulation" else "negative" if institutional_bias == "Distribution" else "warning"
+
+    liquidity_pressure = "Buy-side" if len(eq_highs) > len(eq_lows) else "Sell-side" if len(eq_lows) > len(eq_highs) else "Balanced"
+    fvg_bias = "Bullish" if len(bull_fvg) > len(bear_fvg) else "Bearish" if len(bear_fvg) > len(bull_fvg) else "Mixed"
+    structure_bias = "Bullish" if structure_bull > structure_bear else "Bearish" if structure_bear > structure_bull else "Mixed"
+
+    def detect_last_sweep() -> dict:
+        if len(df) < 12:
+            return {"type": "None", "level": None, "age": None}
+        lookback = min(45, len(df) - 1)
+        start_i = max(5, len(df) - lookback)
+        last = {"type": "None", "level": None, "age": None}
+        for i in range(start_i, len(df)):
+            left = df.iloc[max(0, i - 20):i]
+            if left.empty:
+                continue
+            prev_high = float(left["high"].max())
+            prev_low = float(left["low"].min())
+            high = float(df["high"].iloc[i])
+            low = float(df["low"].iloc[i])
+            candle_close = float(df["close"].iloc[i])
+            sweep_high_level = prev_high
+            sweep_low_level = prev_low
+            nearby_highs = [float(z.get("level", 0)) for z in eq_highs if z.get("level")]
+            nearby_lows = [float(z.get("level", 0)) for z in eq_lows if z.get("level")]
+            if nearby_highs:
+                sweep_high_level = min(nearby_highs, key=lambda x: abs(x - high))
+            if nearby_lows:
+                sweep_low_level = min(nearby_lows, key=lambda x: abs(x - low))
+            if high > sweep_high_level and candle_close < sweep_high_level:
+                last = {"type": "Sweep High", "level": sweep_high_level, "age": len(df) - 1 - i}
+            if low < sweep_low_level and candle_close > sweep_low_level:
+                last = {"type": "Sweep Low", "level": sweep_low_level, "age": len(df) - 1 - i}
+        return last
+
+    sweep = detect_last_sweep()
+    nearest_high = min(eq_highs, key=lambda z: abs(float(z.get("level", close)) - close), default=None)
+    nearest_low = min(eq_lows, key=lambda z: abs(float(z.get("level", close)) - close), default=None)
+    liq_candidates = []
+    if nearest_high:
+        liq_candidates.append(("Buy-side", float(nearest_high.get("level", close)), nearest_high.get("touches", 0)))
+    if nearest_low:
+        liq_candidates.append(("Sell-side", float(nearest_low.get("level", close)), nearest_low.get("touches", 0)))
+    nearest_liq = min(liq_candidates, key=lambda x: abs(x[1] - close), default=None)
+    nearest_liq_label = nearest_liq[0] if nearest_liq else "None"
+    nearest_liq_level = nearest_liq[1] if nearest_liq else None
+    nearest_liq_dist = abs(nearest_liq_level - close) / close * 100 if nearest_liq_level and close else 0
+    sweep_age = sweep.get("age")
+    sweep_risk = "High" if sweep_age is not None and sweep_age <= 3 else "Moderate" if (sweep_age is not None and sweep_age <= 12) or nearest_liq_dist <= 0.75 else "Low"
+
+    reasons = []
+    reasons.append("Bullish FVGs dominate" if len(bull_fvg) > len(bear_fvg) else "Bearish FVGs dominate" if len(bear_fvg) > len(bull_fvg) else "FVG balance mixed")
+    reasons.append("BOS bullish lead" if len(bos_bull) > len(bos_bear) else "BOS bearish lead" if len(bos_bear) > len(bos_bull) else "BOS balanced")
+    if len(choch_br) > len(choch_b):
+        reasons.append("CHoCH bearish warning")
+    elif len(choch_b) > len(choch_br):
+        reasons.append("CHoCH bullish warning")
+    reasons.append("Buy-side liquidity nearby" if nearest_liq_label == "Buy-side" else "Sell-side liquidity nearby" if nearest_liq_label == "Sell-side" else "Liquidity balanced")
+    reasons.append("Price in discount" if zone == "Discount" else "Price in premium" if zone == "Premium" else "Price near equilibrium")
+    if sweep_risk != "Low":
+        reasons.append("Sweep risk elevated")
+    reason_html = "".join(f"<span class='smc-reason-chip'>{html.escape(r)}</span>" for r in reasons)
+
+    setup_type = "Accumulation" if institutional_bias == "Accumulation" and zone != "Premium" else "Distribution" if institutional_bias == "Distribution" and zone != "Discount" else "Reversal Watch" if sweep.get("type") != "None" else "Breakout Watch" if nearest_liq_dist <= 1.0 and nearest_liq else "Neutral"
+    preferred_direction = "Long" if setup_type in {"Accumulation", "Reversal Watch"} and structure_bias != "Bearish" else "Short" if setup_type == "Distribution" or (setup_type == "Breakout Watch" and nearest_liq_label == "Sell-side") else "Wait"
+    confirmation_needed = "Bullish BOS or CHoCH hold" if preferred_direction == "Long" else "Bearish BOS or CHoCH hold" if preferred_direction == "Short" else "Directional BOS/CHoCH"
+    invalidation_level = nearest_low["level"] if preferred_direction == "Long" and nearest_low else nearest_high["level"] if preferred_direction == "Short" and nearest_high else pd_zone.get("equilibrium")
+    risk_level = "High" if sweep_risk == "High" or (zone == "Premium" and preferred_direction == "Long") or (zone == "Discount" and preferred_direction == "Short") else "Low" if sweep_risk == "Low" and institutional_bias != "Neutral" else "Moderate"
+
     st.markdown(
-        "<div class='dashboard-grid'>"
-        + render_dashboard_card("Zone", zone, "Premium / discount context", accent=zone_c, status=zone_status)
-        + render_dashboard_card("Bullish FVG", str(len(bull_fvg)), "Fair value gaps", status="positive" if bull_fvg else "muted")
-        + render_dashboard_card("Bearish FVG", str(len(bear_fvg)), "Fair value gaps", status="negative" if bear_fvg else "muted")
-        + render_dashboard_card("Bullish OB", str(len(bull_ob)), "Order blocks", status="positive" if bull_ob else "muted")
-        + render_dashboard_card("Bearish OB", str(len(bear_ob)), "Order blocks", status="negative" if bear_ob else "muted")
+        "<div class='smc-command-head'>"
+        "<div class='smc-command-title'>Smart Money Command Center</div>"
+        f"<div class='smc-command-meta'>{html.escape(symbol)} / {len(df)} candles / {html.escape(str(zone))}</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<div class='smc-command-card'><div class='smc-command-grid'>"
+        f"<div class='smc-core {card_status_class(status=bias_status)}'>"
+        "<div class='smc-label'>Institutional Bias</div>"
+        f"<div class='smc-value'>{html.escape(institutional_bias)}</div>"
+        f"<div class='smc-sub'>SMC Score {smc_score}/100</div>"
+        "<div class='smc-gauge'><div class='smc-gauge-track'>"
+        f"<div class='smc-gauge-marker' style='left:{smc_score}%'></div></div>"
+        "<div class='smc-gauge-scale'><span>Distribution</span><span>Sell-side</span><span>Neutral</span><span>Buy-side</span><span>Accumulation</span></div></div>"
+        "</div>"
+        "<div class='smc-health-grid'>"
+        f"<div class='smc-health-chip {card_status_class(status=smc_state_status(liquidity_pressure))}'><span>Liquidity Pressure</span><strong>{html.escape(liquidity_pressure)}</strong><em>EQH {len(eq_highs)} / EQL {len(eq_lows)}</em></div>"
+        f"<div class='smc-health-chip {card_status_class(status=smc_state_status(fvg_bias))}'><span>FVG Bias</span><strong>{html.escape(fvg_bias)}</strong><em>{len(bull_fvg)} bull / {len(bear_fvg)} bear</em></div>"
+        f"<div class='smc-health-chip {card_status_class(status=smc_state_status(structure_bias))}'><span>Structure Bias</span><strong>{html.escape(structure_bias)}</strong><em>BOS/CHoCH {structure_bull}:{structure_bear}</em></div>"
+        f"<div class='smc-health-chip {card_status_class(status='negative' if sweep_risk == 'High' else 'warning' if sweep_risk == 'Moderate' else 'positive')}'><span>Sweep Risk</span><strong>{html.escape(sweep_risk)}</strong><em>{html.escape(sweep.get('type', 'None'))}</em></div>"
+        f"<div class='smc-health-chip {card_status_class(status=zone_status if (zone_status := ('positive' if zone == 'Discount' else 'negative' if zone == 'Premium' else 'warning')) else 'warning')}'><span>Price Zone</span><strong>{html.escape(str(zone))}</strong><em>Premium / discount</em></div>"
+        "</div></div></div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Why this SMC bias?</div>"
+        f"<div class='compact-section-meta'>FVG {fvg_bias_score:+.0f} / Structure {structure_score:+.0f} / Liquidity {liquidity_score:+.0f}</div></div>"
+        f"<div class='smc-reasons'>{reason_html}</div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Smart Money Setup</div>"
+        "<div class='compact-section-meta'>Display-only context from current SMC map</div></div>"
+        "<div class='smc-setup-grid'>"
+        + setup_item("Setup Type", setup_type, f"Zone {zone}", smc_state_status(setup_type))
+        + setup_item("Preferred Direction", preferred_direction, confirmation_needed, smc_state_status(preferred_direction))
+        + setup_item("Confirmation Needed", confirmation_needed, "BOS / CHoCH", "warning")
+        + setup_item("Invalidation", fmt_price(float(invalidation_level), symbol) if invalidation_level else "N/A", "Nearest opposing liquidity", "warning")
+        + setup_item("Risk Level", risk_level, f"Sweep {sweep_risk}", "negative" if risk_level == "High" else "positive" if risk_level == "Low" else "warning")
         + "</div>",
         unsafe_allow_html=True,
     )
 
     st.markdown(
-        f"<div class='terminal-card {card_status_class(status=zone_status)}'>"
-        f"<b>Price Zone:</b> <span style='color:{zone_c};font-size:1.1em'><b>{zone}</b></span> &nbsp;|&nbsp; "
-        f"BOS Bull: <b style='color:#00E08A'>{len(bos_bull)}</b> &nbsp;|&nbsp; "
-        f"BOS Bear: <b style='color:#FF5C73'>{len(bos_bear)}</b> &nbsp;|&nbsp; "
-        f"CHoCH Bull: <b style='color:#00E08A'>{len(choch_b)}</b> &nbsp;|&nbsp; "
-        f"CHoCH Bear: <b style='color:#FF5C73'>{len(choch_br)}</b>"
-        f"</div>",
+        "<div class='compact-section-head'><div class='compact-section-title'>Liquidity Sweep Monitor</div>"
+        f"<div class='compact-section-meta'>Recent wick reclaim scan, OHLC only</div></div>"
+        "<div class='smc-summary-grid'>"
+        + summary_card("Last Sweep", sweep.get("type", "None"), fmt_price(float(sweep["level"]), symbol) if sweep.get("level") else "No recent sweep", smc_state_status(sweep.get("type", "None")))
+        + summary_card("Sweep Age", f"{sweep_age} candles" if sweep_age is not None else "N/A", "Most recent sweep", "warning")
+        + summary_card("Nearest Liquidity", nearest_liq_label, fmt_price(nearest_liq_level, symbol) if nearest_liq_level else "No active EQ level", smc_state_status(nearest_liq_label))
+        + summary_card("Distance", f"{nearest_liq_dist:.2f}%" if nearest_liq else "N/A", "To nearest liquidity", "negative" if nearest_liq_dist <= 0.5 and nearest_liq else "warning")
+        + "</div>",
         unsafe_allow_html=True,
     )
 
-    # ── SMC Chart ──────────────────────────────────────────────────────────
-    recent = df.tail(200)
+    # SMC Chart
     fig = go.Figure()
     fig.add_trace(go.Candlestick(
         x=recent.index, open=recent["open"], high=recent["high"],
@@ -3515,130 +3702,131 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
     ))
 
     for fvg in bull_fvg[-4:]:
-        fig.add_shape(type="rect",
-            x0=fvg["time"], x1=recent.index[-1],
-            y0=fvg["bottom"], y1=fvg["top"],
-            fillcolor="rgba(38,166,154,0.12)", line_color="rgba(38,166,154,0.4)",
-            line_width=1)
-        fig.add_annotation(x=fvg["time"], y=fvg["mid"], text=f"FVG↑",
-            font=dict(color="#00E08A", size=9), showarrow=False, xanchor="left")
-
+        fig.add_shape(type="rect", x0=fvg["time"], x1=recent.index[-1], y0=fvg["bottom"], y1=fvg["top"], fillcolor="rgba(38,166,154,0.12)", line_color="rgba(38,166,154,0.4)", line_width=1)
+        fig.add_annotation(x=fvg["time"], y=fvg["mid"], text="FVG+", font=dict(color="#00E08A", size=9), showarrow=False, xanchor="left")
     for fvg in bear_fvg[-4:]:
-        fig.add_shape(type="rect",
-            x0=fvg["time"], x1=recent.index[-1],
-            y0=fvg["bottom"], y1=fvg["top"],
-            fillcolor="rgba(239,83,80,0.12)", line_color="rgba(239,83,80,0.4)",
-            line_width=1)
-        fig.add_annotation(x=fvg["time"], y=fvg["mid"], text=f"FVG↓",
-            font=dict(color="#FF5C73", size=9), showarrow=False, xanchor="left")
+        fig.add_shape(type="rect", x0=fvg["time"], x1=recent.index[-1], y0=fvg["bottom"], y1=fvg["top"], fillcolor="rgba(239,83,80,0.12)", line_color="rgba(239,83,80,0.4)", line_width=1)
+        fig.add_annotation(x=fvg["time"], y=fvg["mid"], text="FVG-", font=dict(color="#FF5C73", size=9), showarrow=False, xanchor="left")
 
     for ob in bull_ob[-3:]:
-        fig.add_shape(type="rect",
-            x0=ob["time"], x1=recent.index[-1],
-            y0=ob["bottom"], y1=ob["top"],
-            fillcolor="rgba(38,166,154,0.18)", line_color="rgba(38,166,154,0.7)",
-            line_width=1, line_dash="dot")
-        fig.add_annotation(x=ob["time"], y=(ob["top"]+ob["bottom"])/2, text="OB+",
-            font=dict(color="#00E08A", size=9), showarrow=False, xanchor="left")
-
+        fig.add_shape(type="rect", x0=ob["time"], x1=recent.index[-1], y0=ob["bottom"], y1=ob["top"], fillcolor="rgba(38,166,154,0.18)", line_color="rgba(38,166,154,0.7)", line_width=1, line_dash="dot")
+        fig.add_annotation(x=ob["time"], y=(ob["top"] + ob["bottom"]) / 2, text="OB+", font=dict(color="#00E08A", size=9), showarrow=False, xanchor="left")
     for ob in bear_ob[-3:]:
-        fig.add_shape(type="rect",
-            x0=ob["time"], x1=recent.index[-1],
-            y0=ob["bottom"], y1=ob["top"],
-            fillcolor="rgba(239,83,80,0.18)", line_color="rgba(239,83,80,0.7)",
-            line_width=1, line_dash="dot")
-        fig.add_annotation(x=ob["time"], y=(ob["top"]+ob["bottom"])/2, text="OB−",
-            font=dict(color="#FF5C73", size=9), showarrow=False, xanchor="left")
+        fig.add_shape(type="rect", x0=ob["time"], x1=recent.index[-1], y0=ob["bottom"], y1=ob["top"], fillcolor="rgba(239,83,80,0.18)", line_color="rgba(239,83,80,0.7)", line_width=1, line_dash="dot")
+        fig.add_annotation(x=ob["time"], y=(ob["top"] + ob["bottom"]) / 2, text="OB-", font=dict(color="#FF5C73", size=9), showarrow=False, xanchor="left")
 
     for b in bos_bull[-2:]:
-        fig.add_hline(y=b["level"], line_dash="dash",
-                      line_color="rgba(38,166,154,0.6)", line_width=1.5,
-                      annotation_text="BOS ↑", annotation_position="right")
+        fig.add_hline(y=b["level"], line_dash="dash", line_color="rgba(38,166,154,0.6)", line_width=1.5, annotation_text="BOS+", annotation_position="right")
     for b in bos_bear[-2:]:
-        fig.add_hline(y=b["level"], line_dash="dash",
-                      line_color="rgba(239,83,80,0.6)", line_width=1.5,
-                      annotation_text="BOS ↓", annotation_position="right")
+        fig.add_hline(y=b["level"], line_dash="dash", line_color="rgba(239,83,80,0.6)", line_width=1.5, annotation_text="BOS-", annotation_position="right")
     for c in choch_b[-1:]:
-        fig.add_hline(y=c["level"], line_dash="dot",
-                      line_color="rgba(38,166,154,0.9)", line_width=2,
-                      annotation_text="CHoCH ↑", annotation_position="right")
+        fig.add_hline(y=c["level"], line_dash="dot", line_color="rgba(38,166,154,0.9)", line_width=2, annotation_text="CHoCH+", annotation_position="right")
     for c in choch_br[-1:]:
-        fig.add_hline(y=c["level"], line_dash="dot",
-                      line_color="rgba(239,83,80,0.9)", line_width=2,
-                      annotation_text="CHoCH ↓", annotation_position="right")
+        fig.add_hline(y=c["level"], line_dash="dot", line_color="rgba(239,83,80,0.9)", line_width=2, annotation_text="CHoCH-", annotation_position="right")
+
+    for z in eq_highs[:4]:
+        lv = float(z.get("level", 0))
+        if lv:
+            fig.add_hline(y=lv, line_dash="dot", line_color="rgba(255,92,115,0.72)", line_width=1.2, annotation_text="BSL", annotation_position="right")
+    for z in eq_lows[:4]:
+        lv = float(z.get("level", 0))
+        if lv:
+            fig.add_hline(y=lv, line_dash="dot", line_color="rgba(0,224,138,0.72)", line_width=1.2, annotation_text="SSL", annotation_position="right")
 
     if pd_zone:
-        fig.add_hrect(y0=pd_zone.get("equilibrium", 0), y1=pd_zone.get("range_high", 0),
-                      fillcolor="rgba(239,83,80,0.05)", line_width=0,
-                      annotation_text="Premium", annotation_position="top right")
-        fig.add_hrect(y0=pd_zone.get("range_low", 0), y1=pd_zone.get("equilibrium", 0),
-                      fillcolor="rgba(38,166,154,0.05)", line_width=0,
-                      annotation_text="Discount", annotation_position="bottom right")
-        fig.add_hline(y=pd_zone.get("equilibrium", 0), line_dash="dot",
-                      line_color="rgba(241,196,15,0.6)", line_width=1,
-                      annotation_text="EQ", annotation_position="right")
+        fig.add_hrect(y0=pd_zone.get("equilibrium", 0), y1=pd_zone.get("range_high", 0), fillcolor="rgba(239,83,80,0.05)", line_width=0, annotation_text="Premium", annotation_position="top right")
+        fig.add_hrect(y0=pd_zone.get("range_low", 0), y1=pd_zone.get("equilibrium", 0), fillcolor="rgba(38,166,154,0.05)", line_width=0, annotation_text="Discount", annotation_position="bottom right")
+        fig.add_hline(y=pd_zone.get("equilibrium", 0), line_dash="dot", line_color="rgba(241,196,15,0.6)", line_width=1, annotation_text="EQ", annotation_position="right")
 
-    fig.update_layout(
-        height=480, xaxis_rangeslider_visible=False,
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=10, r=10, t=30, b=10),
-        showlegend=False,
-    )
+    fig.update_layout(height=500, xaxis_rangeslider_visible=False, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=10, r=10, t=24, b=10), showlegend=False)
     fig.update_xaxes(gridcolor="rgba(255,255,255,0.04)")
     fig.update_yaxes(gridcolor="rgba(255,255,255,0.04)")
     st.plotly_chart(fig, width="stretch")
 
-    # ── Detail tables ──────────────────────────────────────────────────────
+    all_fvgs = [("Bullish", f) for f in bull_fvg] + [("Bearish", f) for f in bear_fvg]
+    nearest_fvg = min(all_fvgs, key=lambda item: abs(float(item[1].get("mid", close)) - close), default=None)
+    nearest_fvg_text = f"{nearest_fvg[0]} {fmt_price(float(nearest_fvg[1].get('mid', close)), symbol)}" if nearest_fvg else "None"
+    fvg_status = "Imbalance active" if len(bull_fvg) + len(bear_fvg) > 0 and fvg_bias != "Mixed" else "Mixed imbalance" if bull_fvg and bear_fvg else "Neutral"
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Fair Value Gaps</div>"
+        "<div class='compact-section-meta'>Active imbalance map</div></div>"
+        "<div class='smc-summary-grid'>"
+        + summary_card("Bullish FVG", str(len(bull_fvg)), "Demand imbalance", "positive" if bull_fvg else "muted")
+        + summary_card("Bearish FVG", str(len(bear_fvg)), "Supply imbalance", "negative" if bear_fvg else "muted")
+        + summary_card("Net FVG Bias", fvg_bias, nearest_fvg_text, smc_state_status(fvg_bias))
+        + summary_card("Status", fvg_status, "Gap magnet" if nearest_fvg else "No active gap", "positive" if fvg_status == "Imbalance active" else "warning")
+        + "</div>",
+        unsafe_allow_html=True,
+    )
+
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown("#### Fair Value Gaps")
         fvg_rows = []
         for f in bull_fvg[-5:]:
-            fvg_rows.append({"Type":"Bullish ↑","Top":fmt_price(f["top"],symbol),
-                "Bottom":fmt_price(f["bottom"],symbol),"Gap%":f"{f['gap_pct']:.3f}%"})
+            fvg_rows.append({"Type": "Bullish", "Top": fmt_price(f["top"], symbol), "Bottom": fmt_price(f["bottom"], symbol), "Gap%": f"{f['gap_pct']:.3f}%"})
         for f in bear_fvg[-5:]:
-            fvg_rows.append({"Type":"Bearish ↓","Top":fmt_price(f["top"],symbol),
-                "Bottom":fmt_price(f["bottom"],symbol),"Gap%":f"{f['gap_pct']:.3f}%"})
+            fvg_rows.append({"Type": "Bearish", "Top": fmt_price(f["top"], symbol), "Bottom": fmt_price(f["bottom"], symbol), "Gap%": f"{f['gap_pct']:.3f}%"})
         if fvg_rows:
             render_interactive_dataframe(pd.DataFrame(fvg_rows), signed_columns={"Type"})
         else:
             st.info("No active FVGs detected.")
 
     with col2:
-        st.markdown("#### Order Blocks")
+        nearest_ob_candidates = [("Bullish", o) for o in bull_ob] + [("Bearish", o) for o in bear_ob]
+        nearest_ob = min(nearest_ob_candidates, key=lambda item: abs(((float(item[1].get("top", close)) + float(item[1].get("bottom", close))) / 2) - close), default=None)
+        nearest_ob_text = f"{nearest_ob[0]} {fmt_price((float(nearest_ob[1].get('top', close)) + float(nearest_ob[1].get('bottom', close))) / 2, symbol)}" if nearest_ob else "None"
+        ob_bias = "Bullish" if len(bull_ob) > len(bear_ob) else "Bearish" if len(bear_ob) > len(bull_ob) else "Mixed"
+        st.markdown(
+            "<div class='compact-section-head'><div class='compact-section-title'>Order Blocks</div>"
+            "<div class='compact-section-meta'>Validated zones only</div></div>"
+            "<div class='smc-summary-grid'>"
+            + summary_card("Bullish OB", str(len(bull_ob)), "Demand blocks", "positive" if bull_ob else "muted")
+            + summary_card("Bearish OB", str(len(bear_ob)), "Supply blocks", "negative" if bear_ob else "muted")
+            + summary_card("Nearest OB", nearest_ob_text, "Tested" if nearest_ob and float(nearest_ob[1].get("bottom", 0)) <= close <= float(nearest_ob[1].get("top", 0)) else "Untested / none", smc_state_status(ob_bias))
+            + summary_card("OB Bias", ob_bias, "Active block balance", smc_state_status(ob_bias))
+            + "</div>",
+            unsafe_allow_html=True,
+        )
         ob_rows = []
         for o in bull_ob[-4:]:
-            ob_rows.append({"Type":"Bullish OB","Top":fmt_price(o["top"],symbol),
-                "Bottom":fmt_price(o["bottom"],symbol)})
+            ob_rows.append({"Type": "Bullish OB", "Top": fmt_price(o["top"], symbol), "Bottom": fmt_price(o["bottom"], symbol)})
         for o in bear_ob[-4:]:
-            ob_rows.append({"Type":"Bearish OB","Top":fmt_price(o["top"],symbol),
-                "Bottom":fmt_price(o["bottom"],symbol)})
+            ob_rows.append({"Type": "Bearish OB", "Top": fmt_price(o["top"], symbol), "Bottom": fmt_price(o["bottom"], symbol)})
         if ob_rows:
             render_interactive_dataframe(pd.DataFrame(ob_rows), signed_columns={"Type"})
         else:
-            st.info("No active Order Blocks detected.")
+            st.markdown(
+                "<div class='smc-empty-note'>No active Order Blocks detected"
+                "<span>No validated unmitigated order block found in current lookback. Increase candle limit or switch timeframe.</span></div>",
+                unsafe_allow_html=True,
+            )
 
-    # Liquidity zones
-    liq = smc.get("equal_highs_above", []) + smc.get("equal_lows_below", [])
+    liq = eq_highs + eq_lows
     if liq:
-        st.markdown("#### Liquidity Zones (Equal Highs / Equal Lows)")
-        liq_rows = [{"Type": "EQ High" if l.get("level",0) > df["close"].iloc[-1] else "EQ Low",
-                     "Level": fmt_price(l["level"], symbol),
-                     "Touches": l.get("touches", 0)} for l in liq[:8]]
+        liq_direction = "Buy-side" if len(eq_highs) > len(eq_lows) else "Sell-side" if len(eq_lows) > len(eq_highs) else "Balanced"
+        st.markdown(
+            "<div class='compact-section-head'><div class='compact-section-title'>Liquidity Zones</div>"
+            "<div class='compact-section-meta'>Equal highs / equal lows</div></div>"
+            "<div class='smc-summary-grid'>"
+            + summary_card("Equal Highs", str(len(eq_highs)), "Buy-side liquidity", "negative" if eq_highs else "muted")
+            + summary_card("Equal Lows", str(len(eq_lows)), "Sell-side liquidity", "positive" if eq_lows else "muted")
+            + summary_card("Nearest Target", nearest_liq_label, fmt_price(nearest_liq_level, symbol) if nearest_liq_level else "None", smc_state_status(nearest_liq_label))
+            + summary_card("Distance", f"{nearest_liq_dist:.2f}%" if nearest_liq else "N/A", liq_direction, "warning")
+            + "</div>",
+            unsafe_allow_html=True,
+        )
+        liq_rows = [{"Type": "EQ High" if float(l.get("level", 0)) > close else "EQ Low", "Level": fmt_price(l["level"], symbol), "Touches": l.get("touches", 0)} for l in liq[:8]]
         render_interactive_dataframe(pd.DataFrame(liq_rows), column_config={"Touches": st.column_config.NumberColumn("Touches", format="%d")})
 
-    # Supply/Demand
     supply = smc.get("supply_zones", [])
     demand = smc.get("demand_zones", [])
     if supply or demand:
         st.markdown("#### Supply & Demand Zones")
         sd_rows = []
         for z in demand[:4]:
-            sd_rows.append({"Type":"Demand 🟢","Top":fmt_price(z["top"],symbol),
-                "Bottom":fmt_price(z["bottom"],symbol)})
+            sd_rows.append({"Type": "Demand", "Top": fmt_price(z["top"], symbol), "Bottom": fmt_price(z["bottom"], symbol)})
         for z in supply[:4]:
-            sd_rows.append({"Type":"Supply 🔴","Top":fmt_price(z["top"],symbol),
-                "Bottom":fmt_price(z["bottom"],symbol)})
+            sd_rows.append({"Type": "Supply", "Top": fmt_price(z["top"], symbol), "Bottom": fmt_price(z["bottom"], symbol)})
         if sd_rows:
             render_interactive_dataframe(pd.DataFrame(sd_rows), signed_columns={"Type"})
 
