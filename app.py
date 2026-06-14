@@ -640,9 +640,13 @@ def get_theme_css(theme_name: str) -> str:
     .regime-driver span {{ display: block; color: var(--subtle); font-size: 0.55rem; font-weight: 850; text-transform: uppercase; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
     .indicator-grid {{ grid-template-columns: repeat(auto-fit, minmax(188px, 1fr)); gap: 16px; margin-top: 0.7rem; }}
     .indicator-grid .dashboard-card {{ min-height: 132px; align-items: center; justify-content: center; text-align: center; }}
-    .tech-command-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0.06rem 0 0.36rem; }}
+    .tech-command-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0.06rem 0 0.22rem; }}
     .tech-command-title {{ color:var(--text); font-size:clamp(1.02rem,1.35vw,1.28rem); font-weight:950; line-height:1.1; }}
     .tech-command-meta {{ color:var(--muted); font-size:0.72rem; font-weight:780; white-space:nowrap; }}
+    .tech-control-row {{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 0.36rem; flex-wrap:wrap; }}
+    .tech-anchor-pills {{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }}
+    .tech-anchor-pills a {{ color:var(--muted); text-decoration:none; border:1px solid var(--card-border); border-radius:999px; background:color-mix(in srgb,var(--panel-bg) 58%,transparent); padding:4px 9px; font-size:0.62rem; font-weight:900; line-height:1; }}
+    .tech-anchor-pills a:hover {{ color:var(--text); border-color:color-mix(in srgb,var(--accent) 48%,var(--card-border)); }}
     .tech-summary-card {{ border:1px solid var(--card-border); border-radius:var(--radius-md); background:linear-gradient(180deg,color-mix(in srgb,var(--card-bg) 94%,var(--panel-bg)),var(--card-bg)); box-shadow:0 9px 22px rgba(2,6,23,0.14); padding:9px 11px; margin:0.02rem 0 0.42rem; }}
     .tech-summary-grid {{ display:grid; grid-template-columns:minmax(185px,0.42fr) minmax(420px,1.58fr); gap:9px; align-items:stretch; }}
     .tech-bias-core {{ --tech-accent:var(--warning); position:relative; border:1px solid color-mix(in srgb,var(--tech-accent) 30%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 52%,transparent); padding:8px 10px 8px 12px; overflow:hidden; }}
@@ -664,24 +668,59 @@ def get_theme_css(theme_name: str) -> str:
     .tech-health-chip em {{ display:block; color:var(--muted); font-size:0.62rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
     .tech-reasons {{ display:flex; flex-wrap:wrap; gap:5px; margin:0.1rem 0 0.45rem; }}
     .tech-reason-chip {{ color:var(--text); background:color-mix(in srgb,var(--panel-bg) 62%,transparent); border:1px solid var(--card-border); border-radius:999px; padding:3px 8px; font-size:0.66rem; font-weight:850; white-space:nowrap; }}
+    .tech-action-grid {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:7px; margin:0.16rem 0 0.38rem; }}
+    .tech-action-item {{ --action-accent:var(--warning); position:relative; border:1px solid color-mix(in srgb,var(--action-accent) 28%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 56%,transparent); padding:7px 8px 7px 10px; min-height:54px; overflow:hidden; }}
+    .tech-action-item::before {{ content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--action-accent); }}
+    .tech-action-item.status-positive {{ --action-accent:var(--cg-green); }}
+    .tech-action-item.status-negative {{ --action-accent:var(--cg-red); }}
+    .tech-action-item.status-warning, .tech-action-item.status-neutral {{ --action-accent:var(--warning); }}
+    .tech-action-item.status-muted, .tech-action-item.status-unavailable {{ --action-accent:var(--muted); }}
+    .tech-action-item span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-action-item strong {{ display:block; color:var(--text); font-size:0.78rem; font-weight:950; line-height:1.08; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-action-item em {{ display:block; color:var(--muted); font-size:0.58rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-checklist {{ display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; margin:0.12rem 0 0.44rem; }}
+    .tech-check {{ --check-accent:var(--warning); border:1px solid color-mix(in srgb,var(--check-accent) 26%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 58%,transparent); padding:6px 7px; min-height:44px; overflow:hidden; }}
+    .tech-check.pass {{ --check-accent:var(--cg-green); }}
+    .tech-check.fail {{ --check-accent:var(--cg-red); }}
+    .tech-check.warn {{ --check-accent:var(--warning); }}
+    .tech-check b {{ display:block; color:var(--check-accent); font-size:0.58rem; font-weight:950; text-transform:uppercase; line-height:1; }}
+    .tech-check span {{ display:block; color:var(--text); font-size:0.68rem; font-weight:850; line-height:1.08; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-score-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.4rem; }}
+    .tech-score-card {{ --score-accent:var(--warning); border:1px solid color-mix(in srgb,var(--score-accent) 26%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 56%,transparent); padding:7px 8px; min-height:54px; overflow:hidden; }}
+    .tech-score-card.status-positive {{ --score-accent:var(--cg-green); }}
+    .tech-score-card.status-negative {{ --score-accent:var(--cg-red); }}
+    .tech-score-card.status-warning, .tech-score-card.status-neutral {{ --score-accent:var(--warning); }}
+    .tech-score-card span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-score-card strong {{ display:block; color:var(--score-accent); font-size:1rem; font-weight:950; line-height:1.04; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-score-card em {{ display:block; color:var(--muted); font-size:0.58rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
     .indicator-group {{ margin:0.24rem 0 0.58rem; }}
     .indicator-group-head {{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 0.2rem; }}
     .indicator-group-title {{ color:var(--text); font-size:0.86rem; font-weight:950; line-height:1.1; }}
     .indicator-group-meta {{ color:var(--muted); font-size:0.64rem; font-weight:750; white-space:nowrap; }}
     .indicator-group .indicator-grid {{ grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:8px; margin:0; }}
     .indicator-group .dashboard-card {{ min-height:92px; padding:9px 10px !important; }}
-    .tech-chart-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin:0.18rem 0 0.1rem; }}
+    .tech-chart-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin:0.08rem 0 0.02rem; }}
     .tech-chart-title {{ color:var(--text); font-size:1rem; font-weight:950; line-height:1.1; }}
     .tech-chart-meta {{ color:var(--muted); font-size:0.66rem; font-weight:760; }}
+    .tech-fg-card {{ border:1px solid var(--card-border); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 56%,transparent); padding:7px 9px 2px; margin:0.12rem 0 0.3rem; }}
+    .tech-fg-head {{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:-4px; }}
+    .tech-fg-title {{ color:var(--text); font-size:0.78rem; font-weight:950; line-height:1.05; }}
+    .tech-fg-meta {{ color:var(--muted); font-size:0.62rem; font-weight:760; white-space:nowrap; }}
+    .tech-fg-compact {{ --fg-accent:var(--warning); border:1px solid color-mix(in srgb,var(--fg-accent) 28%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 58%,transparent); padding:8px 10px; margin:0.12rem 0 0.28rem; }}
+    .tech-fg-compact-top {{ display:flex; align-items:center; justify-content:space-between; gap:10px; }}
+    .tech-fg-compact-title {{ color:var(--subtle); font-size:0.54rem; font-weight:900; text-transform:uppercase; line-height:1.05; }}
+    .tech-fg-compact-value {{ color:var(--fg-accent); font-size:1rem; font-weight:950; line-height:1; white-space:nowrap; }}
+    .tech-fg-bar {{ height:6px; border-radius:999px; background:linear-gradient(90deg,var(--cg-red),var(--warning),var(--cg-green)); margin-top:7px; position:relative; overflow:hidden; }}
+    .tech-fg-pin {{ position:absolute; top:-3px; width:4px; height:12px; border-radius:999px; background:var(--text); transform:translateX(-2px); }}
     .tech-detail-grid {{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:0.45rem; }}
     .tech-detail-card {{ border:1px solid var(--card-border); border-radius:var(--radius-md); background:linear-gradient(180deg,color-mix(in srgb,var(--card-bg) 94%,var(--panel-bg)),var(--card-bg)); box-shadow:0 8px 20px rgba(2,6,23,0.12); padding:10px 11px; }}
     .tech-detail-title {{ color:var(--text); font-size:0.98rem; font-weight:950; margin-bottom:8px; }}
     .tech-metric-grid {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }}
     .tech-mini-metric {{ border:1px solid var(--card-border); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 54%,transparent); padding:6px 7px; min-height:48px; overflow:hidden; }}
-    .tech-mini-metric span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
-    .tech-mini-metric strong {{ display:block; color:var(--text); font-size:0.76rem; font-weight:920; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-mini-label, .tech-mini-metric span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.05; }}
+    .tech-mini-value, .tech-mini-metric strong {{ display:block; color:var(--text); font-size:0.76rem; font-weight:920; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.12; writing-mode:horizontal-tb; text-orientation:mixed; }}
     .tech-level-list {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px; margin-top:7px; }}
-    .tech-level {{ color:var(--muted); border:1px solid var(--card-border); border-radius:999px; padding:3px 6px; font-size:0.58rem; font-weight:850; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .tech-level {{ color:var(--muted); border:1px solid var(--card-border); border-radius:999px; padding:3px 6px; font-size:0.58rem; font-weight:850; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.1; writing-mode:horizontal-tb; text-orientation:mixed; }}
     .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); white-space: nowrap; }}
     .metric-pill.buy {{ background: var(--cg-pos-weak); color: var(--cg-green); }}
     .metric-pill.sell {{ background: var(--cg-neg-weak); color: var(--cg-red); }}
@@ -1164,9 +1203,10 @@ def get_theme_css(theme_name: str) -> str:
       .block-container {{ padding-inline: 0.75rem !important; }}
       .dashboard-grid {{ grid-template-columns: 1fr; }}
       .overview-summary-grid, .indicator-grid {{ grid-template-columns: 1fr; }}
-      .tech-command-head, .indicator-group-head, .tech-chart-head {{ align-items:flex-start; flex-direction:column; gap:3px; }}
+      .tech-command-head, .indicator-group-head, .tech-chart-head, .tech-control-row {{ align-items:flex-start; flex-direction:column; gap:5px; }}
       .tech-command-meta, .indicator-group-meta, .tech-chart-meta {{ white-space:normal; }}
-      .tech-summary-grid, .tech-detail-grid {{ grid-template-columns:1fr; }}
+      .tech-summary-grid, .tech-detail-grid, .tech-action-grid, .tech-score-grid {{ grid-template-columns:1fr; }}
+      .tech-checklist {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-health-grid, .tech-metric-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-level-list {{ grid-template-columns:1fr; }}
       .overview-heading {{ align-items: flex-start; flex-direction: column; gap: 3px; }}
@@ -2866,7 +2906,14 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         )
 
     def mini_metric(label: str, value: str) -> str:
-        return f"<div class='tech-mini-metric'><span>{html.escape(label)}</span><strong>{html.escape(value)}</strong></div>"
+        safe_label = html.escape(str(label))
+        safe_value = html.escape(str(value))
+        return (
+            "<div class='tech-mini-metric'>"
+            f"<div class='tech-mini-label'>{safe_label}</div>"
+            f"<div class='tech-mini-value'>{safe_value}</div>"
+            "</div>"
+        )
 
     rsi_label = "Overbought" if rsi > 70 else "Oversold" if rsi < 30 else "Healthy" if 40 <= rsi <= 65 else "Neutral"
     rsi_c = "#FF5C73" if rsi > 70 else ("#00E08A" if rsi < 30 else "#FFB84D")
@@ -2903,6 +2950,51 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
     volatility_status = "Upper band stretch" if bb_pct > 80 else "Lower band stretch" if bb_pct < 20 else "Normal range"
     volume_flow = "Inflow" if cmf > 0.05 else "Outflow" if cmf < -0.05 else "Balanced"
 
+    nr = sr.get("nearest_resistance", 0)
+    ns = sr.get("nearest_support", 0)
+    resistance_pct = sr.get("resistance_pct", 0)
+    support_pct = sr.get("support_pct", 0)
+    nearest_label = "Resistance" if resistance_pct <= support_pct else "Support"
+    nearest_distance = min(resistance_pct, support_pct)
+
+    near_support = ns > 0 and support_pct <= 1.5
+    near_resistance = nr > 0 and resistance_pct <= 1.5
+    trend_bullish = close > ema200 and ema9 > ema21 and st_dir == 1
+    trend_bearish = close < ema200 and ema9 < ema21 and st_dir == -1
+    momentum_bullish = macd > macd_sig and 35 <= rsi <= 70
+    momentum_bearish = macd < macd_sig and (rsi < 55 or close < ema200)
+
+    if technical_bias == "Bullish" and trend_bullish and momentum_bullish and adx >= 25:
+        preferred_setup = "Long continuation"
+    elif technical_bias == "Bearish" and trend_bearish and momentum_bearish and adx >= 25:
+        preferred_setup = "Short continuation"
+    elif near_support and technical_bias != "Bearish":
+        preferred_setup = "Pullback entry"
+    elif near_resistance and technical_bias != "Bearish":
+        preferred_setup = "Breakout watch"
+    else:
+        preferred_setup = "Wait"
+
+    if near_support:
+        entry_context = "Above support"
+    elif near_resistance:
+        entry_context = "Near resistance" if preferred_setup != "Breakout watch" else "Breakout zone"
+    elif resistance_pct <= 3 and technical_bias == "Bullish":
+        entry_context = "Breakout zone"
+    else:
+        entry_context = "Range middle"
+
+    invalidation = f"Below {fmt_price(ns, symbol)}" if preferred_setup in {"Long continuation", "Pullback entry", "Breakout watch"} and ns else f"Above {fmt_price(nr, symbol)}" if nr else "Nearest S/R"
+    risk_points = 0
+    risk_points += 1 if adx < 20 else -1 if adx >= 30 else 0
+    risk_points += 1 if rsi > 72 or rsi < 28 else 0
+    risk_points += 1 if bb_pct > 88 or bb_pct < 12 else 0
+    risk_points += 1 if nearest_distance <= 0.8 else 0
+    risk_points += -1 if st_dir == 1 and technical_bias == "Bullish" else -1 if st_dir == -1 and technical_bias == "Bearish" else 0
+    risk_level = "High" if risk_points >= 2 else "Low" if risk_points <= -1 else "Moderate"
+
+    sr_action = "Breakout watch" if near_resistance and technical_bias != "Bearish" else "Support bounce zone" if near_support and technical_bias != "Bearish" else "Resistance rejection risk" if near_resistance else "Range trading zone"
+
     reasons = []
     reasons.append("Price above EMA200" if close > ema200 else "Price below EMA200")
     reasons.append("MACD bullish" if macd > macd_sig else "MACD bearish")
@@ -2912,12 +3004,40 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
     reason_html = "".join(f"<span class='tech-reason-chip'>{html.escape(reason)}</span>" for reason in reasons)
 
     st.markdown(
-        "<div class='tech-command-head'>"
+        "<span id='technical-top'></span><div class='tech-command-head'>"
         f"<div class='tech-command-title'>Technical Command Center</div>"
         f"<div class='tech-command-meta'>{html.escape(symbol)} · {cfg.get('timeframe', '1h')} · {len(df)} candles</div>"
         "</div>",
         unsafe_allow_html=True,
     )
+    if "technical_view_mode" not in st.session_state:
+        st.session_state.technical_view_mode = "Summary"
+    if "technical_chart_mode" not in st.session_state:
+        st.session_state.technical_chart_mode = "Standard"
+
+    nav_col, view_col, chart_mode_col = st.columns([1.0, 0.34, 0.48])
+    with nav_col:
+        st.markdown(
+            "<div class='tech-control-row'><div class='tech-anchor-pills'>"
+            "<a href='#technical-top'>Top</a><a href='#technical-chart'>Chart</a><a href='#technical-support-resistance'>Support/Resistance</a>"
+            "</div></div>",
+            unsafe_allow_html=True,
+        )
+    with view_col:
+        view_mode = st.radio(
+            "View Mode",
+            ["Summary", "Full"],
+            key="technical_view_mode",
+            horizontal=True,
+        )
+    with chart_mode_col:
+        chart_mode = st.radio(
+            "Chart Overlays",
+            ["Clean", "Standard", "Full"],
+            key="technical_chart_mode",
+            horizontal=True,
+        )
+    full_mode = view_mode == "Full"
 
     st.markdown(
         "<div class='tech-summary-card'>"
@@ -2936,6 +3056,43 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         f"<div class='tech-health-chip'><span>Volatility Status</span><strong>{html.escape(volatility_status)}</strong><em>BB %B {bb_pct:.1f}%</em></div>"
         f"<div class='tech-health-chip'><span>Volume Flow</span><strong>{html.escape(volume_flow)}</strong><em>CMF {cmf:.3f}</em></div>"
         "</div></div></div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Technical Action Plan</div>"
+        "<div class='compact-section-meta'>Decision context from price, S/R, EMA, MACD, RSI, ADX, Supertrend</div></div>"
+        "<div class='tech-action-grid'>"
+        f"<div class='tech-action-item {card_status_class(status=bias_status)}'><span>Bias</span><strong>{technical_bias}</strong><em>{direction_state}</em></div>"
+        f"<div class='tech-action-item {card_status_class(status='positive' if preferred_setup.startswith('Long') or preferred_setup == 'Pullback entry' else 'negative' if preferred_setup.startswith('Short') else 'warning')}'>"
+        f"<span>Preferred Setup</span><strong>{html.escape(preferred_setup)}</strong><em>ADX {adx:.1f}</em></div>"
+        f"<div class='tech-action-item {card_status_class(status='positive' if entry_context in {'Above support', 'Breakout zone'} else 'negative' if entry_context == 'Near resistance' else 'warning')}'>"
+        f"<span>Entry Context</span><strong>{html.escape(entry_context)}</strong><em>{nearest_distance:.2f}% to {nearest_label}</em></div>"
+        f"<div class='tech-action-item {card_status_class(status='warning')}'>"
+        f"<span>Invalidation</span><strong>{html.escape(invalidation)}</strong><em>Nearest level</em></div>"
+        f"<div class='tech-action-item {card_status_class(status='negative' if risk_level == 'High' else 'positive' if risk_level == 'Low' else 'warning')}'>"
+        f"<span>Risk</span><strong>{risk_level}</strong><em>RSI {rsi:.1f} / BB {bb_pct:.1f}%</em></div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+    def checklist_item(label: str, state: str) -> str:
+        state_label = {"pass": "Pass", "warn": "Warning", "fail": "Fail"}.get(state, "Warning")
+        return f"<div class='tech-check {state}'><b>{state_label}</b><span>{html.escape(label)}</span></div>"
+
+    checklist_html = "".join([
+        checklist_item("Price above EMA200", "pass" if close > ema200 else "fail"),
+        checklist_item("EMA9 above EMA21", "pass" if ema9 > ema21 else "fail"),
+        checklist_item("MACD bullish", "pass" if macd > macd_sig else "fail"),
+        checklist_item("RSI healthy", "pass" if 40 <= rsi <= 65 else "warn" if 35 <= rsi <= 70 else "fail"),
+        checklist_item("CMF inflow", "pass" if cmf > 0.05 else "warn" if cmf >= 0 else "fail"),
+        checklist_item("Supertrend bullish", "pass" if st_dir == 1 else "warn" if st_dir == 0 else "fail"),
+        checklist_item("ADX strong" if adx > 30 else "ADX weak", "pass" if adx > 30 else "warn" if adx >= 20 else "fail"),
+    ])
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Technical Checklist</div>"
+        "<div class='compact-section-meta'>Pass / warning / fail</div></div>"
+        f"<div class='tech-checklist'>{checklist_html}</div>",
         unsafe_allow_html=True,
     )
 
@@ -2979,45 +3136,84 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
     if atr is not None:
         volatility_cards.append(ind_card("ATR (14)", fmt_price(float(atr), symbol), "Range proxy", "#FFB84D"))
 
+    momentum_score = int(round(100 * sum([macd > macd_sig, 40 <= rsi <= 65, roc > 0, 20 <= stk <= 80]) / 4))
+    trend_score = int(round(100 * sum([close > ema200, ema9 > ema21, close > ema50, st_dir == 1, adx > 25]) / 5))
+    flow_score = int(round(100 * sum([cmf > 0.05, obv > 0, close > vwap]) / 3))
+    volatility_risk_score = int(round(100 * sum([bb_pct > 80 or bb_pct < 20, adx < 20, rsi > 70 or rsi < 30]) / 3))
+
+    def score_status(value: int, inverse: bool = False) -> str:
+        if inverse:
+            return "negative" if value >= 67 else "positive" if value <= 33 else "warning"
+        return "positive" if value >= 67 else "negative" if value <= 33 else "warning"
+
+    score_cards = [
+        ("Momentum Score", momentum_score, momentum_status, score_status(momentum_score)),
+        ("Trend Score", trend_score, trend_status, score_status(trend_score)),
+        ("Flow Score", flow_score, volume_flow, score_status(flow_score)),
+        ("Volatility Risk", volatility_risk_score, volatility_status, score_status(volatility_risk_score, inverse=True)),
+    ]
+    score_html = "".join(
+        f"<div class='tech-score-card {card_status_class(status=status)}'><span>{html.escape(label)}</span><strong>{value}/100</strong><em>{html.escape(detail)}</em></div>"
+        for label, value, detail, status in score_cards
+    )
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Indicator Group Summary</div>"
+        "<div class='compact-section-meta'>Compact read before raw cards</div></div>"
+        f"<div class='tech-score-grid'>{score_html}</div>",
+        unsafe_allow_html=True,
+    )
+
     groups = [
         ("Momentum", "RSI, oscillators, rate of change", momentum_cards),
         ("Trend", "EMA structure, trend filters, ADX", trend_cards),
         ("Volume / Flow", "Participation and money flow", flow_cards),
         ("Volatility", "Band position and range", volatility_cards),
     ]
-    for title, meta, cards in groups:
-        st.markdown(
-            f"<div class='indicator-group'><div class='indicator-group-head'><div class='indicator-group-title'>{title}</div>"
-            f"<div class='indicator-group-meta'>{meta}</div></div>"
-            f"<div class='dashboard-grid indicator-grid'>{''.join(cards)}</div></div>",
-            unsafe_allow_html=True,
-        )
+    if full_mode:
+        for title, meta, cards in groups:
+            st.markdown(
+                f"<div class='indicator-group'><div class='indicator-group-head'><div class='indicator-group-title'>{title}</div>"
+                f"<div class='indicator-group-meta'>{meta}</div></div>"
+                f"<div class='dashboard-grid indicator-grid'>{''.join(cards)}</div></div>",
+                unsafe_allow_html=True,
+            )
 
     st.divider()
 
-    chart_col, fg_col = st.columns([3, 1])
-    with chart_col:
-        active_overlays = [name.replace('_', ' ').upper() for name, enabled in cfg.get("show", {}).items() if enabled]
-        overlay_text = ", ".join(active_overlays[:5]) if active_overlays else "Core OHLC, volume, RSI, MACD, MFI/CMF"
+    active_overlays = [name.replace('_', ' ').upper() for name, enabled in cfg.get("show", {}).items() if enabled]
+    overlay_text = "EMA 9/21/50/200 + Volume" if chart_mode == "Clean" else "All available overlays" if chart_mode == "Full" else ", ".join(active_overlays[:5]) if active_overlays else "Core OHLC, volume, RSI, MACD, MFI/CMF"
+    st.markdown(
+        f"<span id='technical-chart'></span><div class='tech-chart-head'><div class='tech-chart-title'>{html.escape(symbol)} Technical Chart</div>"
+        f"<div class='tech-chart-meta'>{html.escape(chart_mode)} · {html.escape(overlay_text)}</div></div>",
+        unsafe_allow_html=True,
+    )
+    render_advanced_chart(df, symbol, sr, cfg["show"], adv, chart_mode=chart_mode)
+    fg_value = fg.get("value", 50)
+    fg_class = fg.get("classification", "Neutral")
+    fg_num = int(fg_value or 0) if str(fg_value).isdigit() else 50
+    fg_c = get_fg_color(fg_num)
+    if full_mode:
         st.markdown(
-            f"<div class='tech-chart-head'><div class='tech-chart-title'>{html.escape(symbol)} Technical Chart</div>"
-            f"<div class='tech-chart-meta'>{html.escape(overlay_text)}</div></div>",
+            "<div class='tech-fg-card'><div class='tech-fg-head'>"
+            f"<div class='tech-fg-title'>Fear & Greed</div><div class='tech-fg-meta'>{html.escape(str(fg_class))} · {html.escape(str(fg_value))}/100</div>"
+            "</div>",
             unsafe_allow_html=True,
         )
-        render_advanced_chart(df, symbol, sr, cfg["show"], adv)
-    with fg_col:
-        st.markdown("#### Fear & Greed")
         render_fear_greed_gauge(fg)
+        st.markdown("</div>", unsafe_allow_html=True)
+    else:
+        st.markdown(
+            f"<div class='tech-fg-compact' style='--fg-accent:{fg_c}'>"
+            "<div class='tech-fg-compact-top'>"
+            f"<div><div class='tech-fg-compact-title'>Fear & Greed</div><strong>{html.escape(str(fg_class))}</strong></div>"
+            f"<div class='tech-fg-compact-value'>{html.escape(str(fg_value))}/100</div></div>"
+            f"<div class='tech-fg-bar'><div class='tech-fg-pin' style='left:{max(0, min(100, fg_num))}%'></div></div></div>",
+            unsafe_allow_html=True,
+        )
 
     st.divider()
 
-    nr = sr.get("nearest_resistance", 0)
-    ns = sr.get("nearest_support", 0)
-    resistance_pct = sr.get("resistance_pct", 0)
-    support_pct = sr.get("support_pct", 0)
-    nearest_label = "Resistance" if resistance_pct <= support_pct else "Support"
-    nearest_distance = min(resistance_pct, support_pct)
-    sr_bias = "Breakout watch" if resistance_pct <= 1.5 else "Rejection risk" if support_pct <= 1.5 else "Range"
+    sr_bias = sr_action
 
     ich_a = adv.get("ich_senkou_a", 0)
     ich_b = adv.get("ich_senkou_b", 0)
@@ -3029,9 +3225,11 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
     cloud_status = "Above cloud" if close > cloud_top else "Below cloud" if close < cloud_bottom else "Inside cloud"
     tk_status = "Tenkan above Kijun" if ten > kij else "Tenkan below Kijun" if ten < kij else "Tenkan equals Kijun"
     ich_bias = "Bullish" if ich_a > ich_b and close > cloud_top and ten >= kij else "Bearish" if ich_a < ich_b and close < cloud_bottom and ten <= kij else "Mixed"
+    ich_summary = "Bullish confirmation" if ich_bias == "Bullish" else "Bearish cloud" if ich_bias == "Bearish" else "Mixed cloud"
+    ich_trend = "Trend confirmation" if (technical_bias == "Bullish" and ich_bias == "Bullish") or (technical_bias == "Bearish" and ich_bias == "Bearish") else "Trend conflict" if ich_bias != "Mixed" else "Trend mixed"
 
     level_html = "".join(
-        f"<span class='tech-level'>{name}: {fmt_price(sr.get(key, 0), symbol)}</span>"
+        f"<div class='tech-level'>{html.escape(name)}: {html.escape(fmt_price(sr.get(key, 0), symbol))}</div>"
         for name, key in [("R2", "pivot_r2"), ("R1", "pivot_r1"), ("PP", "pivot"), ("S1", "pivot_s1"), ("S2", "pivot_s2")]
     )
     sr_metrics = "".join([
@@ -3039,17 +3237,18 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         mini_metric("Nearest Support", fmt_price(ns, symbol)),
         mini_metric("Nearest Resistance", fmt_price(nr, symbol)),
         mini_metric("Nearest Distance", f"{nearest_distance:.2f}% to {nearest_label}"),
-        mini_metric("Bias", sr_bias),
+        mini_metric("Action", sr_bias),
         mini_metric("Range Width", f"{(resistance_pct + support_pct):.2f}%"),
     ])
     ich_metrics = "".join([
+        mini_metric("Summary", ich_summary),
+        mini_metric("Trend Read", ich_trend),
         mini_metric("Cloud Status", cloud_label),
         mini_metric("Price Position", cloud_status),
         mini_metric("Tenkan / Kijun", tk_status),
         mini_metric("Ichimoku Bias", ich_bias),
-        mini_metric("Senkou A", fmt_price(ich_a, symbol)),
-        mini_metric("Senkou B", fmt_price(ich_b, symbol)),
     ])
+    st.markdown("<div id='technical-support-resistance'></div>", unsafe_allow_html=True)
     st.markdown(
         "<div class='tech-detail-grid'>"
         "<div class='tech-detail-card'><div class='tech-detail-title'>Support / Resistance</div>"
@@ -3061,13 +3260,27 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
     )
 
 
-def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, adv: dict):
+def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, adv: dict, chart_mode: str = "Standard"):
+    chart_mode = chart_mode if chart_mode in {"Clean", "Standard", "Full"} else "Standard"
+    clean_mode = chart_mode == "Clean"
+    if chart_mode == "Full":
+        effective_show = dict(show or {})
+        for key in ("ema_9", "ema_21", "ema_50", "ema_200", "sma_20", "sma_50", "sma_200", "vwap", "bb", "keltner", "donchian", "supertrend", "ichimoku", "psar", "sr_lines"):
+            effective_show[key] = True
+    elif clean_mode:
+        effective_show = {"ema_9": True, "ema_21": True, "ema_50": True, "ema_200": True}
+    else:
+        effective_show = dict(show or {})
+
+    rows = 2 if clean_mode else 5
+    volume_row = 2
     fig = make_subplots(
-        rows=5, cols=1, shared_xaxes=True,
+        rows=rows, cols=1, shared_xaxes=True,
         vertical_spacing=0.018,
-        row_heights=[0.44, 0.12, 0.15, 0.15, 0.14],
-        subplot_titles=(f"{symbol} · Price", "Volume", "RSI / Stoch RSI", "MACD", "MFI / CMF"),
+        row_heights=[0.78, 0.22] if clean_mode else [0.44, 0.12, 0.15, 0.15, 0.14],
+        subplot_titles=(f"{symbol} · Price", "Volume") if clean_mode else (f"{symbol} · Price", "Volume", "RSI / Stoch RSI", "MACD", "MFI / CMF"),
     )
+    show = effective_show
 
     # ── Candles ──────────────────────────────────────────────────────────
     fig.add_trace(go.Candlestick(
@@ -3101,7 +3314,7 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
     if show.get("bb") and "bb_upper" in df.columns:
         fig.add_trace(go.Scatter(x=df.index, y=df["bb_upper"], name="BB Upper",
             line=dict(color="rgba(52,152,219,0.5)", width=1, dash="dot")), row=1, col=1)
-        fig.add_trace(go.Scatter(x=df.index, y=df["bb_lower"], name="BB Lower",
+        fig.add_trace(go.Scatter(x=df.index, y=df["bb_lower"], name="BB Lower", showlegend=False,
             line=dict(color="rgba(52,152,219,0.5)", width=1, dash="dot"),
             fill="tonexty", fillcolor="rgba(52,152,219,0.05)"), row=1, col=1)
 
@@ -3109,7 +3322,7 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
     if show.get("keltner") and "kc_upper" in df.columns:
         fig.add_trace(go.Scatter(x=df.index, y=df["kc_upper"], name="KC Upper",
             line=dict(color="rgba(155,89,182,0.5)", width=1, dash="dot")), row=1, col=1)
-        fig.add_trace(go.Scatter(x=df.index, y=df["kc_lower"], name="KC Lower",
+        fig.add_trace(go.Scatter(x=df.index, y=df["kc_lower"], name="KC Lower", showlegend=False,
             line=dict(color="rgba(155,89,182,0.5)", width=1, dash="dot"),
             fill="tonexty", fillcolor="rgba(155,89,182,0.04)"), row=1, col=1)
 
@@ -3117,7 +3330,7 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
     if show.get("donchian") and "dc_upper" in df.columns:
         fig.add_trace(go.Scatter(x=df.index, y=df["dc_upper"], name="DC High",
             line=dict(color="rgba(230,126,34,0.5)", width=1, dash="dashdot")), row=1, col=1)
-        fig.add_trace(go.Scatter(x=df.index, y=df["dc_lower"], name="DC Low",
+        fig.add_trace(go.Scatter(x=df.index, y=df["dc_lower"], name="DC Low", showlegend=False,
             line=dict(color="rgba(230,126,34,0.5)", width=1, dash="dashdot"),
             fill="tonexty", fillcolor="rgba(230,126,34,0.04)"), row=1, col=1)
 
@@ -3138,7 +3351,7 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
             line=dict(color="#3f51b5", width=1)), row=1, col=1)
         fig.add_trace(go.Scatter(x=df.index, y=df["ich_senkou_a"], name="Senkou A",
             line=dict(color="rgba(38,166,154,0.6)", width=1)), row=1, col=1)
-        fig.add_trace(go.Scatter(x=df.index, y=df["ich_senkou_b"], name="Senkou B",
+        fig.add_trace(go.Scatter(x=df.index, y=df["ich_senkou_b"], name="Senkou B", showlegend=False,
             line=dict(color="rgba(239,83,80,0.6)", width=1),
             fill="tonexty", fillcolor="rgba(100,100,100,0.07)"), row=1, col=1)
 
@@ -3186,55 +3399,56 @@ def render_advanced_chart(df: pd.DataFrame, symbol: str, sr: dict, show: dict, a
     if "vwap" in df.columns and show.get("vwap"):
         pass  # Volume VWAP already on price
 
-    # ── RSI + Stoch RSI ───────────────────────────────────────────────────
-    if "rsi" in df.columns:
-        fig.add_trace(go.Scatter(x=df.index, y=df["rsi"], name="RSI",
-            line=dict(color="#FF5C73", width=1.4)), row=3, col=1)
-        for lvl, clr in [(70,"rgba(239,83,80,0.4)"),(30,"rgba(38,166,154,0.4)"),
-                         (50,"rgba(128,128,128,0.2)")]:
-            fig.add_hline(y=lvl, line_dash="dash", line_color=clr, line_width=1, row=3, col=1)
-    if "stochrsi_k" in df.columns:
-        fig.add_trace(go.Scatter(x=df.index, y=df["stochrsi_k"], name="Stoch K",
-            line=dict(color="#3498db", width=1, dash="dot")), row=3, col=1)
-        fig.add_trace(go.Scatter(x=df.index, y=df["stochrsi_d"], name="Stoch D",
-            line=dict(color="#FFB84D", width=1, dash="dot")), row=3, col=1)
+    if not clean_mode:
+        # ── RSI + Stoch RSI ───────────────────────────────────────────────
+        if "rsi" in df.columns:
+            fig.add_trace(go.Scatter(x=df.index, y=df["rsi"], name="RSI",
+                line=dict(color="#FF5C73", width=1.4)), row=3, col=1)
+            for lvl, clr in [(70,"rgba(239,83,80,0.4)"),(30,"rgba(38,166,154,0.4)"),
+                             (50,"rgba(128,128,128,0.2)")]:
+                fig.add_hline(y=lvl, line_dash="dash", line_color=clr, line_width=1, row=3, col=1)
+        if "stochrsi_k" in df.columns:
+            fig.add_trace(go.Scatter(x=df.index, y=df["stochrsi_k"], name="Stoch K",
+                line=dict(color="#3498db", width=1, dash="dot")), row=3, col=1)
+            fig.add_trace(go.Scatter(x=df.index, y=df["stochrsi_d"], name="Stoch D",
+                line=dict(color="#FFB84D", width=1, dash="dot")), row=3, col=1)
 
-    # ── MACD ──────────────────────────────────────────────────────────────
-    if "macd" in df.columns:
-        fig.add_trace(go.Scatter(x=df.index, y=df["macd"], name="MACD",
-            line=dict(color="#3498db", width=1.4)), row=4, col=1)
-        fig.add_trace(go.Scatter(x=df.index, y=df["macd_signal"], name="Signal",
-            line=dict(color="#FF5C73", width=1.4)), row=4, col=1)
-        hist_c = ["#00E08A" if v >= 0 else "#FF5C73"
-                  for v in df.get("macd_hist", pd.Series())]
-        fig.add_trace(go.Bar(x=df.index, y=df.get("macd_hist", pd.Series()),
-            name="Hist", marker_color=hist_c, opacity=0.65), row=4, col=1)
+        # ── MACD ──────────────────────────────────────────────────────────
+        if "macd" in df.columns:
+            fig.add_trace(go.Scatter(x=df.index, y=df["macd"], name="MACD",
+                line=dict(color="#3498db", width=1.4)), row=4, col=1)
+            fig.add_trace(go.Scatter(x=df.index, y=df["macd_signal"], name="Signal",
+                line=dict(color="#FF5C73", width=1.4)), row=4, col=1)
+            hist_c = ["#00E08A" if v >= 0 else "#FF5C73"
+                      for v in df.get("macd_hist", pd.Series())]
+            fig.add_trace(go.Bar(x=df.index, y=df.get("macd_hist", pd.Series()),
+                name="Hist", marker_color=hist_c, opacity=0.65), row=4, col=1)
 
-    # ── MFI / CMF ────────────────────────────────────────────────────────
-    if "mfi" in df.columns:
-        fig.add_trace(go.Scatter(x=df.index, y=df["mfi"], name="MFI",
-            line=dict(color="#9b59b6", width=1.4)), row=5, col=1)
-        for lvl, clr in [(80,"rgba(239,83,80,0.4)"),(20,"rgba(38,166,154,0.4)")]:
-            fig.add_hline(y=lvl, line_dash="dash", line_color=clr, line_width=1, row=5, col=1)
-    if "cmf" in df.columns:
-        fig.add_trace(go.Scatter(x=df.index, y=df["cmf"] * 100, name="CMF×100",
-            line=dict(color="#1abc9c", width=1, dash="dot")), row=5, col=1)
-        fig.add_hline(y=0, line_dash="solid", line_color="rgba(128,128,128,0.25)",
-                      line_width=1, row=5, col=1)
+        # ── MFI / CMF ────────────────────────────────────────────────────
+        if "mfi" in df.columns:
+            fig.add_trace(go.Scatter(x=df.index, y=df["mfi"], name="MFI",
+                line=dict(color="#9b59b6", width=1.4)), row=5, col=1)
+            for lvl, clr in [(80,"rgba(239,83,80,0.4)"),(20,"rgba(38,166,154,0.4)")]:
+                fig.add_hline(y=lvl, line_dash="dash", line_color=clr, line_width=1, row=5, col=1)
+        if "cmf" in df.columns:
+            fig.add_trace(go.Scatter(x=df.index, y=df["cmf"] * 100, name="CMF x100",
+                line=dict(color="#1abc9c", width=1, dash="dot")), row=5, col=1)
+            fig.add_hline(y=0, line_dash="solid", line_color="rgba(128,128,128,0.25)",
+                          line_width=1, row=5, col=1)
 
     chart_xmin = df.index[-min(200, len(df))]
     fig.update_layout(
-        height=720,
+        height=460 if clean_mode else 690,
         showlegend=True,
-        legend=dict(orientation="h", yanchor="bottom", y=1.01, xanchor="right", x=1,
-                    font=dict(size=10)),
+        legend=dict(orientation="h", yanchor="bottom", y=1.005, xanchor="left", x=0,
+                    font=dict(size=9), itemwidth=30, tracegroupgap=4),
         xaxis_rangeslider_visible=False,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=10, r=10, t=50, b=10),
-        xaxis5=dict(range=[chart_xmin, df.index[-1]]),
+        margin=dict(l=10, r=10, t=32 if clean_mode else 36, b=8),
     )
-    for i in range(1, 6):
+    fig.update_xaxes(range=[chart_xmin, df.index[-1]], row=rows, col=1)
+    for i in range(1, rows + 1):
         fig.update_xaxes(gridcolor="rgba(255,255,255,0.04)", row=i, col=1)
         fig.update_yaxes(gridcolor="rgba(255,255,255,0.04)", row=i, col=1)
     render_price_chart(fig)
@@ -4072,8 +4286,8 @@ def render_fear_greed_gauge(fg: dict):
         },
     ))
     fig.update_layout(
-        height=160, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=15, r=15, t=30, b=5), font={"color": "white"},
+        height=125, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=15, r=15, t=22, b=0), font={"color": "white"},
     )
     st.plotly_chart(fig, width="stretch")
 
