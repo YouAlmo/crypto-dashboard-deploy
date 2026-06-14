@@ -793,6 +793,39 @@ def get_theme_css(theme_name: str) -> str:
     .order-context-chip strong {{ color:var(--muted); font-size:0.58rem; font-weight:900; text-transform:uppercase; margin-right:4px; }}
     .order-action-grid {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
     .order-pressure-panel {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; margin:0.1rem 0 0.35rem; }}
+    .mtf-command-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0.05rem 0 0.28rem; }}
+    .mtf-command-title {{ color:var(--text); font-size:clamp(1.02rem,1.35vw,1.28rem); font-weight:950; line-height:1.1; }}
+    .mtf-command-meta {{ color:var(--muted); font-size:0.72rem; font-weight:780; white-space:nowrap; }}
+    .mtf-command-card {{ border:1px solid var(--card-border); border-radius:var(--radius-md); background:linear-gradient(180deg,color-mix(in srgb,var(--card-bg) 94%,var(--panel-bg)),var(--card-bg)); box-shadow:0 9px 22px rgba(2,6,23,0.14); padding:9px 11px; margin:0.02rem 0 0.42rem; }}
+    .mtf-command-grid {{ display:grid; grid-template-columns:minmax(210px,0.42fr) minmax(560px,1.58fr); gap:9px; align-items:stretch; }}
+    .mtf-core {{ --mtf-accent:var(--warning); position:relative; border:1px solid color-mix(in srgb,var(--mtf-accent) 30%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 52%,transparent); padding:8px 10px 8px 12px; overflow:hidden; }}
+    .mtf-core::before {{ content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--mtf-accent); }}
+    .mtf-core.status-positive {{ --mtf-accent:var(--cg-green); }}
+    .mtf-core.status-negative {{ --mtf-accent:var(--cg-red); }}
+    .mtf-core.status-warning, .mtf-core.status-neutral {{ --mtf-accent:var(--warning); }}
+    .mtf-label {{ color:var(--muted); font-size:0.56rem; font-weight:900; text-transform:uppercase; line-height:1.05; }}
+    .mtf-value {{ color:var(--mtf-accent); font-size:clamp(1.05rem,1.38vw,1.32rem); font-weight:950; line-height:1.02; margin-top:4px; }}
+    .mtf-sub {{ color:var(--text); font-size:0.72rem; font-weight:820; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .mtf-gauge {{ margin-top:8px; }}
+    .mtf-gauge-track {{ position:relative; height:8px; border-radius:999px; background:linear-gradient(90deg,var(--cg-red),var(--warning),var(--cg-green)); overflow:hidden; }}
+    .mtf-gauge-marker {{ position:absolute; top:-3px; width:4px; height:14px; border-radius:999px; background:var(--text); box-shadow:0 0 0 2px color-mix(in srgb,var(--app-bg) 90%,transparent); transform:translateX(-2px); }}
+    .mtf-gauge-scale {{ display:flex; justify-content:space-between; color:var(--subtle); font-size:0.52rem; font-weight:800; margin-top:5px; }}
+    .mtf-health-grid {{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px; }}
+    .mtf-chip, .mtf-action-item, .mtf-summary-card {{ --mtf-chip-accent:var(--warning); border:1px solid color-mix(in srgb,var(--mtf-chip-accent) 25%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 54%,transparent); padding:7px 8px; min-height:56px; overflow:hidden; }}
+    .mtf-chip.status-positive, .mtf-action-item.status-positive, .mtf-summary-card.status-positive {{ --mtf-chip-accent:var(--cg-green); }}
+    .mtf-chip.status-negative, .mtf-action-item.status-negative, .mtf-summary-card.status-negative {{ --mtf-chip-accent:var(--cg-red); }}
+    .mtf-chip.status-warning, .mtf-chip.status-neutral, .mtf-action-item.status-warning, .mtf-action-item.status-neutral, .mtf-summary-card.status-warning, .mtf-summary-card.status-neutral {{ --mtf-chip-accent:var(--warning); }}
+    .mtf-chip span, .mtf-action-item span, .mtf-summary-card span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .mtf-chip strong, .mtf-action-item strong, .mtf-summary-card strong {{ display:block; color:var(--text); font-size:0.78rem; font-weight:950; line-height:1.08; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .mtf-summary-card strong {{ color:var(--mtf-chip-accent); font-size:0.9rem; }}
+    .mtf-chip em, .mtf-action-item em, .mtf-summary-card em {{ display:block; color:var(--muted); font-size:0.58rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .mtf-reasons {{ display:flex; flex-wrap:wrap; gap:5px; margin:0.1rem 0 0.45rem; }}
+    .mtf-reason-chip {{ color:var(--text); background:color-mix(in srgb,var(--panel-bg) 62%,transparent); border:1px solid var(--card-border); border-radius:999px; padding:3px 8px; font-size:0.66rem; font-weight:850; white-space:nowrap; }}
+    .mtf-action-grid {{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
+    .mtf-summary-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.38rem; }}
+    .mtf-card-high {{ transform:translateY(-2px); box-shadow:0 16px 32px rgba(2,6,23,0.18) !important; min-height:150px !important; }}
+    .mtf-card-mid {{ min-height:136px !important; }}
+    .mtf-weight-badge {{ display:inline-flex; align-items:center; border:1px solid color-mix(in srgb,var(--accent) 28%,var(--card-border)); border-radius:999px; background:color-mix(in srgb,var(--accent) 12%,transparent); color:var(--text); padding:3px 7px; font-size:0.58rem; font-weight:900; line-height:1; white-space:nowrap; }}
     .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); white-space: nowrap; }}
     .metric-pill.buy {{ background: var(--cg-pos-weak); color: var(--cg-green); }}
     .metric-pill.sell {{ background: var(--cg-neg-weak); color: var(--cg-red); }}
@@ -1275,10 +1308,10 @@ def get_theme_css(theme_name: str) -> str:
       .block-container {{ padding-inline: 0.75rem !important; }}
       .dashboard-grid {{ grid-template-columns: 1fr; }}
       .overview-summary-grid, .indicator-grid {{ grid-template-columns: 1fr; }}
-      .tech-command-head, .indicator-group-head, .tech-chart-head, .tech-control-row, .smc-command-head {{ align-items:flex-start; flex-direction:column; gap:5px; }}
-      .tech-command-meta, .indicator-group-meta, .tech-chart-meta {{ white-space:normal; }}
-      .tech-summary-grid, .tech-detail-grid, .tech-action-grid, .tech-score-grid, .smc-command-grid, .smc-setup-grid, .smc-summary-grid, .order-command-grid, .order-action-grid, .order-pressure-panel {{ grid-template-columns:1fr; }}
-      .smc-health-grid, .order-health-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
+      .tech-command-head, .indicator-group-head, .tech-chart-head, .tech-control-row, .smc-command-head, .mtf-command-head {{ align-items:flex-start; flex-direction:column; gap:5px; }}
+      .tech-command-meta, .indicator-group-meta, .tech-chart-meta, .mtf-command-meta {{ white-space:normal; }}
+      .tech-summary-grid, .tech-detail-grid, .tech-action-grid, .tech-score-grid, .smc-command-grid, .smc-setup-grid, .smc-summary-grid, .order-command-grid, .order-action-grid, .order-pressure-panel, .mtf-command-grid, .mtf-action-grid, .mtf-summary-grid {{ grid-template-columns:1fr; }}
+      .smc-health-grid, .order-health-grid, .mtf-health-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-checklist {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-health-grid, .tech-metric-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-level-list {{ grid-template-columns:1fr; }}
@@ -4241,13 +4274,13 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
     theme_name = normalize_theme_name(theme_name)
     # PERF: Validate data before rendering
     if not mtf or not isinstance(mtf, dict):
-        st.info("⏰ Multi-timeframe data unavailable")
+        st.info("Multi-timeframe data unavailable")
         return
-    
+
     if "_overall" not in mtf:
-        st.info("⏰ Multi-timeframe data unavailable")
+        st.info("Multi-timeframe data unavailable")
         return
-    
+
     theme = THEME_TOKENS.get(THEME_TOKEN_MAP.get(theme_name, "Institutional Dark"), THEME_TOKENS["Institutional Dark"])
     st.markdown(render_section_header(
         f"Multi-Timeframe Analysis — {symbol}",
@@ -4265,50 +4298,313 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
             "Multi-timeframe analysis is partially degraded. Showing best available data.",
             kind="warning",
         )
-    ov = overall.get("verdict", "N/A")
-    ov_c = overall.get("color", theme["muted"])
-    avg = overall.get("avg_score", 0)
-    conf = int(overall.get("confidence", 0.0) * 100)
-
-    st.markdown(
-        "<div class='dashboard-grid'>"
-        + render_dashboard_card("MTF Consensus", ov, f"Avg score {avg:+.2f} · {conf}% confidence", ov_c, signal=overall.get("signal"), status=ov, trend=overall.get("alignment"),)
-        + render_dashboard_card("Bullish Timeframes", str(overall.get("bullish", 0)), "Weighted alignment", theme["success"], status="positive")
-        + render_dashboard_card("Bearish Timeframes", str(overall.get("bearish", 0)), "Market pressure", theme["danger"], status="negative")
-        + render_dashboard_card("Neutral / Hold", str(overall.get("hold", 0)), "Divergence zones", theme["warning"], status="neutral")
-        + "</div>",
-        unsafe_allow_html=True,
-    )
 
     tfs = [tf for tf in MTF_TIMEFRAMES if tf in mtf]
     if not tfs:
         st.info("No timeframe data available")
         return
 
+    tf_weights = {"1m": 1, "5m": 2, "15m": 3, "1h": 5, "4h": 8}
+
+    def safe_float(value, default=0.0):
+        try:
+            if value is None:
+                return default
+            return float(value)
+        except (TypeError, ValueError):
+            return default
+
+    def clamp(value, low, high):
+        return max(low, min(high, value))
+
+    def tf_weight(tf: str) -> int:
+        return tf_weights.get(tf, 0)
+
+    def tf_direction(d: dict) -> int:
+        score = safe_float(d.get("score"), 0.0)
+        verdict = str(d.get("verdict", d.get("signal", ""))).lower()
+        if score >= 2 or "buy" in verdict or "bull" in verdict:
+            return 1
+        if score <= -2 or "sell" in verdict or "bear" in verdict:
+            return -1
+        return 0
+
+    def status_from_bias(label: str) -> str:
+        text = str(label).lower()
+        if any(word in text for word in ["bull", "buy", "long", "aligned", "low"]):
+            return "positive"
+        if any(word in text for word in ["bear", "sell", "short", "diverg", "high"]):
+            return "negative"
+        return "warning"
+
+    weighted_sum = 0.0
+    total_weight = 0
+    bullish_weight = 0
+    bearish_weight = 0
+    neutral_weight = 0
+    htf_weighted_sum = 0.0
+    htf_total_weight = 0
+    ltf_conflict_weight = 0
+    momentum_bull_weight = 0
+    momentum_bear_weight = 0
+    trend_bull_weight = 0
+    trend_bear_weight = 0
+    contributions = {}
+
+    for tf in tfs:
+        d = mtf.get(tf, {})
+        if d.get("verdict") == "N/A":
+            continue
+        weight = tf_weight(tf)
+        if weight <= 0:
+            contributions[tf] = 0.0
+            continue
+        score = safe_float(d.get("score"), 0.0)
+        normalized = clamp(score / 6.0, -1.0, 1.0)
+        direction = tf_direction(d)
+        weighted_sum += normalized * weight
+        total_weight += weight
+        contributions[tf] = normalized * weight
+        if direction > 0:
+            bullish_weight += weight
+        elif direction < 0:
+            bearish_weight += weight
+        else:
+            neutral_weight += weight
+        if weight >= 5:
+            htf_weighted_sum += normalized * weight
+            htf_total_weight += weight
+        else:
+            ltf_conflict_weight += 0
+        momentum = safe_float(d.get("momentum"), 50.0)
+        if momentum >= 55:
+            momentum_bull_weight += weight
+        elif momentum <= 45:
+            momentum_bear_weight += weight
+        trend_text = str(d.get("details", {}).get("trend", "Neutral"))
+        if "Bull" in trend_text or trend_text == "Uptrend":
+            trend_bull_weight += weight
+        elif "Bear" in trend_text or trend_text == "Downtrend":
+            trend_bear_weight += weight
+
+    if total_weight:
+        weighted_raw = weighted_sum / total_weight
+        weighted_score = int(round(clamp((weighted_raw + 1.0) * 50, 0, 100)))
+    else:
+        weighted_raw = 0.0
+        weighted_score = 50
+
+    mtf_bias = "Bullish" if weighted_score >= 65 else "Bearish" if weighted_score <= 35 else "Neutral"
+    bias_status = status_from_bias(mtf_bias)
+    agreement_weight = max(bullish_weight, bearish_weight, neutral_weight)
+    agreement_pct = int(round((agreement_weight / total_weight) * 100)) if total_weight else 0
+    direction_spread = abs(bullish_weight - bearish_weight)
+    confidence = int(round(clamp(40 + abs(weighted_score - 50) * 1.1 + agreement_pct * 0.35, 0, 100)))
+
+    if trend_bull_weight > trend_bear_weight * 1.25:
+        trend_alignment = "Bullish aligned"
+    elif trend_bear_weight > trend_bull_weight * 1.25:
+        trend_alignment = "Bearish aligned"
+    elif trend_bull_weight or trend_bear_weight:
+        trend_alignment = "Trend divergence"
+    else:
+        trend_alignment = "Unavailable"
+
+    if momentum_bull_weight > momentum_bear_weight * 1.2:
+        momentum_alignment = "Bullish momentum"
+    elif momentum_bear_weight > momentum_bull_weight * 1.2:
+        momentum_alignment = "Bearish momentum"
+    elif momentum_bull_weight or momentum_bear_weight:
+        momentum_alignment = "Mixed momentum"
+    else:
+        momentum_alignment = "Unavailable"
+
+    signal_agreement = "Strong agreement" if agreement_pct >= 70 else "Mixed agreement" if agreement_pct >= 48 else "Low agreement"
+    htf_raw = htf_weighted_sum / htf_total_weight if htf_total_weight else weighted_raw
+    htf_direction = 1 if htf_raw > 0.22 else -1 if htf_raw < -0.22 else 0
+    bias_direction = 1 if mtf_bias == "Bullish" else -1 if mtf_bias == "Bearish" else 0
+    for tf in ["1m", "5m"]:
+        if tf in mtf and bias_direction and tf_direction(mtf[tf]) and tf_direction(mtf[tf]) != bias_direction:
+            ltf_conflict_weight += tf_weight(tf)
+
+    divergence = "divergence" in trend_alignment.lower() or "mixed" in momentum_alignment.lower()
+    if confidence >= 72 and not divergence and agreement_pct >= 60:
+        risk_level = "Low"
+    elif confidence < 55 or divergence or ltf_conflict_weight >= 2:
+        risk_level = "High"
+    else:
+        risk_level = "Moderate"
+
+    def command_chip(label, value, sub, status=None):
+        cls = status or status_from_bias(value)
+        return (
+            f"<div class='mtf-chip status-{cls}'>"
+            f"<span>{html.escape(str(label))}</span>"
+            f"<strong>{html.escape(str(value))}</strong>"
+            f"<em>{html.escape(str(sub))}</em>"
+            "</div>"
+        )
+
+    st.markdown(
+        "<div class='mtf-command-head'>"
+        "<div class='mtf-command-title'>MTF Command Center</div>"
+        f"<div class='mtf-command-meta'>{html.escape(symbol)} / weighted 1m-4H consensus</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<div class='mtf-command-card'><div class='mtf-command-grid'>"
+        f"<div class='mtf-core status-{bias_status}'>"
+        "<div class='mtf-label'>MTF Bias</div>"
+        f"<div class='mtf-value'>{html.escape(mtf_bias)}</div>"
+        f"<div class='mtf-sub'>Weighted score {weighted_score}/100 · Confidence {confidence}%</div>"
+        "<div class='mtf-gauge'><div class='mtf-gauge-track'>"
+        f"<span class='mtf-gauge-marker' style='left:{weighted_score}%'></span>"
+        "</div><div class='mtf-gauge-scale'><span>Bearish</span><span>Neutral</span><span>Bullish</span></div></div>"
+        "</div>"
+        "<div class='mtf-health-grid'>"
+        + command_chip("Weighted Score", f"{weighted_score}/100", f"Raw {weighted_raw:+.2f}", bias_status)
+        + command_chip("Confidence", f"{confidence}%", f"Agreement {agreement_pct}%", "positive" if confidence >= 70 else "warning" if confidence >= 55 else "negative")
+        + command_chip("Trend Alignment", trend_alignment, f"Bull {trend_bull_weight} / Bear {trend_bear_weight}")
+        + command_chip("Momentum Alignment", momentum_alignment, f"Bull {momentum_bull_weight} / Bear {momentum_bear_weight}")
+        + command_chip("Signal Agreement", signal_agreement, f"{agreement_pct}% weighted")
+        + command_chip("Risk Level", risk_level, f"LTF conflict {ltf_conflict_weight}", "negative" if risk_level == "High" else "positive" if risk_level == "Low" else "warning")
+        + "</div></div></div>",
+        unsafe_allow_html=True,
+    )
+
+    reason_labels = []
+    for tf in ["4h", "1h"]:
+        if tf in mtf:
+            direction = tf_direction(mtf[tf])
+            if direction > 0:
+                reason_labels.append(f"{MTF_LABELS.get(tf, tf)} bullish")
+            elif direction < 0:
+                reason_labels.append(f"{MTF_LABELS.get(tf, tf)} bearish")
+            else:
+                reason_labels.append(f"{MTF_LABELS.get(tf, tf)} neutral")
+    if "15m" in mtf and bias_direction and tf_direction(mtf["15m"]) and tf_direction(mtf["15m"]) != bias_direction:
+        reason_labels.append("15m conflicting")
+    if ltf_conflict_weight:
+        reason_labels.append("Lower timeframe noise")
+    if momentum_alignment.lower().startswith(mtf_bias.lower()[:4]):
+        reason_labels.append("Momentum aligned")
+    if "divergence" in trend_alignment.lower():
+        reason_labels.append("Trend divergence")
+    if not reason_labels:
+        reason_labels.append("Mixed timeframe structure")
+    reason_labels = reason_labels[:7]
+    reasons_html = "".join(f"<span class='mtf-reason-chip'>{html.escape(reason)}</span>" for reason in reason_labels)
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Why this MTF bias?</div>"
+        f"<div class='compact-section-meta'>Higher timeframes carry heavier weight</div></div>"
+        f"<div class='mtf-reasons'>{reasons_html}</div>",
+        unsafe_allow_html=True,
+    )
+
+    if mtf_bias == "Bullish":
+        preferred_direction = "Long"
+        preferred_setup = "HTF continuation" if htf_direction >= 0 else "Pullback alignment"
+        entry_context = "Use 15m / 5m trigger with 1H and 4H bias"
+        confirmation_needed = "15m bullish follow-through" if "15m" in mtf and tf_direction(mtf["15m"]) <= 0 else "Lower timeframe holds bid"
+        invalidation = "4H bias flips" if "4h" in mtf else "1H bias flips"
+    elif mtf_bias == "Bearish":
+        preferred_direction = "Short"
+        preferred_setup = "HTF continuation" if htf_direction <= 0 else "Bounce alignment"
+        entry_context = "Use 15m / 5m trigger with 1H and 4H pressure"
+        confirmation_needed = "15m bearish follow-through" if "15m" in mtf and tf_direction(mtf["15m"]) >= 0 else "Lower timeframe loses bid"
+        invalidation = "4H bias flips" if "4h" in mtf else "1H bias flips"
+    else:
+        preferred_direction = "Wait"
+        preferred_setup = "Wait for alignment"
+        entry_context = "Range / mixed timeframe structure"
+        confirmation_needed = "1H and 4H resolve the same way"
+        invalidation = "New HTF conflict"
+
+    def action_card(label, value, sub, status=None):
+        cls = status or status_from_bias(value)
+        return (
+            f"<div class='mtf-action-item status-{cls}'>"
+            f"<span>{html.escape(str(label))}</span>"
+            f"<strong>{html.escape(str(value))}</strong>"
+            f"<em>{html.escape(str(sub))}</em>"
+            "</div>"
+        )
+
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>MTF Trade Setup Generator</div>"
+        "<div class='compact-section-meta'>Display-only setup from existing timeframe states</div></div>"
+        "<div class='mtf-action-grid'>"
+        + action_card("Preferred Direction", preferred_direction, mtf_bias, bias_status)
+        + action_card("Preferred Setup", preferred_setup, trend_alignment)
+        + action_card("Entry Context", entry_context, signal_agreement)
+        + action_card("Confirmation Needed", confirmation_needed, momentum_alignment)
+        + action_card("Invalidation", invalidation, "Higher timeframe state")
+        + action_card("Risk Level", risk_level, f"Confidence {confidence}%", "negative" if risk_level == "High" else "positive" if risk_level == "Low" else "warning")
+        + "</div>",
+        unsafe_allow_html=True,
+    )
+
+    ov = overall.get("verdict", "N/A")
+    ov_c = overall.get("color", theme["muted"])
+    avg = safe_float(overall.get("avg_score"), 0.0)
+    conf = int(safe_float(overall.get("confidence"), 0.0) * 100)
+    st.markdown(
+        "<div class='dashboard-grid'>"
+        + render_dashboard_card("MTF Consensus", ov, f"Avg score {avg:+.2f} · {conf}% confidence", ov_c, signal=overall.get("signal"), status=ov, trend=overall.get("alignment"),)
+        + render_dashboard_card("Bullish Timeframes", str(overall.get("bullish", 0)), "Raw timeframe count", theme["success"], status="positive")
+        + render_dashboard_card("Bearish Timeframes", str(overall.get("bearish", 0)), "Raw timeframe count", theme["danger"], status="negative")
+        + render_dashboard_card("Neutral / Hold", str(overall.get("hold", 0)), "Divergence zones", theme["warning"], status="neutral")
+        + "</div>",
+        unsafe_allow_html=True,
+    )
+
     cards_html = ""
     for tf in tfs:
         d = mtf[tf]
         tf_color = d.get("color", theme["muted"])
-        momentum = d.get("momentum", 0)
-        confidence = int(d.get("confidence", 0.0) * 100)
-        trend = d.get("details", {}).get("trend", "Neutral")
+        momentum = int(safe_float(d.get("momentum"), 0.0))
+        tf_confidence = int(safe_float(d.get("confidence"), 0.0) * 100)
+        trend = str(d.get("details", {}).get("trend", "Neutral"))
         tf_signal = d.get("signal", d.get("verdict", "N/A"))
+        weight = tf_weight(tf)
+        contribution = contributions.get(tf, 0.0)
+        importance = "HTF driver" if weight >= 5 else "Midframe" if weight >= 3 else "LTF trigger" if weight else "Reference"
+        weight_label = f"W{weight}" if weight else "Ref"
+        emphasis_class = "mtf-card-high" if weight >= 5 else "mtf-card-mid" if weight >= 3 else ""
         tf_status_class = card_status_class(signal=tf_signal, status=d.get("verdict"), trend=trend, value=momentum)
         cards_html += (
-            f"<div class='dashboard-card {tf_status_class}' style='padding:18px;'>"
-            f"<div class='metric-label'>{MTF_LABELS.get(tf, tf)}</div>"
-            f"<div style='font-size:1.4rem;font-weight:800;color:{tf_color};margin-bottom:4px'>{d.get('verdict', 'N/A')}</div>"
-            f"<div style='font-size:.88rem;color:var(--muted);margin-bottom:12px'>Trend: {trend}</div>"
+            f"<div class='dashboard-card {tf_status_class} {emphasis_class}' style='padding:18px;'>"
+            f"<div style='display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px'>"
+            f"<div class='metric-label'>{html.escape(MTF_LABELS.get(tf, tf))}</div>"
+            f"<span class='mtf-weight-badge'>{weight_label} · {html.escape(importance)}</span>"
+            "</div>"
+            f"<div style='font-size:1.4rem;font-weight:800;color:{tf_color};margin-bottom:4px'>{html.escape(str(d.get('verdict', 'N/A')))}</div>"
+            f"<div style='font-size:.88rem;color:var(--muted);margin-bottom:12px'>Trend: {html.escape(trend)}</div>"
             f"<div style='display:flex;gap:7px;flex-wrap:wrap'>"
             f"<span class='metric-pill' style='background:rgba(37,99,235,0.12);color:{theme['accent']}'>Momentum {momentum}%</span>"
-            f"<span class='metric-pill' style='background:rgba(255,92,115,0.12);color:{theme['danger']}'>Conf {confidence}%</span>"
-            f"<span class='metric-pill' style='background:rgba(0,224,138,0.12);color:{theme['success']}'>Signal {d.get('signal','N/A')}</span>"
+            f"<span class='metric-pill' style='background:rgba(255,92,115,0.12);color:{theme['danger']}'>Conf {tf_confidence}%</span>"
+            f"<span class='metric-pill' style='background:rgba(0,224,138,0.12);color:{theme['success']}'>Signal {html.escape(str(d.get('signal','N/A')))}</span>"
+            f"<span class='metric-pill'>Contribution {contribution:+.1f}</span>"
             f"</div>"
             "</div>"
         )
     st.markdown(f"<div class='dashboard-grid'>{cards_html}</div>", unsafe_allow_html=True)
 
-    st.markdown("#### Alignment Matrix")
+    ltf_noise = "Yes" if ltf_conflict_weight else "No"
+    htf_bias_label = "Bullish" if htf_direction > 0 else "Bearish" if htf_direction < 0 else "Neutral"
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Alignment Matrix</div>"
+        "<div class='compact-section-meta'>Indicator agreement by timeframe</div></div>"
+        "<div class='mtf-summary-grid'>"
+        + command_chip("Weighted Score", f"{weighted_score}/100", mtf_bias, bias_status)
+        + command_chip("HTF Bias", htf_bias_label, "1H / 4H priority", status_from_bias(htf_bias_label))
+        + command_chip("LTF Noise", ltf_noise, f"Conflict weight {ltf_conflict_weight}", "warning" if ltf_conflict_weight else "positive")
+        + command_chip("Agreement", f"{agreement_pct}%", signal_agreement, "positive" if agreement_pct >= 70 else "warning" if agreement_pct >= 48 else "negative")
+        + "</div>",
+        unsafe_allow_html=True,
+    )
+
     metrics = ["rsi", "macd", "ema_9_21", "ema", "trend"]
     metric_labels = {
         "rsi": "RSI", "macd": "MACD", "ema_9_21": "EMA 9/21",
@@ -4320,11 +4616,11 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
         row_d = []
         row_c = []
         for m in metrics:
-            v = mtf[tf].get("details", {}).get(m, "N/A")
+            v = str(mtf[tf].get("details", {}).get(m, "N/A"))
             row_d.append(v)
-            if any(label in v for label in ["Bull", "Oversold", "Strong Bull"]):
+            if any(label in v for label in ["Bull", "Oversold", "Strong Bull", "Uptrend"]):
                 row_c.append(theme["heat_bull"])
-            elif any(label in v for label in ["Bear", "Overbought", "Strong Bear"]):
+            elif any(label in v for label in ["Bear", "Overbought", "Strong Bear", "Downtrend"]):
                 row_c.append(theme["heat_bear"])
             else:
                 row_c.append("rgba(128,128,128,0.15)")
@@ -4340,7 +4636,7 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
         ),
         cells=dict(
             values=[
-                [MTF_LABELS.get(tf, tf) for tf in tfs],
+                [f"{MTF_LABELS.get(tf, tf)} · {'W' + str(tf_weight(tf)) if tf_weight(tf) else 'Ref'}" for tf in tfs],
                 *[[heat_data[i][j] for i in range(len(tfs))] for j in range(len(metrics))],
             ],
             fill_color=[theme["card_bg"]] + [[heat_colors[i][j] for i in range(len(tfs))] for j in range(len(metrics))],
@@ -4355,7 +4651,6 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
         paper_bgcolor="rgba(0,0,0,0)",
     )
     st.plotly_chart(fig, width="stretch")
-
 
 # ── Tab 6: AI Signals ─────────────────────────────────────────────────────────
 
