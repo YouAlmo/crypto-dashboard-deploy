@@ -665,6 +665,10 @@ def get_theme_css(theme_name: str) -> str:
     .smc-health-chip em, .smc-setup-item em {{ display:block; color:var(--muted); font-size:0.58rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
     .smc-reasons {{ display:flex; flex-wrap:wrap; gap:5px; margin:0.1rem 0 0.45rem; }}
     .smc-reason-chip {{ color:var(--text); background:color-mix(in srgb,var(--panel-bg) 62%,transparent); border:1px solid var(--card-border); border-radius:999px; padding:3px 8px; font-size:0.66rem; font-weight:850; white-space:nowrap; }}
+    .smc-chart-control-row {{ display:flex; align-items:end; justify-content:space-between; gap:12px; margin:0.1rem 0 0.32rem; flex-wrap:wrap; }}
+    .smc-chart-context {{ display:flex; flex-wrap:wrap; gap:5px; align-items:center; }}
+    .smc-chart-chip {{ color:var(--text); background:color-mix(in srgb,var(--panel-bg) 62%,transparent); border:1px solid var(--card-border); border-radius:999px; padding:4px 8px; font-size:0.64rem; font-weight:850; white-space:nowrap; line-height:1; }}
+    .smc-chart-chip strong {{ color:var(--muted); font-size:0.58rem; font-weight:900; text-transform:uppercase; margin-right:4px; }}
     .smc-setup-grid {{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
     .smc-summary-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.42rem; }}
     .smc-summary-card {{ --smc-summary-accent:var(--warning); border:1px solid color-mix(in srgb,var(--smc-summary-accent) 26%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 56%,transparent); padding:7px 8px; min-height:54px; overflow:hidden; }}
@@ -3691,6 +3695,89 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
         unsafe_allow_html=True,
     )
 
+    if "smc_chart_view" not in st.session_state:
+        st.session_state.smc_chart_view = "Standard"
+
+    chart_control_col, chart_context_col = st.columns([0.34, 1.2])
+    with chart_control_col:
+        chart_view = st.radio(
+            "Chart View",
+            ["Clean", "Standard", "Full"],
+            key="smc_chart_view",
+            horizontal=True,
+        )
+
+    all_fvgs_for_chart = [("Bullish", f) for f in bull_fvg] + [("Bearish", f) for f in bear_fvg]
+    all_fvgs_for_chart = sorted(all_fvgs_for_chart, key=lambda item: abs(float(item[1].get("mid", close)) - close))
+    nearest_fvg_for_chart = all_fvgs_for_chart[0] if all_fvgs_for_chart else None
+    nearest_liq_text = f"{nearest_liq_label[:3].upper()} {fmt_price(nearest_liq_level, symbol)}" if nearest_liq_level else "None"
+    with chart_context_col:
+        st.markdown(
+            "<div class='smc-chart-control-row'><div class='smc-chart-context'>"
+            f"<span class='smc-chart-chip'><strong>View</strong>{html.escape(chart_view)}</span>"
+            f"<span class='smc-chart-chip'><strong>Nearest Liquidity</strong>{html.escape(nearest_liq_text)}</span>"
+            f"<span class='smc-chart-chip'><strong>Last Sweep</strong>{html.escape(str(sweep.get('type', 'None')))}</span>"
+            f"<span class='smc-chart-chip'><strong>Active FVGs</strong>{len(bull_fvg) + len(bear_fvg)}</span>"
+            f"<span class='smc-chart-chip'><strong>Zone</strong>{html.escape(str(zone))}</span>"
+            "</div></div>",
+            unsafe_allow_html=True,
+        )
+
+    def selected_fvgs_for_view() -> list:
+        if chart_view == "Clean":
+            return all_fvgs_for_chart[:2]
+        if chart_view == "Standard":
+            return all_fvgs_for_chart[:5]
+        return [("Bullish", f) for f in bull_fvg] + [("Bearish", f) for f in bear_fvg]
+
+    def recent_structure_for_view() -> list:
+        items = []
+        for label, rows in (("BOS+", bos_bull), ("BOS-", bos_bear), ("CHoCH+", choch_b), ("CHoCH-", choch_br)):
+            for row in rows:
+                t = row.get("break_time") or row.get("time") or df.index[-1]
+                items.append((t, label, row))
+        items = sorted(items, key=lambda x: x[0])
+        if chart_view == "Clean":
+            return []
+        if chart_view == "Standard":
+            return items[-5:]
+        return items
+
+    def selected_liquidity_for_view(levels: list, side: str) -> list:
+        sorted_levels = sorted(
+            [z for z in levels if z.get("level")],
+            key=lambda z: abs(float(z.get("level", close)) - close),
+        )
+        if chart_view == "Clean":
+            return sorted_levels[:1]
+        if chart_view == "Standard":
+            return sorted_levels[:3]
+        return sorted_levels
+
+    def label_liquidity_levels(levels: list, base_label: str) -> list:
+        labeled = []
+        previous_level = None
+        cluster_open = False
+        for idx, z in enumerate(levels):
+            lv = float(z.get("level", 0))
+            if not lv:
+                continue
+            close_to_previous = previous_level is not None and abs(lv - previous_level) / close * 100 <= 0.18
+            if close_to_previous:
+                label = f"{base_label} Cluster" if not cluster_open else ""
+                cluster_open = True
+            else:
+                label = base_label if idx < 2 or chart_view != "Full" else ""
+                cluster_open = False
+            labeled.append((z, label))
+            previous_level = lv
+        return labeled
+
+    chart_fvgs = selected_fvgs_for_view()
+    chart_structure = recent_structure_for_view()
+    chart_bsl = selected_liquidity_for_view(eq_highs, "BSL")
+    chart_ssl = selected_liquidity_for_view(eq_lows, "SSL")
+
     # SMC Chart
     fig = go.Figure()
     fig.add_trace(go.Candlestick(
@@ -3701,42 +3788,55 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
         increasing_fillcolor="#00E08A", decreasing_fillcolor="#FF5C73",
     ))
 
-    for fvg in bull_fvg[-4:]:
-        fig.add_shape(type="rect", x0=fvg["time"], x1=recent.index[-1], y0=fvg["bottom"], y1=fvg["top"], fillcolor="rgba(38,166,154,0.12)", line_color="rgba(38,166,154,0.4)", line_width=1)
-        fig.add_annotation(x=fvg["time"], y=fvg["mid"], text="FVG+", font=dict(color="#00E08A", size=9), showarrow=False, xanchor="left")
-    for fvg in bear_fvg[-4:]:
-        fig.add_shape(type="rect", x0=fvg["time"], x1=recent.index[-1], y0=fvg["bottom"], y1=fvg["top"], fillcolor="rgba(239,83,80,0.12)", line_color="rgba(239,83,80,0.4)", line_width=1)
-        fig.add_annotation(x=fvg["time"], y=fvg["mid"], text="FVG-", font=dict(color="#FF5C73", size=9), showarrow=False, xanchor="left")
+    for idx, (fvg_type, fvg) in enumerate(chart_fvgs):
+        is_nearest = nearest_fvg_for_chart is not None and fvg is nearest_fvg_for_chart[1]
+        is_bull = fvg_type == "Bullish"
+        fill = "rgba(38,166,154,0.18)" if is_nearest and is_bull else "rgba(239,83,80,0.18)" if is_nearest else "rgba(38,166,154,0.08)" if is_bull else "rgba(239,83,80,0.08)"
+        line = "rgba(38,166,154,0.78)" if is_nearest and is_bull else "rgba(239,83,80,0.78)" if is_nearest else "rgba(38,166,154,0.35)" if is_bull else "rgba(239,83,80,0.35)"
+        text = "FVG+" if is_bull else "FVG-"
+        fig.add_shape(type="rect", x0=fvg["time"], x1=recent.index[-1], y0=fvg["bottom"], y1=fvg["top"], fillcolor=fill, line_color=line, line_width=2 if is_nearest else 1)
+        if chart_view != "Clean" or is_nearest:
+            fig.add_annotation(x=fvg["time"], y=fvg["mid"], text=text, font=dict(color="#00E08A" if is_bull else "#FF5C73", size=9), showarrow=False, xanchor="left")
 
-    for ob in bull_ob[-3:]:
-        fig.add_shape(type="rect", x0=ob["time"], x1=recent.index[-1], y0=ob["bottom"], y1=ob["top"], fillcolor="rgba(38,166,154,0.18)", line_color="rgba(38,166,154,0.7)", line_width=1, line_dash="dot")
-        fig.add_annotation(x=ob["time"], y=(ob["top"] + ob["bottom"]) / 2, text="OB+", font=dict(color="#00E08A", size=9), showarrow=False, xanchor="left")
-    for ob in bear_ob[-3:]:
-        fig.add_shape(type="rect", x0=ob["time"], x1=recent.index[-1], y0=ob["bottom"], y1=ob["top"], fillcolor="rgba(239,83,80,0.18)", line_color="rgba(239,83,80,0.7)", line_width=1, line_dash="dot")
-        fig.add_annotation(x=ob["time"], y=(ob["top"] + ob["bottom"]) / 2, text="OB-", font=dict(color="#FF5C73", size=9), showarrow=False, xanchor="left")
+    if chart_view == "Full":
+        for ob in bull_ob:
+            fig.add_shape(type="rect", x0=ob["time"], x1=recent.index[-1], y0=ob["bottom"], y1=ob["top"], fillcolor="rgba(38,166,154,0.14)", line_color="rgba(38,166,154,0.58)", line_width=1, line_dash="dot")
+            fig.add_annotation(x=ob["time"], y=(ob["top"] + ob["bottom"]) / 2, text="OB+", font=dict(color="#00E08A", size=9), showarrow=False, xanchor="left")
+        for ob in bear_ob:
+            fig.add_shape(type="rect", x0=ob["time"], x1=recent.index[-1], y0=ob["bottom"], y1=ob["top"], fillcolor="rgba(239,83,80,0.14)", line_color="rgba(239,83,80,0.58)", line_width=1, line_dash="dot")
+            fig.add_annotation(x=ob["time"], y=(ob["top"] + ob["bottom"]) / 2, text="OB-", font=dict(color="#FF5C73", size=9), showarrow=False, xanchor="left")
 
-    for b in bos_bull[-2:]:
-        fig.add_hline(y=b["level"], line_dash="dash", line_color="rgba(38,166,154,0.6)", line_width=1.5, annotation_text="BOS+", annotation_position="right")
-    for b in bos_bear[-2:]:
-        fig.add_hline(y=b["level"], line_dash="dash", line_color="rgba(239,83,80,0.6)", line_width=1.5, annotation_text="BOS-", annotation_position="right")
-    for c in choch_b[-1:]:
-        fig.add_hline(y=c["level"], line_dash="dot", line_color="rgba(38,166,154,0.9)", line_width=2, annotation_text="CHoCH+", annotation_position="right")
-    for c in choch_br[-1:]:
-        fig.add_hline(y=c["level"], line_dash="dot", line_color="rgba(239,83,80,0.9)", line_width=2, annotation_text="CHoCH-", annotation_position="right")
+    for _time, label, row in chart_structure:
+        bullish = "+" in label
+        fig.add_hline(
+            y=row["level"],
+            line_dash="dash" if label.startswith("BOS") else "dot",
+            line_color="rgba(38,166,154,0.54)" if bullish else "rgba(239,83,80,0.54)",
+            line_width=1.2 if label.startswith("BOS") else 1.6,
+            annotation_text=label,
+            annotation_position="right",
+        )
 
-    for z in eq_highs[:4]:
+    for z, label in label_liquidity_levels(chart_bsl, "BSL"):
         lv = float(z.get("level", 0))
-        if lv:
-            fig.add_hline(y=lv, line_dash="dot", line_color="rgba(255,92,115,0.72)", line_width=1.2, annotation_text="BSL", annotation_position="right")
-    for z in eq_lows[:4]:
+        is_nearest = nearest_liq_label == "Buy-side" and nearest_liq_level and abs(lv - nearest_liq_level) < 1e-9
+        fig.add_hline(y=lv, line_dash="dot", line_color="rgba(255,92,115,0.82)" if is_nearest else "rgba(255,92,115,0.42)", line_width=2 if is_nearest else 1, annotation_text=label, annotation_position="right")
+    for z, label in label_liquidity_levels(chart_ssl, "SSL"):
         lv = float(z.get("level", 0))
-        if lv:
-            fig.add_hline(y=lv, line_dash="dot", line_color="rgba(0,224,138,0.72)", line_width=1.2, annotation_text="SSL", annotation_position="right")
+        is_nearest = nearest_liq_label == "Sell-side" and nearest_liq_level and abs(lv - nearest_liq_level) < 1e-9
+        fig.add_hline(y=lv, line_dash="dot", line_color="rgba(0,224,138,0.82)" if is_nearest else "rgba(0,224,138,0.42)", line_width=2 if is_nearest else 1, annotation_text=label, annotation_position="right")
+
+    if sweep.get("level"):
+        sweep_color = "rgba(255,92,115,0.92)" if sweep.get("type") == "Sweep High" else "rgba(0,224,138,0.92)"
+        sweep_idx = len(df) - 1 - int(sweep.get("age") or 0)
+        sweep_x = df.index[max(0, min(len(df) - 1, sweep_idx))]
+        fig.add_hline(y=float(sweep["level"]), line_dash="dashdot", line_color=sweep_color, line_width=2, annotation_text=sweep.get("type", "Sweep"), annotation_position="right")
+        fig.add_trace(go.Scatter(x=[sweep_x], y=[float(sweep["level"])], mode="markers", name="Last Sweep", marker=dict(size=11, color=sweep_color, symbol="diamond", line=dict(color="white", width=1)), showlegend=False))
 
     if pd_zone:
-        fig.add_hrect(y0=pd_zone.get("equilibrium", 0), y1=pd_zone.get("range_high", 0), fillcolor="rgba(239,83,80,0.05)", line_width=0, annotation_text="Premium", annotation_position="top right")
-        fig.add_hrect(y0=pd_zone.get("range_low", 0), y1=pd_zone.get("equilibrium", 0), fillcolor="rgba(38,166,154,0.05)", line_width=0, annotation_text="Discount", annotation_position="bottom right")
-        fig.add_hline(y=pd_zone.get("equilibrium", 0), line_dash="dot", line_color="rgba(241,196,15,0.6)", line_width=1, annotation_text="EQ", annotation_position="right")
+        fig.add_hrect(y0=pd_zone.get("equilibrium", 0), y1=pd_zone.get("range_high", 0), fillcolor="rgba(239,83,80,0.035)", line_width=0, annotation_text="Premium", annotation_position="top right")
+        fig.add_hrect(y0=pd_zone.get("range_low", 0), y1=pd_zone.get("equilibrium", 0), fillcolor="rgba(38,166,154,0.035)", line_width=0, annotation_text="Discount", annotation_position="bottom right")
+        fig.add_hline(y=pd_zone.get("equilibrium", 0), line_dash="dot", line_color="rgba(241,196,15,0.56)", line_width=1, annotation_text="EQ", annotation_position="right")
 
     fig.update_layout(height=500, xaxis_rangeslider_visible=False, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=10, r=10, t=24, b=10), showlegend=False)
     fig.update_xaxes(gridcolor="rgba(255,255,255,0.04)")
