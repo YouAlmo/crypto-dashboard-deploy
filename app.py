@@ -856,6 +856,66 @@ def get_theme_css(theme_name: str) -> str:
     .ai-reason-chip {{ color:var(--text); background:color-mix(in srgb,var(--panel-bg) 62%,transparent); border:1px solid var(--card-border); border-radius:999px; padding:3px 8px; font-size:0.66rem; font-weight:850; white-space:nowrap; }}
     .ai-action-grid {{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
     .ai-consensus-grid, .ai-breakdown-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
+    .bt-command-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0.05rem 0 0.28rem; }}
+    .bt-command-title {{ color:var(--text); font-size:clamp(1.02rem,1.35vw,1.28rem); font-weight:950; line-height:1.1; text-transform:uppercase; }}
+    .bt-command-meta {{ color:var(--muted); font-size:0.72rem; font-weight:780; white-space:nowrap; }}
+    .bt-command-card {{ border:1px solid var(--card-border); border-radius:var(--radius-md); background:linear-gradient(180deg,color-mix(in srgb,var(--card-bg) 94%,var(--panel-bg)),var(--card-bg)); box-shadow:0 9px 22px rgba(2,6,23,0.14); padding:9px 11px; margin:0.02rem 0 0.42rem; }}
+    .bt-command-grid {{ display:grid; grid-template-columns:minmax(210px,0.42fr) minmax(560px,1.58fr); gap:9px; align-items:stretch; }}
+    .bt-core {{ --bt-accent:var(--warning); position:relative; border:1px solid color-mix(in srgb,var(--bt-accent) 30%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 52%,transparent); padding:8px 10px 8px 12px; overflow:hidden; }}
+    .bt-core::before {{ content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--bt-accent); }}
+    .bt-core.status-positive {{ --bt-accent:var(--cg-green); }}
+    .bt-core.status-negative {{ --bt-accent:var(--cg-red); }}
+    .bt-core.status-warning, .bt-core.status-neutral {{ --bt-accent:var(--warning); }}
+    .bt-label {{ color:var(--muted); font-size:0.56rem; font-weight:900; text-transform:uppercase; line-height:1.05; }}
+    .bt-value {{ color:var(--bt-accent); font-size:clamp(1.05rem,1.38vw,1.32rem); font-weight:950; line-height:1.02; margin-top:4px; }}
+    .bt-sub {{ color:var(--text); font-size:0.72rem; font-weight:820; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .bt-gauge {{ margin-top:8px; }}
+    .bt-gauge-track {{ position:relative; height:8px; border-radius:999px; background:linear-gradient(90deg,var(--cg-red),var(--warning),var(--cg-green)); overflow:hidden; }}
+    .bt-gauge-marker {{ position:absolute; top:-3px; width:4px; height:14px; border-radius:999px; background:var(--text); box-shadow:0 0 0 2px color-mix(in srgb,var(--app-bg) 90%,transparent); transform:translateX(-2px); }}
+    .bt-gauge-scale {{ display:flex; justify-content:space-between; color:var(--subtle); font-size:0.52rem; font-weight:800; margin-top:5px; }}
+    .bt-health-grid {{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px; }}
+    .bt-chip, .bt-kpi, .bt-analytics-card {{ --bt-chip-accent:var(--warning); border:1px solid color-mix(in srgb,var(--bt-chip-accent) 25%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 54%,transparent); padding:7px 8px; min-height:56px; overflow:hidden; }}
+    .bt-chip.status-positive, .bt-kpi.status-positive, .bt-analytics-card.status-positive {{ --bt-chip-accent:var(--cg-green); }}
+    .bt-chip.status-negative, .bt-kpi.status-negative, .bt-analytics-card.status-negative {{ --bt-chip-accent:var(--cg-red); }}
+    .bt-chip.status-warning, .bt-chip.status-neutral, .bt-kpi.status-warning, .bt-kpi.status-neutral, .bt-analytics-card.status-warning, .bt-analytics-card.status-neutral {{ --bt-chip-accent:var(--warning); }}
+    .bt-chip span, .bt-kpi span, .bt-analytics-card span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .bt-chip strong, .bt-kpi strong, .bt-analytics-card strong {{ display:block; color:var(--text); font-size:0.78rem; font-weight:950; line-height:1.08; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .bt-kpi strong, .bt-analytics-card strong {{ color:var(--bt-chip-accent); font-size:0.92rem; }}
+    .bt-chip em, .bt-kpi em, .bt-analytics-card em {{ display:block; color:var(--muted); font-size:0.58rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .bt-kpi-grid {{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
+    .bt-analytics-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
+    .bt-reasons {{ display:flex; flex-wrap:wrap; gap:5px; margin:0.1rem 0 0.45rem; }}
+    .bt-reason-chip {{ color:var(--text); background:color-mix(in srgb,var(--panel-bg) 62%,transparent); border:1px solid var(--card-border); border-radius:999px; padding:3px 8px; font-size:0.66rem; font-weight:850; white-space:nowrap; }}
+    .pf-command-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0.05rem 0 0.28rem; }}
+    .pf-command-title {{ color:var(--text); font-size:clamp(1.02rem,1.35vw,1.28rem); font-weight:950; line-height:1.1; text-transform:uppercase; }}
+    .pf-command-meta {{ color:var(--muted); font-size:0.72rem; font-weight:780; white-space:nowrap; }}
+    .pf-command-card {{ border:1px solid var(--card-border); border-radius:var(--radius-md); background:linear-gradient(180deg,color-mix(in srgb,var(--card-bg) 94%,var(--panel-bg)),var(--card-bg)); box-shadow:0 9px 22px rgba(2,6,23,0.14); padding:9px 11px; margin:0.02rem 0 0.42rem; }}
+    .pf-command-grid {{ display:grid; grid-template-columns:minmax(210px,0.42fr) minmax(560px,1.58fr); gap:9px; align-items:stretch; }}
+    .pf-core {{ --pf-accent:var(--warning); position:relative; border:1px solid color-mix(in srgb,var(--pf-accent) 30%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 52%,transparent); padding:8px 10px 8px 12px; overflow:hidden; }}
+    .pf-core::before {{ content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--pf-accent); }}
+    .pf-core.status-positive {{ --pf-accent:var(--cg-green); }}
+    .pf-core.status-negative {{ --pf-accent:var(--cg-red); }}
+    .pf-core.status-warning, .pf-core.status-neutral {{ --pf-accent:var(--warning); }}
+    .pf-label {{ color:var(--muted); font-size:0.56rem; font-weight:900; text-transform:uppercase; line-height:1.05; }}
+    .pf-value {{ color:var(--pf-accent); font-size:clamp(1.05rem,1.38vw,1.32rem); font-weight:950; line-height:1.02; margin-top:4px; }}
+    .pf-sub {{ color:var(--text); font-size:0.72rem; font-weight:820; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .pf-gauge {{ margin-top:8px; }}
+    .pf-gauge-track {{ position:relative; height:8px; border-radius:999px; background:linear-gradient(90deg,var(--cg-red),var(--warning),var(--cg-green)); overflow:hidden; }}
+    .pf-gauge-marker {{ position:absolute; top:-3px; width:4px; height:14px; border-radius:999px; background:var(--text); box-shadow:0 0 0 2px color-mix(in srgb,var(--app-bg) 90%,transparent); transform:translateX(-2px); }}
+    .pf-gauge-scale {{ display:flex; justify-content:space-between; color:var(--subtle); font-size:0.52rem; font-weight:800; margin-top:5px; }}
+    .pf-health-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }}
+    .pf-chip, .pf-kpi, .pf-analytics-card {{ --pf-chip-accent:var(--warning); border:1px solid color-mix(in srgb,var(--pf-chip-accent) 25%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 54%,transparent); padding:7px 8px; min-height:56px; overflow:hidden; }}
+    .pf-chip.status-positive, .pf-kpi.status-positive, .pf-analytics-card.status-positive {{ --pf-chip-accent:var(--cg-green); }}
+    .pf-chip.status-negative, .pf-kpi.status-negative, .pf-analytics-card.status-negative {{ --pf-chip-accent:var(--cg-red); }}
+    .pf-chip.status-warning, .pf-chip.status-neutral, .pf-kpi.status-warning, .pf-kpi.status-neutral, .pf-analytics-card.status-warning, .pf-analytics-card.status-neutral {{ --pf-chip-accent:var(--warning); }}
+    .pf-chip span, .pf-kpi span, .pf-analytics-card span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .pf-chip strong, .pf-kpi strong, .pf-analytics-card strong {{ display:block; color:var(--text); font-size:0.78rem; font-weight:950; line-height:1.08; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .pf-kpi strong, .pf-analytics-card strong {{ color:var(--pf-chip-accent); font-size:0.92rem; }}
+    .pf-chip em, .pf-kpi em, .pf-analytics-card em {{ display:block; color:var(--muted); font-size:0.58rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .pf-kpi-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
+    .pf-analytics-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
+    .pf-reasons {{ display:flex; flex-wrap:wrap; gap:5px; margin:0.1rem 0 0.45rem; }}
+    .pf-reason-chip {{ color:var(--text); background:color-mix(in srgb,var(--panel-bg) 62%,transparent); border:1px solid var(--card-border); border-radius:999px; padding:3px 8px; font-size:0.66rem; font-weight:850; white-space:nowrap; }}
     .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); white-space: nowrap; }}
     .metric-pill.buy {{ background: var(--cg-pos-weak); color: var(--cg-green); }}
     .metric-pill.sell {{ background: var(--cg-neg-weak); color: var(--cg-red); }}
@@ -1338,10 +1398,10 @@ def get_theme_css(theme_name: str) -> str:
       .block-container {{ padding-inline: 0.75rem !important; }}
       .dashboard-grid {{ grid-template-columns: 1fr; }}
       .overview-summary-grid, .indicator-grid {{ grid-template-columns: 1fr; }}
-      .tech-command-head, .indicator-group-head, .tech-chart-head, .tech-control-row, .smc-command-head, .mtf-command-head, .ai-command-head {{ align-items:flex-start; flex-direction:column; gap:5px; }}
-      .tech-command-meta, .indicator-group-meta, .tech-chart-meta, .mtf-command-meta, .ai-command-meta {{ white-space:normal; }}
-      .tech-summary-grid, .tech-detail-grid, .tech-action-grid, .tech-score-grid, .smc-command-grid, .smc-setup-grid, .smc-summary-grid, .order-command-grid, .order-action-grid, .order-pressure-panel, .mtf-command-grid, .mtf-action-grid, .mtf-summary-grid, .ai-command-grid, .ai-action-grid, .ai-consensus-grid, .ai-breakdown-grid {{ grid-template-columns:1fr; }}
-      .smc-health-grid, .order-health-grid, .mtf-health-grid, .ai-health-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
+      .tech-command-head, .indicator-group-head, .tech-chart-head, .tech-control-row, .smc-command-head, .mtf-command-head, .ai-command-head, .bt-command-head, .pf-command-head {{ align-items:flex-start; flex-direction:column; gap:5px; }}
+      .tech-command-meta, .indicator-group-meta, .tech-chart-meta, .mtf-command-meta, .ai-command-meta, .bt-command-meta, .pf-command-meta {{ white-space:normal; }}
+      .tech-summary-grid, .tech-detail-grid, .tech-action-grid, .tech-score-grid, .smc-command-grid, .smc-setup-grid, .smc-summary-grid, .order-command-grid, .order-action-grid, .order-pressure-panel, .mtf-command-grid, .mtf-action-grid, .mtf-summary-grid, .ai-command-grid, .ai-action-grid, .ai-consensus-grid, .ai-breakdown-grid, .bt-command-grid, .bt-kpi-grid, .bt-analytics-grid, .pf-command-grid, .pf-kpi-grid, .pf-analytics-grid {{ grid-template-columns:1fr; }}
+      .smc-health-grid, .order-health-grid, .mtf-health-grid, .ai-health-grid, .bt-health-grid, .pf-health-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-checklist {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-health-grid, .tech-metric-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-level-list {{ grid-template-columns:1fr; }}
@@ -5065,7 +5125,7 @@ def render_backtest(df, cfg, symbol):
     with bc2:
         bt_cap = st.number_input("Starting Capital ($)", 5.0, 1_000_000.0, step=1.0, format="%.2f", key="bt_run_cap")
         if bt_cap < 5:
-            st.error("⚠️ Minimum capital is $5.00")
+            st.error("Minimum capital is $5.00")
             bt_cap = 5.0
         bt_pos_pct = st.slider("Position Size %", 5, 50, step=5, key="bt_run_pos")
 
@@ -5080,13 +5140,13 @@ def render_backtest(df, cfg, symbol):
     bt_key = backtest_cache_key(symbol, cfg.get("timeframe", "1h"), cfg["limit"], bt_cap, bt_sl, bt_tp, bt_pos)
     bt_cache = st.session_state.setdefault("bt_result_cache", {})
 
-    if st.button("▶️ Run Backtest", type="primary"):
+    if st.button("Run Backtest", type="primary"):
         status = st.empty()
         with status.container():
             if bt_key in bt_cache:
-                render_compact_state("Loading cached result…", "Backtest settings unchanged")
+                render_compact_state("Loading cached result...", "Backtest settings unchanged")
             else:
-                render_compact_state("Calculating…", "Preparing full dataset and strategy results")
+                render_compact_state("Calculating...", "Preparing full dataset and strategy results")
         start = time.perf_counter()
         bt_r = bt_cache.get(bt_key)
         if bt_r is None:
@@ -5106,7 +5166,7 @@ def render_backtest(df, cfg, symbol):
         if bt_key in bt_cache:
             st.session_state["bt_result"] = bt_cache[bt_key]
             st.session_state["bt_result_key"] = bt_key
-            render_compact_state("Loading cached result…", "Backtest settings unchanged")
+            render_compact_state("Loading cached result...", "Backtest settings unchanged")
         else:
             st.info("Configure parameters above and click **Run Backtest**.")
             return
@@ -5121,50 +5181,295 @@ def render_backtest(df, cfg, symbol):
         st.warning("No trades generated. Try different SL/TP or more candles.")
         return
 
+    trades = bt_result.get("trades", []) or []
+    td_raw = pd.DataFrame(trades)
+    eq_raw = bt_result.get("equity_curve", pd.DataFrame())
+    eq = eq_raw.reset_index() if isinstance(eq_raw, pd.DataFrame) and not eq_raw.empty else pd.DataFrame(columns=["timestamp", "equity"])
+
+    def clamp(value, low=0.0, high=100.0):
+        return max(low, min(high, value))
+
+    def finite_num(value, default=0.0):
+        try:
+            value = float(value)
+            return value if np.isfinite(value) else default
+        except (TypeError, ValueError):
+            return default
+
+    def status_from_score(score):
+        return "positive" if score >= 70 else "warning" if score >= 45 else "negative"
+
+    def status_from_value(value):
+        return "positive" if value > 0 else "negative" if value < 0 else "warning"
+
+    def grade_from_score(score, labels=("Excellent", "Good", "Average", "Weak", "Danger")):
+        if score >= 82:
+            return labels[0]
+        if score >= 65:
+            return labels[1]
+        if score >= 45:
+            return labels[2]
+        if score >= 25:
+            return labels[3]
+        return labels[4]
+
+    total_trades = int(m.get("total_trades", 0) or 0)
+    winning_trades = int(m.get("winning_trades", 0) or 0)
+    losing_trades = int(m.get("losing_trades", 0) or 0)
+    win_rate = finite_num(m.get("win_rate"), 0.0)
+    total_return = finite_num(m.get("total_return"), 0.0)
+    total_return_pct = finite_num(m.get("total_return_pct"), 0.0)
+    final_capital = finite_num(m.get("final_capital"), bt_cap)
+    profit_factor = finite_num(m.get("profit_factor"), 0.0)
+    sharpe = finite_num(m.get("sharpe_ratio"), 0.0)
+    max_dd = abs(finite_num(m.get("max_drawdown"), 0.0))
+    avg_winner = finite_num(m.get("avg_win"), 0.0)
+    avg_loser = finite_num(m.get("avg_loss"), 0.0)
+
+    pnl_values = td_raw["pnl"].astype(float).tolist() if not td_raw.empty and "pnl" in td_raw else []
+    pct_values = td_raw["pnl_pct"].astype(float).tolist() if not td_raw.empty and "pnl_pct" in td_raw else []
+    avg_trade = float(np.mean(pnl_values)) if pnl_values else 0.0
+    best_trade = max(pnl_values) if pnl_values else 0.0
+    worst_trade = min(pnl_values) if pnl_values else 0.0
+    largest_winner = max([p for p in pnl_values if p > 0], default=0.0)
+    largest_loser = min([p for p in pnl_values if p <= 0], default=0.0)
+    win_loss_ratio = winning_trades / losing_trades if losing_trades else float(winning_trades)
+    gross_loss = abs(sum(p for p in pnl_values if p <= 0))
+    recovery_factor = total_return / (bt_cap * max_dd / 100) if max_dd > 0 else (99.0 if total_return > 0 else 0.0)
+
+    equity_values = eq["equity"].astype(float).tolist() if not eq.empty and "equity" in eq else []
+    peak_equity = max(equity_values) if equity_values else final_capital
+    current_equity = equity_values[-1] if equity_values else final_capital
+    current_dd = abs(((current_equity - peak_equity) / peak_equity) * 100) if peak_equity else 0.0
+    eq_returns = pd.Series(equity_values).pct_change().dropna() if len(equity_values) > 1 else pd.Series(dtype=float)
+    equity_vol = float(eq_returns.std()) if len(eq_returns) else 0.0
+    equity_stability = int(round(clamp(100 - max_dd * 4 - equity_vol * 4500)))
+    equity_health = int(round(clamp(equity_stability * 0.45 + max(0, min(100, 50 + total_return_pct * 4)) * 0.35 + max(0, min(100, 50 + sharpe * 10)) * 0.20)))
+
+    pf_score = clamp(profit_factor / 2.0 * 100) if profit_factor < 10 else 100
+    sharpe_score = clamp(50 + sharpe * 12)
+    drawdown_score = clamp(100 - max_dd * 8)
+    trade_count_score = clamp(total_trades / 30 * 100)
+    strategy_score = int(round(clamp(win_rate * 0.25 + pf_score * 0.25 + sharpe_score * 0.20 + drawdown_score * 0.20 + trade_count_score * 0.10)))
+    health_score = int(round(clamp(win_rate * 0.28 + pf_score * 0.28 + sharpe_score * 0.22 + drawdown_score * 0.22)))
+    confidence = int(round(clamp(35 + strategy_score * 0.45 + min(total_trades, 30) * 0.75)))
+
+    verdict = "Excellent" if strategy_score >= 82 else "Good" if strategy_score >= 65 else "Average" if strategy_score >= 45 else "Poor" if strategy_score >= 25 else "Failing"
+    health_label = grade_from_score(health_score, ("Excellent", "Good", "Average", "Weak", "Danger"))
+    risk_level = "Low" if max_dd <= 5 and profit_factor >= 1.4 else "Moderate" if max_dd <= 12 and profit_factor >= 0.8 else "High"
+    profitability_rating = "Strong" if total_return > 0 and profit_factor >= 1.3 else "Positive" if total_return > 0 else "Weak" if profit_factor >= 0.8 else "Negative"
+    robustness_rating = "Robust" if total_trades >= 30 and sharpe > 0 and max_dd < 10 else "Developing" if total_trades >= 10 else "Thin Sample"
+    trade_quality = "High" if avg_trade > 0 and win_loss_ratio >= 1 else "Mixed" if avg_trade >= -0.01 else "Poor"
+
+    risk_score = int(round(clamp(drawdown_score * 0.45 + pf_score * 0.25 + max(0, min(100, 50 + total_return_pct * 4)) * 0.15 + (100 - bt_pos_pct * 1.5) * 0.15)))
+    dd_severity = "Low" if max_dd <= 5 else "Moderate" if max_dd <= 12 else "High"
+    capital_preservation = "Strong" if current_dd <= 3 and total_return >= 0 else "Stable" if current_dd <= 8 else "Weak"
+    position_risk = "Elevated" if bt_pos_pct >= 35 else "Moderate" if bt_pos_pct >= 20 else "Controlled"
+    risk_verdict = "Healthy" if risk_score >= 70 else "Caution" if risk_score >= 45 else "Danger"
+
+    def fmt_money(value):
+        return f"${value:,.2f}"
+
+    def fmt_pct(value):
+        return f"{value:+.2f}%"
+
+    def fmt_pf(value):
+        return "Inf" if value >= 99 else f"{value:.3f}"
+
+    def bt_card(label, value, sub, status="warning", klass="bt-chip"):
+        return (
+            f"<div class='{klass} status-{status}'>"
+            f"<span>{html.escape(str(label))}</span>"
+            f"<strong>{html.escape(str(value))}</strong>"
+            f"<em>{html.escape(str(sub))}</em>"
+            "</div>"
+        )
+
     st.markdown(
-        "<div class='dashboard-grid'>" +
-        render_dashboard_card("Total Return", f"${m['total_return']:,.2f}", f"{m['total_return_pct']:+.2f}%", status="positive" if m['total_return'] > 0 else "negative" if m['total_return'] < 0 else "neutral") +
-        render_dashboard_card("Win Rate", f"{m['win_rate']:.1f}%", f"{m['winning_trades']}W / {m['losing_trades']}L", status="positive" if m['win_rate'] >= 50 else "negative") +
-        render_dashboard_card("Sharpe Ratio", f"{m['sharpe_ratio']:.3f}", "Risk-adjusted returns", status="positive" if m['sharpe_ratio'] > 0 else "negative" if m['sharpe_ratio'] < 0 else "neutral") +
-        render_dashboard_card("Max Drawdown", f"{m['max_drawdown']:.2f}%", "Peak-to-trough", status="negative" if m['max_drawdown'] > 0 else "neutral") +
-        render_dashboard_card("Total Trades", str(m['total_trades']), "Market events", status="muted") +
-        render_dashboard_card("Profit Factor", f"{m['profit_factor']:.3f}", "Gross profit / loss", status="positive" if m['profit_factor'] >= 1 else "negative") +
+        "<div class='bt-command-head'>"
+        "<div class='bt-command-title'>Backtest Command Center</div>"
+        f"<div class='bt-command-meta'>{html.escape(symbol)} / {html.escape(str(cfg.get('timeframe', '1h')))} / {total_trades} trades</div>"
         "</div>",
         unsafe_allow_html=True,
     )
+    st.markdown(
+        "<div class='bt-command-card'><div class='bt-command-grid'>"
+        f"<div class='bt-core status-{status_from_score(strategy_score)}'>"
+        "<div class='bt-label'>Strategy Verdict</div>"
+        f"<div class='bt-value'>{html.escape(verdict)}</div>"
+        f"<div class='bt-sub'>Strategy score {strategy_score}/100 · Confidence {confidence}%</div>"
+        "<div class='bt-gauge'><div class='bt-gauge-track'>"
+        f"<span class='bt-gauge-marker' style='left:{strategy_score}%'></span>"
+        "</div><div class='bt-gauge-scale'><span>Failing</span><span>Average</span><span>Excellent</span></div></div>"
+        "</div>"
+        "<div class='bt-health-grid'>"
+        + bt_card("Strategy Score", f"{strategy_score}/100", verdict, status_from_score(strategy_score))
+        + bt_card("Confidence", f"{confidence}%", f"Sample {total_trades} trades", status_from_score(confidence))
+        + bt_card("Risk Level", risk_level, f"Max DD {max_dd:.2f}%", "negative" if risk_level == "High" else "positive" if risk_level == "Low" else "warning")
+        + bt_card("Profitability", profitability_rating, f"PF {fmt_pf(profit_factor)}")
+        + bt_card("Robustness", robustness_rating, f"Sharpe {sharpe:.2f}")
+        + bt_card("Trade Quality", trade_quality, f"Avg {fmt_money(avg_trade)}", "positive" if trade_quality == "High" else "negative" if trade_quality == "Poor" else "warning")
+        + "</div></div></div>",
+        unsafe_allow_html=True,
+    )
 
-    eq = bt_result["equity_curve"].reset_index()
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Performance Summary</div><div class='compact-section-meta'>Premium strategy KPIs</div></div>", unsafe_allow_html=True)
+    kpis = [
+        ("Net Profit", fmt_money(total_return), fmt_pct(total_return_pct), status_from_value(total_return)),
+        ("Total Return %", fmt_pct(total_return_pct), "Return on capital", status_from_value(total_return_pct)),
+        ("Final Capital", fmt_money(final_capital), f"Start {fmt_money(bt_cap)}", status_from_value(final_capital - bt_cap)),
+        ("Win Rate", f"{win_rate:.1f}%", f"{winning_trades}W / {losing_trades}L", "positive" if win_rate >= 50 else "negative"),
+        ("Profit Factor", fmt_pf(profit_factor), "Gross profit / loss", "positive" if profit_factor >= 1.3 else "warning" if profit_factor >= 0.8 else "negative"),
+        ("Sharpe Ratio", f"{sharpe:.3f}", "Risk-adjusted returns", "positive" if sharpe > 0.5 else "warning" if sharpe >= 0 else "negative"),
+        ("Max Drawdown", f"-{max_dd:.2f}%", "Peak-to-trough", "positive" if max_dd <= 5 else "warning" if max_dd <= 12 else "negative"),
+        ("Recovery Factor", f"{recovery_factor:.2f}", "Net / drawdown", "positive" if recovery_factor >= 1 else "warning" if recovery_factor >= 0 else "negative"),
+        ("Average Trade", fmt_money(avg_trade), "Mean closed PnL", status_from_value(avg_trade)),
+        ("Best Trade", fmt_money(best_trade), "Largest win", status_from_value(best_trade)),
+        ("Worst Trade", fmt_money(worst_trade), "Largest loss", status_from_value(worst_trade)),
+        ("Total Trades", str(total_trades), "Closed positions", "positive" if total_trades >= 30 else "warning" if total_trades >= 10 else "negative"),
+    ]
+    st.markdown("<div class='bt-kpi-grid'>" + "".join(bt_card(*item, klass="bt-kpi") for item in kpis) + "</div>", unsafe_allow_html=True)
+
+    diagnosis = []
+    if max_dd > 10:
+        diagnosis.append("High drawdown")
+    elif max_dd <= 5:
+        diagnosis.append("Controlled drawdown")
+    if win_rate < 40:
+        diagnosis.append("Low win rate")
+    elif win_rate >= 55:
+        diagnosis.append("Strong win rate")
+    if avg_winner > abs(avg_loser) and avg_winner > 0:
+        diagnosis.append("Strong average winner")
+    if profit_factor < 1:
+        diagnosis.append("Weak profit factor")
+    elif profit_factor >= 1.5:
+        diagnosis.append("Healthy profit factor")
+    if total_trades < 10:
+        diagnosis.append("Too few trades")
+    if equity_stability >= 70:
+        diagnosis.append("Stable equity curve")
+    if equity_vol > 0.01 or sharpe < 0:
+        diagnosis.append("Volatile returns")
+    if not diagnosis:
+        diagnosis.append("Balanced but inconclusive profile")
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Why did the strategy perform this way?</div>"
+        "<div class='compact-section-meta'>Generated from existing backtest metrics</div></div>"
+        "<div class='bt-reasons'>" + "".join(f"<span class='bt-reason-chip'>{html.escape(x)}</span>" for x in diagnosis[:8]) + "</div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Trade Analytics</div><div class='compact-section-meta'>Closed trade quality</div></div>", unsafe_allow_html=True)
+    trade_cards = [
+        ("Winning Trades", str(winning_trades), f"{win_rate:.1f}% win rate", "positive" if winning_trades else "warning"),
+        ("Losing Trades", str(losing_trades), f"{100-win_rate:.1f}% loss rate", "negative" if losing_trades else "positive"),
+        ("Win/Loss Ratio", f"{win_loss_ratio:.2f}", "Wins per loss", "positive" if win_loss_ratio >= 1 else "negative"),
+        ("Average Winner", fmt_money(avg_winner), "Mean winning PnL", status_from_value(avg_winner)),
+        ("Average Loser", fmt_money(avg_loser), "Mean losing PnL", status_from_value(avg_loser)),
+        ("Largest Winner", fmt_money(largest_winner), "Best closed trade", status_from_value(largest_winner)),
+        ("Largest Loser", fmt_money(largest_loser), "Worst closed trade", status_from_value(largest_loser)),
+    ]
+    st.markdown("<div class='bt-analytics-grid'>" + "".join(bt_card(*item, klass="bt-analytics-card") for item in trade_cards) + "</div>", unsafe_allow_html=True)
+
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Equity Analysis</div><div class='compact-section-meta'>Portfolio path and drawdown health</div></div>", unsafe_allow_html=True)
+    equity_cards = [
+        ("Peak Equity", fmt_money(peak_equity), "Highest curve value", "positive"),
+        ("Current Equity", fmt_money(current_equity), "Latest curve value", status_from_value(current_equity - bt_cap)),
+        ("Drawdown %", f"-{current_dd:.2f}%", "Current from peak", "positive" if current_dd <= 3 else "warning" if current_dd <= 8 else "negative"),
+        ("Equity Stability", f"{equity_stability}/100", "Volatility adjusted", status_from_score(equity_stability)),
+        ("Equity Health Score", f"{equity_health}/100", grade_from_score(equity_health), status_from_score(equity_health)),
+    ]
+    st.markdown("<div class='bt-analytics-grid'>" + "".join(bt_card(*item, klass="bt-analytics-card") for item in equity_cards) + "</div>", unsafe_allow_html=True)
+
     if len(eq):
-        fig = go.Figure(go.Scatter(x=eq["timestamp"], y=eq["equity"],
-            fill="tozeroy", fillcolor="rgba(0,224,138,0.12)",
-            line=dict(color="#00E08A", width=2), name="Portfolio"))
-        fig.update_layout(height=220, title="Equity Curve",
-            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-            yaxis=dict(tickprefix="$", gridcolor="rgba(255,255,255,0.04)"),
-            xaxis=dict(gridcolor="rgba(255,255,255,0.04)"),
-            margin=dict(l=0, r=0, t=40, b=0))
+        eq_plot = eq.copy()
+        eq_plot["peak"] = eq_plot["equity"].cummax()
+        eq_plot["drawdown"] = (eq_plot["equity"] - eq_plot["peak"]) / eq_plot["peak"] * 100
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=eq_plot["timestamp"], y=eq_plot["equity"], fill="tozeroy", fillcolor="rgba(0,224,138,0.12)", line=dict(color="#00E08A", width=2), name="Equity"))
+        fig.add_trace(go.Scatter(x=eq_plot["timestamp"], y=eq_plot["peak"], line=dict(color="#FFB84D", width=1, dash="dot"), name="Peak Equity"))
+        fig.update_layout(height=260, title="Equity Curve", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", yaxis=dict(tickprefix="$", gridcolor="rgba(255,255,255,0.04)"), xaxis=dict(gridcolor="rgba(255,255,255,0.04)"), margin=dict(l=0, r=0, t=40, b=0), legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0))
         st.plotly_chart(fig, width="stretch")
 
-    trades = bt_result["trades"]
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Trade Distribution</div><div class='compact-section-meta'>PnL shape and outcomes</div></div>", unsafe_allow_html=True)
+    chart_cols = st.columns(3)
+    if pnl_values:
+        with chart_cols[0]:
+            fig_hist = px.histogram(pd.DataFrame({"PnL": pnl_values}), x="PnL", nbins=min(12, max(4, total_trades)), title="PnL Distribution Histogram")
+            fig_hist.update_traces(marker_color="#00A3FF")
+            fig_hist.update_layout(height=230, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0, r=0, t=40, b=0), showlegend=False)
+            st.plotly_chart(fig_hist, width="stretch")
+        with chart_cols[1]:
+            fig_pie = go.Figure(go.Pie(labels=["Wins", "Losses"], values=[winning_trades, losing_trades], marker=dict(colors=["#00E08A", "#FF5C73"]), hole=0.52))
+            fig_pie.update_layout(height=230, title="Win vs Loss Pie Chart", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0, r=0, t=40, b=0))
+            st.plotly_chart(fig_pie, width="stretch")
+        with chart_cols[2]:
+            outcomes = td_raw["exit_reason"].value_counts().reset_index() if "exit_reason" in td_raw else pd.DataFrame({"exit_reason": [], "count": []})
+            outcomes.columns = ["Outcome", "Count"]
+            fig_out = px.bar(outcomes, x="Outcome", y="Count", title="Trade Outcome Breakdown", color="Outcome")
+            fig_out.update_layout(height=230, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0, r=0, t=40, b=0), showlegend=False)
+            st.plotly_chart(fig_out, width="stretch")
+
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Strategy Health</div><div class='compact-section-meta'>Win rate, profit factor, Sharpe, drawdown</div></div>", unsafe_allow_html=True)
+    health_cards = [
+        ("Strategy Health Score", f"{health_score}/100", health_label, status_from_score(health_score)),
+        ("Health Verdict", health_label, "Excellent / Good / Average / Weak / Danger", status_from_score(health_score)),
+        ("Win Rate Input", f"{win_rate:.1f}%", "Health component", "positive" if win_rate >= 50 else "negative"),
+        ("Drawdown Input", f"{drawdown_score:.0f}/100", f"Max DD {max_dd:.2f}%", status_from_score(drawdown_score)),
+    ]
+    st.markdown("<div class='bt-analytics-grid'>" + "".join(bt_card(*item, klass="bt-analytics-card") for item in health_cards) + "</div>", unsafe_allow_html=True)
+
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Risk Command Center</div><div class='compact-section-meta'>Capital defense and position risk</div></div>", unsafe_allow_html=True)
+    risk_cards = [
+        ("Risk Score", f"{risk_score}/100", risk_verdict, status_from_score(risk_score)),
+        ("Drawdown Severity", dd_severity, f"Max DD {max_dd:.2f}%", "negative" if dd_severity == "High" else "positive" if dd_severity == "Low" else "warning"),
+        ("Capital Preservation", capital_preservation, f"Current DD {current_dd:.2f}%", "positive" if capital_preservation == "Strong" else "warning" if capital_preservation == "Stable" else "negative"),
+        ("Position Risk", position_risk, f"Position {bt_pos_pct}%", "negative" if position_risk == "Elevated" else "warning" if position_risk == "Moderate" else "positive"),
+        ("Risk Verdict", risk_verdict, risk_level, status_from_score(risk_score)),
+    ]
+    st.markdown("<div class='bt-analytics-grid'>" + "".join(bt_card(*item, klass="bt-analytics-card") for item in risk_cards) + "</div>", unsafe_allow_html=True)
+
     if trades:
-        td = pd.DataFrame(trades)
-        td["pnl_pct"] = (td["pnl_pct"] * 100).round(2)
-        td["pnl"]     = td["pnl"].round(2)
-        td["entry"]   = td["entry"].round(6)
-        td["exit"]    = td["exit"].round(6)
-        st.caption("**Recent Trades**")
+        td = pd.DataFrame(trades).copy()
+        td.insert(0, "Trade #", range(1, len(td) + 1))
+        td["Result"] = np.where(td["pnl"].astype(float) > 0, "+ Win", "- Loss")
+        td["Risk Grade"] = np.select(
+            [td["pnl_pct"].astype(float) <= -bt_sl * 0.95, td["pnl_pct"].astype(float) < 0, td["pnl_pct"].astype(float) > 0],
+            ["High", "Moderate", "Low"],
+            default="Moderate",
+        )
+        entry_times = []
+        bt_df = bt_result.get("df")
+        buy_times = []
+        if isinstance(bt_df, pd.DataFrame) and "signal" in bt_df.columns:
+            buy_times = list(bt_df.index[bt_df["signal"] == SIGNAL_BUY])
+        cursor = 0
+        for close_ts in pd.to_datetime(td["timestamp"]):
+            entry_ts = pd.NaT
+            while cursor < len(buy_times) and pd.to_datetime(buy_times[cursor]) <= close_ts:
+                entry_ts = pd.to_datetime(buy_times[cursor])
+                cursor += 1
+                break
+            entry_times.append(entry_ts)
+        td["Entry Time"] = entry_times
+        td["Duration"] = ["N/A" if pd.isna(x) else str(pd.to_datetime(y) - x) for x, y in zip(td["Entry Time"], pd.to_datetime(td["timestamp"]))]
+        td["pnl_pct"] = (td["pnl_pct"].astype(float) * 100).round(2)
+        td["pnl"] = td["pnl"].astype(float).round(2)
+        td["entry"] = td["entry"].astype(float).round(6)
+        td["exit"] = td["exit"].astype(float).round(6)
+        st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Professional Trades Table</div><div class='compact-section-meta'>Existing trade log with display-only labels</div></div>", unsafe_allow_html=True)
         render_interactive_dataframe(
-            td[["timestamp","entry","exit","pnl","pnl_pct","exit_reason"]].tail(20),
-            signed_columns={"pnl", "pnl_pct"},
+            td[["Trade #", "timestamp", "Duration", "entry", "exit", "pnl", "pnl_pct", "Result", "Risk Grade", "exit_reason"]].tail(50),
+            signed_columns={"pnl", "pnl_pct", "Result"},
             column_config={
                 "entry": st.column_config.NumberColumn("entry", format="%.6f"),
                 "exit": st.column_config.NumberColumn("exit", format="%.6f"),
                 "pnl": st.column_config.NumberColumn("pnl", format="$%.2f"),
                 "pnl_pct": st.column_config.NumberColumn("pnl_pct", format="%+.2f%%"),
             },
-            height=520,
+            height=560,
         )
-
 
 # ── Tab 8: Portfolio (Paper Trading) ──────────────────────────────────────────
 
@@ -5182,10 +5487,286 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
     if "paper_trades" not in st.session_state:
         st.session_state.paper_trades = []
 
-    sig   = signal_result.get("signal", "HOLD")
-    close = ind["close"]
-    pos   = risk["position_size"]
-    ts    = now_str("%Y-%m-%d %H:%M:%S WIB")
+    sig = signal_result.get("signal", "HOLD")
+    close = float(ind["close"])
+    pos = risk["position_size"]
+    ts = now_str("%Y-%m-%d %H:%M:%S WIB")
+
+    def clamp(value, low=0.0, high=100.0):
+        return max(low, min(high, value))
+
+    def safe_float(value, default=0.0):
+        try:
+            value = float(value)
+            return value if np.isfinite(value) else default
+        except (TypeError, ValueError):
+            return default
+
+    def status_from_score(score):
+        return "positive" if score >= 70 else "warning" if score >= 45 else "negative"
+
+    def status_from_value(value):
+        return "positive" if value > 0 else "negative" if value < 0 else "warning"
+
+    def fmt_money(value):
+        return f"${value:,.2f}"
+
+    def fmt_pct(value):
+        return f"{value:+.2f}%"
+
+    def pf_card(label, value, sub, status="warning", klass="pf-chip"):
+        return (
+            f"<div class='{klass} status-{status}'>"
+            f"<span>{html.escape(str(label))}</span>"
+            f"<strong>{html.escape(str(value))}</strong>"
+            f"<em>{html.escape(str(sub))}</em>"
+            "</div>"
+        )
+
+    trades_df = pd.DataFrame(st.session_state.paper_trades)
+    if not trades_df.empty:
+        for col in ["price", "size", "units", "SL", "TP", "conf"]:
+            if col in trades_df.columns:
+                trades_df[col] = pd.to_numeric(trades_df[col], errors="coerce").fillna(0.0)
+        trades_df["time_dt"] = pd.to_datetime(trades_df.get("time", pd.Series(dtype=str)).astype(str).str.replace(" WIB", "", regex=False), errors="coerce")
+        trades_df["direction"] = trades_df.get("signal", "HOLD").astype(str).str.upper()
+        trades_df["entry"] = trades_df.get("price", 0.0).astype(float)
+        trades_df["position_value"] = trades_df.get("size", 0.0).astype(float)
+        trades_df["current_price"] = close
+        side = np.where(trades_df["direction"].eq("SELL"), -1.0, 1.0)
+        trades_df["unrealized_pnl"] = (close - trades_df["entry"]) * trades_df.get("units", 0.0).astype(float) * side
+        trades_df["unrealized_pct"] = np.where(trades_df["entry"].abs() > 0, (close - trades_df["entry"]) / trades_df["entry"] * 100 * side, 0.0)
+        trades_df["realized_pnl"] = pd.to_numeric(trades_df.get("pnl", 0.0), errors="coerce").fillna(0.0)
+    else:
+        trades_df = pd.DataFrame(columns=["time", "symbol", "direction", "entry", "position_value", "units", "current_price", "unrealized_pnl", "unrealized_pct", "realized_pnl", "time_dt"])
+
+    active_positions = len(trades_df)
+    used_margin = float(trades_df["position_value"].sum()) if active_positions else 0.0
+    available_cash = max(0.0, float(capital) - used_margin)
+    unrealized_pnl = float(trades_df["unrealized_pnl"].sum()) if active_positions else 0.0
+    realized_pnl = float(trades_df["realized_pnl"].sum()) if active_positions else 0.0
+    portfolio_value = available_cash + used_margin + unrealized_pnl + realized_pnl
+    total_pnl = unrealized_pnl + realized_pnl
+    total_return_pct = (total_pnl / max(float(capital), 1.0)) * 100
+    exposure_pct = used_margin / max(float(capital), 1.0) * 100
+    capital_utilization = min(100.0, exposure_pct)
+    winning_positions = int((trades_df["unrealized_pnl"] > 0).sum()) if active_positions else 0
+    losing_positions = int((trades_df["unrealized_pnl"] < 0).sum()) if active_positions else 0
+    largest_position = float(trades_df["position_value"].max()) if active_positions else 0.0
+    concentration = largest_position / max(used_margin, 1.0) * 100 if used_margin else 0.0
+
+    now_ts = pd.Timestamp.now()
+    def period_pnl(days):
+        if not active_positions or "time_dt" not in trades_df:
+            return 0.0
+        return float(trades_df.loc[trades_df["time_dt"] >= now_ts - pd.Timedelta(days=days), "unrealized_pnl"].sum())
+
+    daily_return = period_pnl(1) / max(float(capital), 1.0) * 100
+    weekly_return = period_pnl(7) / max(float(capital), 1.0) * 100
+    monthly_return = period_pnl(30) / max(float(capital), 1.0) * 100
+
+    max_exposure = 50.0
+    risk_utilization = exposure_pct / max_exposure * 100 if max_exposure else 0.0
+    portfolio_drawdown = abs(min(0.0, total_return_pct))
+    risk_score = int(round(clamp(100 - exposure_pct * 0.65 - concentration * 0.20 - portfolio_drawdown * 5)))
+    portfolio_score = int(round(clamp(45 + total_return_pct * 4 + (100 - min(exposure_pct, 100)) * 0.18 + risk_score * 0.25 + min(active_positions, 8) * 2 - concentration * 0.08)))
+    risk_label = "Low" if risk_score >= 75 else "Medium" if risk_score >= 55 else "High" if risk_score >= 30 else "Extreme"
+    exposure_level = "Low" if exposure_pct < 20 else "Medium" if exposure_pct < 50 else "High" if exposure_pct < 80 else "Extreme"
+    verdict = "Excellent" if portfolio_score >= 82 else "Good" if portfolio_score >= 65 else "Neutral" if portfolio_score >= 45 else "Weak" if portfolio_score >= 25 else "Dangerous"
+
+    st.markdown(
+        "<div class='pf-command-head'>"
+        "<div class='pf-command-title'>Portfolio Command Center</div>"
+        f"<div class='pf-command-meta'>{html.escape(symbol)} / {active_positions} active positions / Paper trading</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<div class='pf-command-card'><div class='pf-command-grid'>"
+        f"<div class='pf-core status-{status_from_score(portfolio_score)}'>"
+        "<div class='pf-label'>Portfolio Verdict</div>"
+        f"<div class='pf-value'>{html.escape(verdict)}</div>"
+        f"<div class='pf-sub'>Score {portfolio_score}/100 · Risk {risk_label}</div>"
+        "<div class='pf-gauge'><div class='pf-gauge-track'>"
+        f"<span class='pf-gauge-marker' style='left:{portfolio_score}%'></span>"
+        "</div><div class='pf-gauge-scale'><span>Danger</span><span>Neutral</span><span>Excellent</span></div></div>"
+        "</div>"
+        "<div class='pf-health-grid'>"
+        + pf_card("Portfolio Health", verdict, f"Score {portfolio_score}/100", status_from_score(portfolio_score))
+        + pf_card("Portfolio Score", f"{portfolio_score}/100", "Composite account quality", status_from_score(portfolio_score))
+        + pf_card("Portfolio Risk", risk_label, f"Risk score {risk_score}/100", "positive" if risk_label == "Low" else "warning" if risk_label == "Medium" else "negative")
+        + pf_card("Exposure Level", exposure_level, f"{exposure_pct:.1f}% deployed", "positive" if exposure_level == "Low" else "warning" if exposure_level == "Medium" else "negative")
+        + pf_card("Capital Utilization", f"{capital_utilization:.1f}%", f"Used {fmt_money(used_margin)}", "positive" if capital_utilization <= 40 else "warning" if capital_utilization <= 70 else "negative")
+        + pf_card("Active Positions", str(active_positions), f"{winning_positions}W / {losing_positions}L", "positive" if winning_positions >= losing_positions else "negative" if losing_positions else "warning")
+        + pf_card("Unrealized PnL", fmt_money(unrealized_pnl), fmt_pct(total_return_pct), status_from_value(unrealized_pnl))
+        + pf_card("Realized PnL", fmt_money(realized_pnl), "Closed ledger PnL", status_from_value(realized_pnl))
+        + "</div></div></div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Account Summary</div><div class='compact-section-meta'>Capital, cash, margin, and period returns</div></div>", unsafe_allow_html=True)
+    account_cards = [
+        ("Total Capital", fmt_money(capital), "Configured account", "neutral"),
+        ("Available Cash", fmt_money(available_cash), "Capital not allocated", "positive" if available_cash >= capital * 0.5 else "warning" if available_cash > 0 else "negative"),
+        ("Used Margin", fmt_money(used_margin), f"{exposure_pct:.1f}% exposure", "positive" if exposure_pct <= 40 else "warning" if exposure_pct <= 70 else "negative"),
+        ("Portfolio Value", fmt_money(portfolio_value), "Cash + positions + PnL", status_from_value(portfolio_value - capital)),
+        ("Total Return %", fmt_pct(total_return_pct), "Open + realized", status_from_value(total_return_pct)),
+        ("Daily Return %", fmt_pct(daily_return), "Logged today", status_from_value(daily_return)),
+        ("Weekly Return %", fmt_pct(weekly_return), "Logged 7D", status_from_value(weekly_return)),
+        ("Monthly Return %", fmt_pct(monthly_return), "Logged 30D", status_from_value(monthly_return)),
+    ]
+    st.markdown("<div class='pf-kpi-grid'>" + "".join(pf_card(*item, klass="pf-kpi") for item in account_cards) + "</div>", unsafe_allow_html=True)
+
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Risk Command Center</div><div class='compact-section-meta'>Exposure, concentration, and capital defense</div></div>", unsafe_allow_html=True)
+    risk_cards = [
+        ("Portfolio Risk Score", f"{risk_score}/100", risk_label, status_from_score(risk_score)),
+        ("Current Exposure", f"{exposure_pct:.1f}%", fmt_money(used_margin), "positive" if exposure_pct <= 40 else "warning" if exposure_pct <= 70 else "negative"),
+        ("Maximum Exposure", f"{max_exposure:.0f}%", "Display risk ceiling", "neutral"),
+        ("Risk Utilization", f"{risk_utilization:.1f}%", "Current / max exposure", "positive" if risk_utilization <= 60 else "warning" if risk_utilization <= 100 else "negative"),
+        ("Position Concentration", f"{concentration:.1f}%", "Largest / exposure", "positive" if concentration <= 35 else "warning" if concentration <= 60 else "negative"),
+        ("Largest Position", fmt_money(largest_position), "Largest open allocation", "warning" if largest_position else "neutral"),
+        ("Portfolio Drawdown", f"-{portfolio_drawdown:.2f}%", "Current account drawdown", "positive" if portfolio_drawdown <= 3 else "warning" if portfolio_drawdown <= 8 else "negative"),
+    ]
+    st.markdown("<div class='pf-analytics-grid'>" + "".join(pf_card(*item, klass="pf-analytics-card") for item in risk_cards) + "</div>", unsafe_allow_html=True)
+
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Position Management Center</div><div class='compact-section-meta'>Open paper positions marked to current price</div></div>", unsafe_allow_html=True)
+    position_cards = [
+        ("Open Positions", str(active_positions), "Logged paper entries", "positive" if active_positions else "warning"),
+        ("Winning Positions", str(winning_positions), "Positive unrealized PnL", "positive" if winning_positions else "warning"),
+        ("Losing Positions", str(losing_positions), "Negative unrealized PnL", "negative" if losing_positions else "positive"),
+    ]
+    st.markdown("<div class='pf-analytics-grid'>" + "".join(pf_card(*item, klass="pf-analytics-card") for item in position_cards) + "</div>", unsafe_allow_html=True)
+    if active_positions:
+        pos_table = trades_df.copy()
+        pos_table["Symbol"] = pos_table.get("symbol", symbol)
+        pos_table["Direction"] = pos_table["direction"]
+        pos_table["Entry"] = pos_table["entry"].round(6)
+        pos_table["Current Price"] = close
+        pos_table["PnL $"] = pos_table["unrealized_pnl"].round(2)
+        pos_table["PnL %"] = pos_table["unrealized_pct"].round(2)
+        pos_table["Position Value"] = pos_table["position_value"].round(2)
+        pos_table["Risk Grade"] = np.where(pos_table["Position Value"] / max(float(capital), 1.0) * 100 >= 25, "High", np.where(pos_table["Position Value"] / max(float(capital), 1.0) * 100 >= 10, "Medium", "Low"))
+        pos_table["Status"] = np.where(pos_table["PnL $"] > 0, "Profit", np.where(pos_table["PnL $"] < 0, "Loss", "Flat"))
+        render_interactive_dataframe(
+            pos_table[["Symbol", "Direction", "Entry", "Current Price", "PnL $", "PnL %", "Position Value", "Risk Grade", "Status"]],
+            signed_columns={"Direction", "PnL $", "PnL %", "Status"},
+            column_config={
+                "Entry": st.column_config.NumberColumn("Entry", format="%.6f"),
+                "Current Price": st.column_config.NumberColumn("Current Price", format="%.6f"),
+                "PnL $": st.column_config.NumberColumn("PnL $", format="$%.2f"),
+                "PnL %": st.column_config.NumberColumn("PnL %", format="%+.2f%%"),
+                "Position Value": st.column_config.NumberColumn("Position Value", format="$%.2f"),
+            },
+            height=280,
+        )
+    else:
+        render_empty_state("No open paper positions logged yet.")
+
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Trade Journal</div><div class='compact-section-meta'>Professional ledger view with period filters</div></div>", unsafe_allow_html=True)
+    journal_filter = st.radio("Journal Filter", ["Today", "Week", "Month", "All"], horizontal=True, key="pf_journal_filter", label_visibility="collapsed")
+    if active_positions:
+        journal = trades_df.copy()
+        cutoff = None
+        if journal_filter == "Today":
+            cutoff = now_ts - pd.Timedelta(days=1)
+        elif journal_filter == "Week":
+            cutoff = now_ts - pd.Timedelta(days=7)
+        elif journal_filter == "Month":
+            cutoff = now_ts - pd.Timedelta(days=30)
+        if cutoff is not None:
+            journal = journal[journal["time_dt"] >= cutoff]
+        journal = journal.reset_index(drop=True)
+        journal.insert(0, "Trade #", range(1, len(journal) + 1))
+        journal["Date"] = journal.get("time", "")
+        journal["Symbol"] = journal.get("symbol", symbol)
+        journal["Direction"] = journal["direction"]
+        journal["Entry"] = journal["entry"].round(6)
+        journal["Exit"] = close
+        journal["PnL"] = journal["unrealized_pnl"].round(2)
+        journal["PnL %"] = journal["unrealized_pct"].round(2)
+        journal["Duration"] = ["N/A" if pd.isna(t) else str(now_ts - t).split(".")[0] for t in journal["time_dt"]]
+        journal["Exit Reason"] = "Open"
+        render_interactive_dataframe(
+            journal[["Trade #", "Date", "Symbol", "Direction", "Entry", "Exit", "PnL", "PnL %", "Duration", "Exit Reason"]],
+            signed_columns={"Direction", "PnL", "PnL %"},
+            column_config={
+                "Entry": st.column_config.NumberColumn("Entry", format="%.6f"),
+                "Exit": st.column_config.NumberColumn("Exit", format="%.6f"),
+                "PnL": st.column_config.NumberColumn("PnL", format="$%.2f"),
+                "PnL %": st.column_config.NumberColumn("PnL %", format="%+.2f%%"),
+            },
+            height=360,
+        )
+
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Portfolio Analytics</div><div class='compact-section-meta'>Display-only curves from paper ledger</div></div>", unsafe_allow_html=True)
+    if active_positions:
+        curve = trades_df.sort_values("time_dt").copy()
+        curve["cum_pnl"] = curve["unrealized_pnl"].cumsum()
+        curve["equity"] = float(capital) + curve["cum_pnl"]
+        curve["growth"] = (curve["equity"] / max(float(capital), 1.0) - 1) * 100
+        curve["exposure"] = curve["position_value"].cumsum() / max(float(capital), 1.0) * 100
+        daily = curve.set_index("time_dt")["unrealized_pnl"].resample("D").sum().reset_index().rename(columns={"unrealized_pnl": "Daily PnL"})
+        c1, c2 = st.columns(2)
+        with c1:
+            fig_eq = go.Figure(go.Scatter(x=curve["time_dt"], y=curve["equity"], fill="tozeroy", fillcolor="rgba(0,224,138,0.12)", line=dict(color="#00E08A", width=2), name="Equity"))
+            fig_eq.update_layout(height=230, title="Equity Curve", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0, r=0, t=40, b=0), yaxis=dict(tickprefix="$"))
+            st.plotly_chart(fig_eq, width="stretch")
+        with c2:
+            fig_growth = go.Figure(go.Scatter(x=curve["time_dt"], y=curve["growth"], line=dict(color="#00A3FF", width=2), name="Growth"))
+            fig_growth.update_layout(height=230, title="Portfolio Growth", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0, r=0, t=40, b=0), yaxis=dict(ticksuffix="%"))
+            st.plotly_chart(fig_growth, width="stretch")
+        c3, c4, c5 = st.columns(3)
+        with c3:
+            fig_daily = px.bar(daily, x="time_dt", y="Daily PnL", title="Daily PnL")
+            fig_daily.update_traces(marker_color="#FFB84D")
+            fig_daily.update_layout(height=220, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0, r=0, t=40, b=0))
+            st.plotly_chart(fig_daily, width="stretch")
+        with c4:
+            fig_cum = go.Figure(go.Scatter(x=curve["time_dt"], y=curve["cum_pnl"], line=dict(color="#00E08A" if total_pnl >= 0 else "#FF5C73", width=2), name="Cumulative PnL"))
+            fig_cum.update_layout(height=220, title="Cumulative PnL", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0, r=0, t=40, b=0), yaxis=dict(tickprefix="$"))
+            st.plotly_chart(fig_cum, width="stretch")
+        with c5:
+            fig_exp = go.Figure(go.Scatter(x=curve["time_dt"], y=curve["exposure"], fill="tozeroy", fillcolor="rgba(255,184,77,0.12)", line=dict(color="#FFB84D", width=2), name="Exposure"))
+            fig_exp.update_layout(height=220, title="Exposure History", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0, r=0, t=40, b=0), yaxis=dict(ticksuffix="%"))
+            st.plotly_chart(fig_exp, width="stretch")
+    else:
+        render_empty_state("Portfolio analytics will populate after trades are logged.")
+
+    pnl_series = trades_df["unrealized_pnl"] if active_positions else pd.Series(dtype=float)
+    wins = pnl_series[pnl_series > 0]
+    losses = pnl_series[pnl_series < 0]
+    win_rate = len(wins) / max(len(pnl_series), 1) * 100 if active_positions else 0.0
+    gross_profit = float(wins.sum()) if len(wins) else 0.0
+    gross_loss = abs(float(losses.sum())) if len(losses) else 0.0
+    profit_factor = gross_profit / gross_loss if gross_loss > 0 else (99.0 if gross_profit > 0 else 0.0)
+    returns = pnl_series / max(float(capital), 1.0)
+    sharpe = float(returns.mean() / returns.std() * np.sqrt(252)) if len(returns) > 1 and returns.std() > 0 else 0.0
+    recovery_factor = total_pnl / max(portfolio_drawdown / 100 * float(capital), 1.0) if portfolio_drawdown > 0 else (99.0 if total_pnl > 0 else 0.0)
+    avg_winner = float(wins.mean()) if len(wins) else 0.0
+    avg_loser = float(losses.mean()) if len(losses) else 0.0
+    best_trade = float(pnl_series.max()) if active_positions else 0.0
+    worst_trade = float(pnl_series.min()) if active_positions else 0.0
+
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Performance Diagnostics</div><div class='compact-section-meta'>Paper ledger performance quality</div></div>", unsafe_allow_html=True)
+    perf_cards = [
+        ("Win Rate", f"{win_rate:.1f}%", f"{len(wins)} wins / {len(losses)} losses", "positive" if win_rate >= 50 else "negative" if active_positions else "warning"),
+        ("Profit Factor", "Inf" if profit_factor >= 99 else f"{profit_factor:.2f}", "Gross profit / loss", "positive" if profit_factor >= 1.3 else "warning" if profit_factor >= 0.8 else "negative"),
+        ("Sharpe Ratio", f"{sharpe:.2f}", "PnL consistency proxy", "positive" if sharpe > 0.5 else "warning" if sharpe >= 0 else "negative"),
+        ("Recovery Factor", "Inf" if recovery_factor >= 99 else f"{recovery_factor:.2f}", "PnL / drawdown", "positive" if recovery_factor >= 1 else "warning" if recovery_factor >= 0 else "negative"),
+        ("Average Winner", fmt_money(avg_winner), "Mean positive PnL", status_from_value(avg_winner)),
+        ("Average Loser", fmt_money(avg_loser), "Mean negative PnL", status_from_value(avg_loser)),
+        ("Best Trade", fmt_money(best_trade), "Largest paper gain", status_from_value(best_trade)),
+        ("Worst Trade", fmt_money(worst_trade), "Largest paper loss", status_from_value(worst_trade)),
+    ]
+    st.markdown("<div class='pf-analytics-grid'>" + "".join(pf_card(*item, klass="pf-analytics-card") for item in perf_cards) + "</div>", unsafe_allow_html=True)
+
+    diagnostics = []
+    diagnostics.append("Strong profitability" if total_pnl > 0 and profit_factor >= 1.2 else "Weak profitability" if total_pnl < 0 else "Neutral profitability")
+    diagnostics.append("Controlled risk" if risk_score >= 70 else "Overexposed" if exposure_pct > 60 else "Risk needs monitoring")
+    diagnostics.append("Healthy portfolio" if portfolio_score >= 65 else "Portfolio deterioration" if portfolio_score < 35 else "Portfolio mixed")
+    if concentration > 50:
+        diagnostics.append("Position concentration high")
+    st.markdown("<div class='pf-reasons'>" + "".join(f"<span class='pf-reason-chip'>{html.escape(x)}</span>" for x in diagnostics) + "</div>", unsafe_allow_html=True)
 
     st.markdown(
         "<div class='dashboard-grid'>"
@@ -5198,11 +5779,10 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
 
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown(f"**Signal:** {sig_badge(sig)} at `{fmt_price(close, symbol)}`",
-                    unsafe_allow_html=True)
+        st.markdown(f"**Signal:** {sig_badge(sig)} at `{fmt_price(close, symbol)}`", unsafe_allow_html=True)
         st.markdown(f"**Capital:** `${capital:,.2f}`")
         if sig == SIGNAL_BUY:
-            if st.button("📥 Log BUY Trade", type="primary"):
+            if st.button("Log BUY Trade", type="primary"):
                 st.session_state.paper_trades.append({
                     "time": ts, "symbol": symbol, "signal": "BUY",
                     "price": close, "size": pos["position_value"],
@@ -5211,7 +5791,7 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
                 })
                 st.success(f"Logged BUY {pos['units']:.6f} {symbol.split('/')[0]} @ {fmt_price(close, symbol)}")
         elif sig == SIGNAL_SELL:
-            if st.button("📤 Log SELL Trade", type="secondary"):
+            if st.button("Log SELL Trade", type="secondary"):
                 st.session_state.paper_trades.append({
                     "time": ts, "symbol": symbol, "signal": "SELL",
                     "price": close, "size": pos["position_value"],
@@ -5219,18 +5799,15 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
                     "TP": risk["take_profit"], "conf": signal_result["confidence"],
                 })
         else:
-            st.info("Signal is HOLD — no action.")
+            st.info("Signal is HOLD - no action.")
     with col2:
         if st.session_state.paper_trades:
-            if st.button("🗑️ Clear Log"):
+            if st.button("Clear Log"):
                 st.session_state.paper_trades = []
                 st.rerun()
 
-    if st.session_state.paper_trades:
-        render_interactive_dataframe(pd.DataFrame(st.session_state.paper_trades), signed_columns={"signal"}, height=520)
-
     st.divider()
-    st.subheader("Position Sizing Calculator")
+    st.markdown("<div class='compact-section-head'><div class='compact-section-title'>Position Sizing Pro</div><div class='compact-section-meta'>Institutional allocation calculator</div></div>", unsafe_allow_html=True)
     init_widget_from_query("rc", "pf_cap", float(capital), lambda v: qp_float("pf_cap", float(capital), 5.0, 1_000_000.0))
     init_widget_from_query("re", "pf_entry", float(close), lambda v: qp_float("pf_entry", float(close), 0.000001, 1_000_000.0))
     init_widget_from_query("rsl", "pf_sl", float(risk["stop_loss"]), lambda v: qp_float("pf_sl", float(risk["stop_loss"]), 0.000001, 1_000_000.0))
@@ -5240,14 +5817,14 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
 
     r1, r2 = st.columns(2)
     with r1:
-        custom_cap   = st.number_input("Capital ($)", 5.0, 1_000_000.0, step=1.0, format="%.2f", key="rc")
+        custom_cap = st.number_input("Capital ($)", 5.0, 1_000_000.0, step=1.0, format="%.2f", key="rc")
         if custom_cap < 5:
-            st.error("⚠️ Minimum capital is $5.00")
+            st.error("Minimum capital is $5.00")
             custom_cap = 5.0
         custom_entry = st.number_input("Entry Price", 0.000001, 1_000_000.0, key="re", format="%.6f")
-        custom_sl    = st.number_input("Stop Loss", 0.000001, 1_000_000.0, key="rsl", format="%.6f")
+        custom_sl = st.number_input("Stop Loss", 0.000001, 1_000_000.0, key="rsl", format="%.6f")
     with r2:
-        custom_tp    = st.number_input("Take Profit", 0.000001, 1_000_000.0, key="rtp", format="%.6f")
+        custom_tp = st.number_input("Take Profit", 0.000001, 1_000_000.0, key="rtp", format="%.6f")
         custom_risk_pct = st.slider("Risk per Trade %", 0.1, 5.0, step=0.1, key="rrp")
         custom_maxp_pct = st.slider("Max Position %", 5, 50, step=5, key="rmp")
 
@@ -5260,13 +5837,22 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
     custom_risk = custom_risk_pct / 100
     custom_maxp = custom_maxp_pct / 100
 
-    sz     = load_position_size_cached(custom_cap, custom_entry, custom_sl, custom_risk, custom_maxp)
-    rr_c   = abs(custom_tp - custom_entry) / abs(custom_entry - custom_sl) if abs(custom_entry - custom_sl) > 0 else 0
-    q1, q2, q3, q4 = st.columns(4)
-    q1.metric("Units",          f"{sz['units']:.6f}")
-    q2.metric("Position Value", f"${sz['position_value']:,.2f}")
-    q3.metric("Risk Amount",    f"${sz['risk_amount']:,.2f}")
-    q4.metric("Risk/Reward",    f"1:{rr_c:.2f}")
+    sz = load_position_size_cached(custom_cap, custom_entry, custom_sl, custom_risk, custom_maxp)
+    rr_c = abs(custom_tp - custom_entry) / abs(custom_entry - custom_sl) if abs(custom_entry - custom_sl) > 0 else 0
+    max_loss = sz["risk_amount"]
+    expected_profit = abs(custom_tp - custom_entry) * sz["units"]
+    suggested_alloc = sz["position_value"] / max(custom_cap, 1.0) * 100
+    sizing_cards = [
+        ("Units", f"{sz['units']:.6f}", "Suggested position size", "positive"),
+        ("Position Value", fmt_money(sz["position_value"]), "Suggested capital allocation", "positive" if suggested_alloc <= custom_maxp_pct else "warning"),
+        ("Risk Amount", fmt_money(sz["risk_amount"]), f"{custom_risk_pct:.1f}% risk", "warning"),
+        ("Max Loss", fmt_money(max_loss), "At stop loss", "negative" if max_loss > 0 else "neutral"),
+        ("Expected Profit", fmt_money(expected_profit), "At take profit", "positive"),
+        ("Reward/Risk", f"1:{rr_c:.2f}", "TP / SL distance", "positive" if rr_c >= 1.5 else "warning"),
+        ("Suggested Position Size", f"{sz['units']:.6f}", "Units from risk model", "positive"),
+        ("Suggested Allocation", f"{suggested_alloc:.1f}%", f"Cap {custom_maxp_pct}%", "positive" if suggested_alloc <= custom_maxp_pct else "negative"),
+    ]
+    st.markdown("<div class='pf-kpi-grid'>" + "".join(pf_card(*item, klass="pf-kpi") for item in sizing_cards) + "</div>", unsafe_allow_html=True)
 
 
 # ── Fear & Greed gauge ────────────────────────────────────────────────────────
