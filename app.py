@@ -826,6 +826,36 @@ def get_theme_css(theme_name: str) -> str:
     .mtf-card-high {{ transform:translateY(-2px); box-shadow:0 16px 32px rgba(2,6,23,0.18) !important; min-height:150px !important; }}
     .mtf-card-mid {{ min-height:136px !important; }}
     .mtf-weight-badge {{ display:inline-flex; align-items:center; border:1px solid color-mix(in srgb,var(--accent) 28%,var(--card-border)); border-radius:999px; background:color-mix(in srgb,var(--accent) 12%,transparent); color:var(--text); padding:3px 7px; font-size:0.58rem; font-weight:900; line-height:1; white-space:nowrap; }}
+    .ai-command-head {{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0.05rem 0 0.28rem; }}
+    .ai-command-title {{ color:var(--text); font-size:clamp(1.02rem,1.35vw,1.28rem); font-weight:950; line-height:1.1; }}
+    .ai-command-meta {{ color:var(--muted); font-size:0.72rem; font-weight:780; white-space:nowrap; }}
+    .ai-command-card {{ border:1px solid var(--card-border); border-radius:var(--radius-md); background:linear-gradient(180deg,color-mix(in srgb,var(--card-bg) 94%,var(--panel-bg)),var(--card-bg)); box-shadow:0 9px 22px rgba(2,6,23,0.14); padding:9px 11px; margin:0.02rem 0 0.42rem; }}
+    .ai-command-grid {{ display:grid; grid-template-columns:minmax(210px,0.42fr) minmax(560px,1.58fr); gap:9px; align-items:stretch; }}
+    .ai-core {{ --ai-accent:var(--warning); position:relative; border:1px solid color-mix(in srgb,var(--ai-accent) 30%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 52%,transparent); padding:8px 10px 8px 12px; overflow:hidden; }}
+    .ai-core::before {{ content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--ai-accent); }}
+    .ai-core.status-positive {{ --ai-accent:var(--cg-green); }}
+    .ai-core.status-negative {{ --ai-accent:var(--cg-red); }}
+    .ai-core.status-warning, .ai-core.status-neutral {{ --ai-accent:var(--warning); }}
+    .ai-label {{ color:var(--muted); font-size:0.56rem; font-weight:900; text-transform:uppercase; line-height:1.05; }}
+    .ai-value {{ color:var(--ai-accent); font-size:clamp(1.05rem,1.38vw,1.32rem); font-weight:950; line-height:1.02; margin-top:4px; }}
+    .ai-sub {{ color:var(--text); font-size:0.72rem; font-weight:820; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .ai-gauge {{ margin-top:8px; }}
+    .ai-gauge-track {{ position:relative; height:8px; border-radius:999px; background:linear-gradient(90deg,var(--cg-red),var(--warning),var(--cg-green)); overflow:hidden; }}
+    .ai-gauge-marker {{ position:absolute; top:-3px; width:4px; height:14px; border-radius:999px; background:var(--text); box-shadow:0 0 0 2px color-mix(in srgb,var(--app-bg) 90%,transparent); transform:translateX(-2px); }}
+    .ai-gauge-scale {{ display:flex; justify-content:space-between; color:var(--subtle); font-size:0.52rem; font-weight:800; margin-top:5px; }}
+    .ai-health-grid {{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px; }}
+    .ai-chip, .ai-action-item, .ai-consensus-card, .ai-breakdown-card {{ --ai-chip-accent:var(--warning); border:1px solid color-mix(in srgb,var(--ai-chip-accent) 25%,var(--card-border)); border-radius:var(--radius-sm); background:color-mix(in srgb,var(--panel-bg) 54%,transparent); padding:7px 8px; min-height:56px; overflow:hidden; }}
+    .ai-chip.status-positive, .ai-action-item.status-positive, .ai-consensus-card.status-positive, .ai-breakdown-card.status-positive {{ --ai-chip-accent:var(--cg-green); }}
+    .ai-chip.status-negative, .ai-action-item.status-negative, .ai-consensus-card.status-negative, .ai-breakdown-card.status-negative {{ --ai-chip-accent:var(--cg-red); }}
+    .ai-chip.status-warning, .ai-chip.status-neutral, .ai-action-item.status-warning, .ai-action-item.status-neutral, .ai-consensus-card.status-warning, .ai-consensus-card.status-neutral, .ai-breakdown-card.status-warning, .ai-breakdown-card.status-neutral {{ --ai-chip-accent:var(--warning); }}
+    .ai-chip span, .ai-action-item span, .ai-consensus-card span, .ai-breakdown-card span {{ display:block; color:var(--subtle); font-size:0.52rem; font-weight:900; text-transform:uppercase; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .ai-chip strong, .ai-action-item strong, .ai-consensus-card strong, .ai-breakdown-card strong {{ display:block; color:var(--text); font-size:0.78rem; font-weight:950; line-height:1.08; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .ai-consensus-card strong, .ai-breakdown-card strong {{ color:var(--ai-chip-accent); font-size:0.92rem; }}
+    .ai-chip em, .ai-action-item em, .ai-consensus-card em, .ai-breakdown-card em {{ display:block; color:var(--muted); font-size:0.58rem; font-style:normal; font-weight:720; line-height:1.08; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+    .ai-reasons {{ display:flex; flex-wrap:wrap; gap:5px; margin:0.1rem 0 0.45rem; }}
+    .ai-reason-chip {{ color:var(--text); background:color-mix(in srgb,var(--panel-bg) 62%,transparent); border:1px solid var(--card-border); border-radius:999px; padding:3px 8px; font-size:0.66rem; font-weight:850; white-space:nowrap; }}
+    .ai-action-grid {{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
+    .ai-consensus-grid, .ai-breakdown-grid {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; margin:0.14rem 0 0.44rem; }}
     .metric-pill {{ color: var(--text); padding: 3px 7px; font-size: 0.62rem; border-radius: 999px; border: 1px solid var(--card-border); white-space: nowrap; }}
     .metric-pill.buy {{ background: var(--cg-pos-weak); color: var(--cg-green); }}
     .metric-pill.sell {{ background: var(--cg-neg-weak); color: var(--cg-red); }}
@@ -1308,10 +1338,10 @@ def get_theme_css(theme_name: str) -> str:
       .block-container {{ padding-inline: 0.75rem !important; }}
       .dashboard-grid {{ grid-template-columns: 1fr; }}
       .overview-summary-grid, .indicator-grid {{ grid-template-columns: 1fr; }}
-      .tech-command-head, .indicator-group-head, .tech-chart-head, .tech-control-row, .smc-command-head, .mtf-command-head {{ align-items:flex-start; flex-direction:column; gap:5px; }}
-      .tech-command-meta, .indicator-group-meta, .tech-chart-meta, .mtf-command-meta {{ white-space:normal; }}
-      .tech-summary-grid, .tech-detail-grid, .tech-action-grid, .tech-score-grid, .smc-command-grid, .smc-setup-grid, .smc-summary-grid, .order-command-grid, .order-action-grid, .order-pressure-panel, .mtf-command-grid, .mtf-action-grid, .mtf-summary-grid {{ grid-template-columns:1fr; }}
-      .smc-health-grid, .order-health-grid, .mtf-health-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
+      .tech-command-head, .indicator-group-head, .tech-chart-head, .tech-control-row, .smc-command-head, .mtf-command-head, .ai-command-head {{ align-items:flex-start; flex-direction:column; gap:5px; }}
+      .tech-command-meta, .indicator-group-meta, .tech-chart-meta, .mtf-command-meta, .ai-command-meta {{ white-space:normal; }}
+      .tech-summary-grid, .tech-detail-grid, .tech-action-grid, .tech-score-grid, .smc-command-grid, .smc-setup-grid, .smc-summary-grid, .order-command-grid, .order-action-grid, .order-pressure-panel, .mtf-command-grid, .mtf-action-grid, .mtf-summary-grid, .ai-command-grid, .ai-action-grid, .ai-consensus-grid, .ai-breakdown-grid {{ grid-template-columns:1fr; }}
+      .smc-health-grid, .order-health-grid, .mtf-health-grid, .ai-health-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-checklist {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-health-grid, .tech-metric-grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }}
       .tech-level-list {{ grid-template-columns:1fr; }}
@@ -4666,52 +4696,279 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
         render_empty_state("Risk assessment unavailable.")
         return
 
-    st.markdown("### 🤖 AI Signal Engine")
+    theme_name = normalize_theme_name(cfg.get("theme", "Default") if isinstance(cfg, dict) else "Default")
+    theme = THEME_TOKENS.get(THEME_TOKEN_MAP.get(theme_name, "Institutional Dark"), THEME_TOKENS["Institutional Dark"])
 
-    sig  = signal_result.get("signal", "HOLD")
-    conf = signal_result.get("confidence", 0.0)
-    sc   = signal_result.get("score", 0.0)
-    bull = signal_result.get("bull_signals", 0)
-    bear = signal_result.get("bear_signals", 0)
-    norm = signal_result.get("normalized_score", 0)
+    sig = str(signal_result.get("signal", "HOLD") or "HOLD").upper()
+    conf = float(signal_result.get("confidence", 0.0) or 0.0)
+    sc = float(signal_result.get("score", 0.0) or 0.0)
+    bull = int(signal_result.get("bull_signals", 0) or 0)
+    bear = int(signal_result.get("bear_signals", 0) or 0)
+    norm = float(signal_result.get("normalized_score", 0.0) or 0.0)
     color = signal_color(sig)
 
-    inst_label = signal_result.get("institutional_bias", "Neutral")
-    inst_score = signal_result.get("institutional_bias_score", 0.0)
-    market_regime = signal_result.get("market_regime", "N/A")
-    trend_strength = float(signal_result.get("trend_strength", 0.0))
-    # Map numeric trend strength to categorical label: Weak/Moderate/Strong/Extreme
-    if trend_strength >= 0.9:
-        trend_category = "Extreme"
-    elif trend_strength >= 0.66:
-        trend_category = "Strong"
-    elif trend_strength >= 0.33:
-        trend_category = "Moderate"
-    else:
-        trend_category = "Weak"
-    risk_level = signal_result.get("risk_level", "N/A")
+    inst_label = str(signal_result.get("institutional_bias", "Neutral") or "Neutral")
+    inst_score = float(signal_result.get("institutional_bias_score", 0.0) or 0.0)
+    market_regime = str(signal_result.get("market_regime", "N/A") or "N/A")
+    trend_strength = float(signal_result.get("trend_strength", 0.0) or 0.0)
+    trend_category = str(signal_result.get("trend_strength_label") or "")
+    if not trend_category:
+        if trend_strength >= 0.9:
+            trend_category = "Extreme"
+        elif trend_strength >= 0.66:
+            trend_category = "Strong"
+        elif trend_strength >= 0.33:
+            trend_category = "Moderate"
+        else:
+            trend_category = "Weak"
+    risk_level = str(signal_result.get("risk_level", "N/A") or "N/A")
+    reasons = [str(r) for r in signal_result.get("reasons", []) if r]
 
-    # dynamic classes and layout helpers
+    def clamp(value, low=0.0, high=100.0):
+        return max(low, min(high, value))
+
+    def status_from_text(value: str) -> str:
+        text = str(value).lower()
+        if any(word in text for word in ["buy", "bull", "up", "long", "low", "positive", "above", "strong"]):
+            return "positive"
+        if any(word in text for word in ["sell", "bear", "down", "short", "high", "negative", "below", "weak"]):
+            return "negative"
+        return "warning"
+
+    ai_direction_score = int(round(clamp((norm + 1.0) * 50)))
+    ai_bias = "BUY" if ai_direction_score >= 65 else "SELL" if ai_direction_score <= 35 else "HOLD"
+    bias_status = status_from_text(ai_bias)
+    confidence_pct = int(round(clamp(conf * 100)))
+    trend_status = "positive" if trend_strength >= 0.66 else "warning" if trend_strength >= 0.33 else "negative"
+    risk_status = "negative" if risk_level == "High" else "positive" if risk_level == "Low" else "warning"
+
+    rf = ml_result.get("rf", {}) if isinstance(ml_result, dict) else {}
+    xgb = ml_result.get("xgb", {}) if isinstance(ml_result, dict) else {}
+    rf_prob = rf.get("probability") if isinstance(rf, dict) else None
+    xgb_prob = xgb.get("probability") if isinstance(xgb, dict) else None
+    ml_prob = ml_result.get("combined_probability") if isinstance(ml_result, dict) else None
+    ml_direction = str(ml_result.get("direction", "N/A") if isinstance(ml_result, dict) else "N/A")
+
+    def model_direction(prob, pred=None):
+        if pred is not None:
+            try:
+                return "UP" if int(pred) == 1 else "DOWN"
+            except (TypeError, ValueError):
+                pass
+        if prob is None:
+            return "N/A"
+        return "UP" if float(prob) >= 0.5 else "DOWN"
+
+    rf_dir = model_direction(rf_prob, rf.get("prediction") if isinstance(rf, dict) else None)
+    xgb_dir = model_direction(xgb_prob, xgb.get("prediction") if isinstance(xgb, dict) else None)
+    available_model_dirs = [d for d in [rf_dir, xgb_dir] if d != "N/A"]
+    if len(available_model_dirs) >= 2:
+        model_agreement_pct = 100 if len(set(available_model_dirs)) == 1 else 50
+    elif len(available_model_dirs) == 1:
+        model_agreement_pct = 50
+    else:
+        model_agreement_pct = 0
+    model_agreement = "Agree" if model_agreement_pct == 100 else "Partial" if model_agreement_pct == 50 else "Unavailable"
+    if ml_direction == "N/A" and ml_prob is not None:
+        ml_direction = "UP" if float(ml_prob) >= 0.5 else "DOWN"
+    ml_bias_aligned = (ai_bias == "BUY" and ml_direction == "UP") or (ai_bias == "SELL" and ml_direction == "DOWN") or ai_bias == "HOLD"
+
+    def ai_chip(label, value, sub, status=None):
+        cls = status or status_from_text(value)
+        return (
+            f"<div class='ai-chip status-{cls}'>"
+            f"<span>{html.escape(str(label))}</span>"
+            f"<strong>{html.escape(str(value))}</strong>"
+            f"<em>{html.escape(str(sub))}</em>"
+            "</div>"
+        )
+
+    st.markdown(
+        "<div class='ai-command-head'>"
+        "<div class='ai-command-title'>AI Signal Command Center</div>"
+        f"<div class='ai-command-meta'>{html.escape(symbol)} / display-only synthesis from existing signal outputs</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<div class='ai-command-card'><div class='ai-command-grid'>"
+        f"<div class='ai-core status-{bias_status}'>"
+        "<div class='ai-label'>AI Bias</div>"
+        f"<div class='ai-value'>{html.escape(ai_bias)}</div>"
+        f"<div class='ai-sub'>Confidence {confidence_pct}% · Score {ai_direction_score}/100</div>"
+        "<div class='ai-gauge'><div class='ai-gauge-track'>"
+        f"<span class='ai-gauge-marker' style='left:{ai_direction_score}%'></span>"
+        "</div><div class='ai-gauge-scale'><span>SELL</span><span>HOLD</span><span>BUY</span></div></div>"
+        "</div>"
+        "<div class='ai-health-grid'>"
+        + ai_chip("AI Bias", ai_bias, f"Raw {sc:+.2f}", bias_status)
+        + ai_chip("Confidence", f"{confidence_pct}%", f"Norm {norm:+.3f}", "positive" if confidence_pct >= 70 else "warning" if confidence_pct >= 50 else "negative")
+        + ai_chip("Model Agreement", f"{model_agreement_pct}%", model_agreement, "positive" if model_agreement_pct == 100 else "warning" if model_agreement_pct else "negative")
+        + ai_chip("Market Regime", market_regime, f"Institutional {inst_label}")
+        + ai_chip("Trend Strength", trend_category, f"{trend_strength:.3f}", trend_status)
+        + ai_chip("Risk Level", risk_level, f"Bull {bull} / Bear {bear}", risk_status)
+        + "</div></div></div>",
+        unsafe_allow_html=True,
+    )
+
+    factor_aliases = [
+        ("Supertrend", ["supertrend"]),
+        ("MACD", ["macd"]),
+        ("RSI", ["rsi"]),
+        ("VWAP", ["vwap"]),
+        ("Fear & Greed", ["fear", "greed"]),
+        ("Market regime", ["market regime", "regime"]),
+    ]
+    factor_entries = []
+    seen_factors = set()
+    for idx, reason in enumerate(reasons):
+        lower = reason.lower()
+        for label, keys in factor_aliases:
+            if label not in seen_factors and any(key in lower for key in keys):
+                strength = len(reasons) - idx
+                factor_entries.append((strength, label, reason))
+                seen_factors.add(label)
+                break
+    if ml_direction != "N/A":
+        ml_strength = int(round(abs(float(ml_prob or 0.5) - 0.5) * 100)) + 1
+        ml_reason = f"ML prediction {ml_direction} ({float(ml_prob or 0.5) * 100:.1f}% up probability)"
+        factor_entries.append((ml_strength, "ML prediction", ml_reason))
+    factor_entries.sort(key=lambda item: item[0], reverse=True)
+    if not factor_entries:
+        factor_entries.append((1, "Signal", "Mixed signal inputs"))
+    reason_chips = "".join(
+        f"<span class='ai-reason-chip'>{html.escape(label)}: {html.escape(reason)}</span>"
+        for _, label, reason in factor_entries[:7]
+    )
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Why this AI signal?</div>"
+        "<div class='compact-section-meta'>Strongest available factors by signal-engine order and model confidence</div></div>"
+        f"<div class='ai-reasons'>{reason_chips}</div>",
+        unsafe_allow_html=True,
+    )
+
+    if ai_bias == "BUY":
+        preferred_direction = "Long"
+        preferred_setup = "Long continuation" if trend_strength >= 0.5 else "Pullback confirmation"
+        entry_context = "Buy signal with supportive model" if ml_bias_aligned else "Buy signal with ML conflict"
+        confirmation_needed = "MACD / Supertrend follow-through"
+        invalidation = "AI bias falls back to HOLD"
+    elif ai_bias == "SELL":
+        preferred_direction = "Short"
+        preferred_setup = "Short continuation" if trend_strength >= 0.5 else "Bounce rejection"
+        entry_context = "Sell signal with supportive model" if ml_bias_aligned else "Sell signal with ML conflict"
+        confirmation_needed = "MACD / Supertrend follow-through"
+        invalidation = "AI bias recovers to HOLD"
+    else:
+        preferred_direction = "Wait"
+        preferred_setup = "Wait for confirmation"
+        entry_context = "Mixed signal stack"
+        confirmation_needed = "AI score clears BUY or SELL zone"
+        invalidation = "New directional break"
+
+    def action_card(label, value, sub, status=None):
+        cls = status or status_from_text(value)
+        return (
+            f"<div class='ai-action-item status-{cls}'>"
+            f"<span>{html.escape(str(label))}</span>"
+            f"<strong>{html.escape(str(value))}</strong>"
+            f"<em>{html.escape(str(sub))}</em>"
+            "</div>"
+        )
+
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>AI Trade Setup Generator</div>"
+        "<div class='compact-section-meta'>Display-only setup from current AI signal values</div></div>"
+        "<div class='ai-action-grid'>"
+        + action_card("Preferred Direction", preferred_direction, ai_bias, bias_status)
+        + action_card("Preferred Setup", preferred_setup, trend_category)
+        + action_card("Entry Context", entry_context, f"Model {model_agreement.lower()}")
+        + action_card("Confirmation Needed", confirmation_needed, market_regime)
+        + action_card("Invalidation", invalidation, f"Score {ai_direction_score}/100")
+        + action_card("Risk Level", risk_level, f"Confidence {confidence_pct}%", risk_status)
+        + "</div>",
+        unsafe_allow_html=True,
+    )
+
+    def fmt_prob(prob):
+        return "N/A" if prob is None else f"{float(prob) * 100:.1f}% up"
+
+    def accuracy_text(model):
+        meta = (model.get("meta", {}) if isinstance(model, dict) else {}) or {}
+        val = meta.get("test_accuracy", meta.get("train_accuracy"))
+        return "Accuracy N/A" if val is None else f"Accuracy {float(val) * 100:.1f}%"
+
+    def consensus_card(label, value, sub, status=None):
+        cls = status or status_from_text(value)
+        return (
+            f"<div class='ai-consensus-card status-{cls}'>"
+            f"<span>{html.escape(str(label))}</span>"
+            f"<strong>{html.escape(str(value))}</strong>"
+            f"<em>{html.escape(str(sub))}</em>"
+            "</div>"
+        )
+
+    ensemble_label = f"{ml_direction}" if ml_direction != "N/A" else "Unavailable"
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Model Consensus Panel</div>"
+        "<div class='compact-section-meta'>Random Forest / XGBoost / Ensemble agreement</div></div>"
+        "<div class='ai-consensus-grid'>"
+        + consensus_card("Random Forest", rf_dir, f"{fmt_prob(rf_prob)} · {accuracy_text(rf)}")
+        + consensus_card("XGBoost", xgb_dir, f"{fmt_prob(xgb_prob)} · {accuracy_text(xgb)}")
+        + consensus_card("Ensemble / ML Consensus", ensemble_label, fmt_prob(ml_prob))
+        + consensus_card("Agreement", f"{model_agreement_pct}%", model_agreement, "positive" if model_agreement_pct == 100 else "warning" if model_agreement_pct else "negative")
+        + "</div>",
+        unsafe_allow_html=True,
+    )
+
+    technical_hits = sum(1 for r in reasons if any(k in r.lower() for k in ["rsi", "macd", "ema", "vwap", "supertrend", "bollinger", "sar"]))
+    trend_score = int(round(clamp(trend_strength * 100)))
+    technical_score = int(round(clamp(50 + (bull - bear) * 7 + technical_hits * 3)))
+    ml_score = int(round(clamp((float(ml_prob or 0.5)) * 100)))
+    fg_value = fg.get("value", 50) if isinstance(fg, dict) else 50
+    try:
+        fg_num = int(float(fg_value))
+    except (TypeError, ValueError):
+        fg_num = 50
+    sentiment_score = int(round(clamp(100 - abs(fg_num - 50) * 1.2)))
+
+    def breakdown_status(score_value):
+        return "positive" if score_value >= 65 else "negative" if score_value <= 35 else "warning"
+
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>AI Confidence Breakdown</div>"
+        "<div class='compact-section-meta'>Deterministic read from existing AI inputs</div></div>"
+        "<div class='ai-breakdown-grid'>"
+        + consensus_card("Technical Contribution", f"{technical_score}/100", f"{technical_hits} technical factors", breakdown_status(technical_score))
+        + consensus_card("Trend Contribution", f"{trend_score}/100", trend_category, breakdown_status(trend_score))
+        + consensus_card("ML Contribution", f"{ml_score}/100", ensemble_label, breakdown_status(ml_score))
+        + consensus_card("Sentiment Contribution", f"{sentiment_score}/100", f"Fear & Greed {fg_num}", breakdown_status(sentiment_score))
+        + "</div>",
+        unsafe_allow_html=True,
+    )
+
     css_state = "buy" if sig == "BUY" else ("sell" if sig == "SELL" else "hold")
     signal_status_class = card_status_class(signal=sig)
     dominance_total = bull + bear
     if dominance_total > 0:
         bull_pct = bull / dominance_total * 100
     else:
-        # fallback to orderbook buy_pct if available
-        bull_pct = ob.get("buy_pct", 50)
+        bull_pct = ob.get("buy_pct", 50) if isinstance(ob, dict) else 50
     bear_pct = max(0.0, 100 - bull_pct)
-
-    # risk badge class
     rclass = "risk-low" if risk_level == "Low" else ("risk-medium" if risk_level == "Medium" else "risk-high")
 
+    st.markdown(
+        "<div class='compact-section-head'><div class='compact-section-title'>Signal Summary</div>"
+        "<div class='compact-section-meta'>Existing AI signal output</div></div>",
+        unsafe_allow_html=True,
+    )
     with st.container():
         left, right = st.columns([1, 2])
         with left:
             st.markdown(
                 f"<div class='signal-card {css_state} {signal_status_class}'><div style='display:flex;align-items:center;justify-content:space-between'>"
                 f"<div style='display:flex;flex-direction:column;align-items:flex-start'>"
-                f"<div class='signal-badge' style='background:{color}'>{sig}</div>"
+                f"<div class='signal-badge' style='background:{color}'>{html.escape(sig)}</div>"
                 f"<div class='small-muted' style='margin-top:6px'>Confidence</div>"
                 f"<div style='font-size:1.6em;font-weight:800;color:{color}'>{conf*100:.1f}%</div>"
                 f"<div class='conf-wrap'><div class='conf-bar'><div class='conf-fill' style='width:{conf*100:.1f}%;background:{color}'></div></div></div>"
@@ -4726,62 +4983,60 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
             )
 
         with right:
-            # Top meta row
             st.markdown(
                 f"<div class='signal-card {card_status_class(signal=sig)}'><div class='signal-row'>"
-                f"<div style='flex:1'><div class='signal-meta'><b>Institutional:</b> {inst_label} ({inst_score:+.3f})</div></div>"
-                f"<div style='flex:1'><div class='signal-meta'><b>Regime:</b> {market_regime}</div></div>"
-                f"<div style='flex:1' style='text-align:right'><div class='signal-meta'><b>Risk:</b> <span class='risk-badge {rclass}'>{risk_level}</span></div></div>"
+                f"<div style='flex:1'><div class='signal-meta'><b>Institutional:</b> {html.escape(inst_label)} ({inst_score:+.3f})</div></div>"
+                f"<div style='flex:1'><div class='signal-meta'><b>Regime:</b> {html.escape(market_regime)}</div></div>"
+                f"<div style='flex:1'><div class='signal-meta'><b>Risk:</b> <span class='risk-badge {rclass}'>{html.escape(risk_level)}</span></div></div>"
                 f"</div>"
                 f"<div style='height:8px'></div>"
                 f"<div class='signal-row'>"
-                f"<div style='flex:1'><div class='signal-item'><b>Trend:</b> {trend_category}</div></div>"
+                f"<div style='flex:1'><div class='signal-item'><b>Trend:</b> {html.escape(trend_category)}</div></div>"
                 f"<div style='flex:1'><div class='signal-item'><b>Bull:</b> {bull}</div></div>"
                 f"<div style='flex:1'><div class='signal-item'><b>Bear:</b> {bear}</div></div>"
-                f"</div></div></div>",
+                f"</div></div>",
                 unsafe_allow_html=True,
             )
 
     st.divider()
     st.markdown("#### Signal Reasoning (top factors by weight)")
-    reasons = signal_result.get("reasons", [])
-    for i, r in enumerate(reasons[:12]):
-        icon = "🟢" if any(w in r.lower() for w in
-                           ["bull","oversold","above","positive","discount","dominant bid","strong buy"]) \
-               else "🔴" if any(w in r.lower() for w in
-                                ["bear","overbought","below","negative","premium","dominant ask","strong sell"]) \
-               else "⚪"
-        st.caption(f"{icon} {r}")
+    for r in reasons[:12]:
+        icon = "POS" if any(w in r.lower() for w in
+                            ["bull", "oversold", "above", "positive", "discount", "dominant bid", "strong buy"]) \
+               else "NEG" if any(w in r.lower() for w in
+                                  ["bear", "overbought", "below", "negative", "premium", "dominant ask", "strong sell"]) \
+               else "NEU"
+        st.caption(f"{icon} · {r}")
 
     st.divider()
-    st.subheader("🤖 ML Predictions")
+    st.subheader("ML Predictions")
     if render_ml_prediction_state(ml_result):
         direction = ml_result.get("direction", "?")
-        prob      = ml_result.get("combined_probability", 0.5)
-        dir_c     = "#00E08A" if direction == "UP" else "#FF5C73"
+        prob = ml_result.get("combined_probability", 0.5)
+        dir_c = "#00E08A" if direction == "UP" else "#FF5C73"
         mc1, mc2, mc3, mc4 = st.columns(4)
         mc1.markdown(
             f"<div class='terminal-card {card_status_class(signal=direction)}' style='text-align:center'>"
             f"<div class='metric-label'>ML Consensus</div>"
             f"<div style='font-size:1.8em;color:{dir_c};font-weight:700'>"
-            f"{('↑' if direction=='UP' else '↓')} {direction}</div></div>",
+            f"{('UP' if direction=='UP' else 'DOWN')} {direction}</div></div>",
             unsafe_allow_html=True)
         mc2.metric("Up Probability", f"{prob*100:.1f}%")
-        rf  = ml_result.get("rf", {}) or {}
+        rf = ml_result.get("rf", {}) or {}
         rfm = rf.get("meta", {}) or {}
         mc3.metric("RF Accuracy", f"{rfm.get('test_accuracy', rfm.get('train_accuracy',0))*100:.1f}%")
-        xgb  = ml_result.get("xgb", {}) or {}
+        xgb = ml_result.get("xgb", {}) or {}
         xgbm = xgb.get("meta", {}) or {}
         mc4.metric("XGB Accuracy", f"{xgbm.get('test_accuracy', xgbm.get('train_accuracy',0))*100:.1f}%")
 
         fi = ml_result.get("feature_importance", {})
         if fi:
-            fi_df = pd.DataFrame(list(fi.items()), columns=["Feature","Importance"]).sort_values("Importance")
+            fi_df = pd.DataFrame(list(fi.items()), columns=["Feature", "Importance"]).sort_values("Importance")
             fig = px.bar(fi_df.tail(10), x="Importance", y="Feature", orientation="h",
                          title="Top Feature Importances", color="Importance",
                          color_continuous_scale="teal")
             fig.update_layout(height=200, paper_bgcolor="rgba(0,0,0,0)",
-                              plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0,r=0,t=40,b=0))
+                              plot_bgcolor="rgba(0,0,0,0)", margin=dict(l=0, r=0, t=40, b=0))
             st.plotly_chart(fig, width="stretch")
 
         cache_status = ml_result.get("_cache_status")
@@ -4790,7 +5045,6 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
             st.caption("ML prediction reused from the current session cache.")
         elif elapsed_ms is not None:
             st.caption(f"ML prediction refreshed in {elapsed_ms / 1000:.1f}s.")
-
 
 # ── Tab 7: Backtest ───────────────────────────────────────────────────────────
 
