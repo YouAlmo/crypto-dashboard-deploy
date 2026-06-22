@@ -1384,6 +1384,135 @@ def get_theme_css(theme_name: str) -> str:
     }}
     button:focus-visible, input:focus-visible, [role="button"]:focus-visible, [role="slider"]:focus-visible {{ outline: 2px solid var(--cg-green) !important; outline-offset: 2px !important; }}
     .stAlert {{ border-radius: var(--radius-md) !important; border: 1px solid var(--card-border) !important; }}
+    .trade-decision-card {{
+      --decision-accent: var(--warning);
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(190px, 0.72fr) minmax(520px, 1.9fr) minmax(180px, 0.58fr);
+      gap: 12px;
+      align-items: stretch;
+      margin: 0.02rem 0 0.78rem;
+      padding: 12px 14px;
+      border: 1px solid color-mix(in srgb, var(--decision-accent) 58%, var(--card-border));
+      border-radius: var(--radius-lg);
+      background:
+        radial-gradient(circle at 6% 20%, color-mix(in srgb, var(--decision-accent) 18%, transparent), transparent 30%),
+        linear-gradient(135deg, color-mix(in srgb, var(--decision-accent) 10%, transparent), transparent 36%),
+        linear-gradient(180deg, color-mix(in srgb, var(--card-bg) 96%, var(--panel-bg)), var(--card-bg));
+      box-shadow: 0 14px 32px rgba(2,6,23,0.22), 0 0 0 1px rgba(255,255,255,0.02) inset;
+      overflow: hidden;
+    }}
+    .trade-decision-card.status-positive {{ --decision-accent: var(--cg-green); }}
+    .trade-decision-card.status-negative {{ --decision-accent: var(--cg-red); }}
+    .trade-decision-card.status-warning {{ --decision-accent: var(--warning); }}
+    .trade-decision-card.status-neutral {{ --decision-accent: var(--subtle); }}
+    .trade-decision-card::before {{
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: var(--decision-accent);
+      box-shadow: 0 0 18px color-mix(in srgb, var(--decision-accent) 72%, transparent);
+    }}
+    .trade-decision-core {{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+      padding-left: 4px;
+    }}
+    .trade-decision-symbol {{
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 850;
+      line-height: 1.05;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }}
+    .trade-decision-verdict {{
+      color: var(--decision-accent);
+      font-size: clamp(1.28rem, 2.1vw, 2rem);
+      font-weight: 950;
+      line-height: 1.02;
+      margin-top: 5px;
+      white-space: nowrap;
+      text-shadow: 0 0 18px color-mix(in srgb, var(--decision-accent) 28%, transparent);
+    }}
+    .trade-decision-action {{
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 840;
+      line-height: 1.1;
+      margin-top: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }}
+    .trade-decision-metrics {{
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 7px;
+      align-items: stretch;
+    }}
+    .trade-decision-metric {{
+      border: 1px solid color-mix(in srgb, var(--decision-accent) 20%, var(--card-border));
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--panel-bg) 58%, transparent);
+      padding: 7px 8px;
+      min-height: 58px;
+      overflow: hidden;
+    }}
+    .trade-decision-metric span {{
+      display: block;
+      color: var(--subtle);
+      font-size: 0.52rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1.05;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }}
+    .trade-decision-metric strong {{
+      display: block;
+      color: var(--text);
+      font-size: 0.86rem;
+      font-weight: 930;
+      line-height: 1.08;
+      margin-top: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-variant-numeric: tabular-nums;
+    }}
+    .trade-decision-metric.is-primary strong {{ color: var(--decision-accent); }}
+    .trade-decision-reason {{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+      border-left: 1px solid var(--card-border);
+      padding-left: 12px;
+    }}
+    .trade-decision-reason span {{
+      color: var(--subtle);
+      font-size: 0.52rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1.05;
+    }}
+    .trade-decision-reason strong {{
+      color: var(--text);
+      font-size: 0.8rem;
+      font-weight: 820;
+      line-height: 1.18;
+      margin-top: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }}
 
     @keyframes pulse {{
       0%, 100% {{ opacity: 0.72; }}
@@ -1398,6 +1527,10 @@ def get_theme_css(theme_name: str) -> str:
       .block-container {{ padding-inline: 0.75rem !important; }}
       .dashboard-grid {{ grid-template-columns: 1fr; }}
       .overview-summary-grid, .indicator-grid {{ grid-template-columns: 1fr; }}
+      .trade-decision-card {{ grid-template-columns: 1fr; gap: 8px; padding: 11px 12px; }}
+      .trade-decision-metrics {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
+      .trade-decision-reason {{ border-left: 0; border-top: 1px solid var(--card-border); padding-left: 0; padding-top: 9px; }}
+      .trade-decision-verdict {{ white-space: normal; }}
       .tech-command-head, .indicator-group-head, .tech-chart-head, .tech-control-row, .smc-command-head, .mtf-command-head, .ai-command-head, .bt-command-head, .pf-command-head {{ align-items:flex-start; flex-direction:column; gap:5px; }}
       .tech-command-meta, .indicator-group-meta, .tech-chart-meta, .mtf-command-meta, .ai-command-meta, .bt-command-meta, .pf-command-meta {{ white-space:normal; }}
       .tech-summary-grid, .tech-detail-grid, .tech-action-grid, .tech-score-grid, .smc-command-grid, .smc-setup-grid, .smc-summary-grid, .order-command-grid, .order-action-grid, .order-pressure-panel, .mtf-command-grid, .mtf-action-grid, .mtf-summary-grid, .ai-command-grid, .ai-action-grid, .ai-consensus-grid, .ai-breakdown-grid, .bt-command-grid, .bt-kpi-grid, .bt-analytics-grid, .pf-command-grid, .pf-kpi-grid, .pf-analytics-grid {{ grid-template-columns:1fr; }}
@@ -1933,6 +2066,167 @@ def verdict_color(v: str) -> str:
         "Sell":        "#FF5C73",
         "Strong Sell": "#8b0000",
     }.get(v, "#7B8596")
+
+def compute_trade_verdict(symbol: str, ind: dict, adv: dict, signal_result: dict, cfg: dict) -> dict:
+    ind = ind or {}
+    adv = adv or {}
+    signal_result = signal_result or {}
+    cfg = cfg or {}
+
+    def safe_num(value, default=0.0) -> float:
+        try:
+            if value is None or pd.isna(value):
+                return float(default)
+            return float(value)
+        except (TypeError, ValueError):
+            return float(default)
+
+    signal = str(signal_result.get("signal", SIGNAL_HOLD) or SIGNAL_HOLD).upper()
+    confidence = int(round(max(0.0, min(100.0, safe_num(signal_result.get("confidence"), 0.0) * 100))))
+    norm = safe_num(signal_result.get("normalized_score"), 0.0)
+    directional_score = int(round(max(0.0, min(100.0, 50.0 + norm * 50.0))))
+    regime = str(signal_result.get("market_regime", "") or "").lower()
+    risk_level = str(signal_result.get("risk_level", "") or "").lower()
+
+    close = safe_num(ind.get("close"), 0.0)
+    ema9 = safe_num(ind.get("ema_9"), close)
+    ema21 = safe_num(ind.get("ema_21"), close)
+    ema50 = safe_num(ind.get("ema_50"), close)
+    ema200 = safe_num(ind.get("ema_200"), close)
+    macd = safe_num(ind.get("macd"), 0.0)
+    macd_sig = safe_num(ind.get("macd_signal"), 0.0)
+    rsi = safe_num(ind.get("rsi"), 50.0)
+    roc = safe_num(adv.get("roc"), 0.0)
+
+    bullish_regime = regime in {"bull", "bullish"} or (close > ema50 >= ema200 and ema9 >= ema21)
+    bearish_regime = regime in {"bear", "bearish"} or (close < ema50 <= ema200 and ema9 <= ema21)
+    positive_momentum = macd >= macd_sig and roc >= 0 and rsi >= 45
+    negative_momentum = macd <= macd_sig and roc <= 0 and rsi <= 55
+
+    if risk_level == "high" and confidence < 58 and signal == SIGNAL_HOLD:
+        verdict = "AVOID"
+        action = "Stay Out"
+        status = "neutral"
+        reason = "Weak signal quality with elevated risk"
+    elif signal == SIGNAL_BUY and confidence >= 75 and bullish_regime and positive_momentum:
+        verdict = "STRONG BUY"
+        action = "Enter Long"
+        status = "positive"
+        reason = "Strong trend plus positive momentum"
+    elif signal == SIGNAL_BUY or (directional_score >= 58 and bullish_regime):
+        verdict = "BUY"
+        action = "Enter Long"
+        status = "positive"
+        reason = "Bullish structure with supportive confirmation"
+    elif signal == SIGNAL_SELL and confidence >= 75 and bearish_regime and negative_momentum:
+        verdict = "STRONG SELL"
+        action = "Enter Short"
+        status = "negative"
+        reason = "Strong downtrend plus negative momentum"
+    elif signal == SIGNAL_SELL or (directional_score <= 42 and bearish_regime):
+        verdict = "SELL"
+        action = "Enter Short"
+        status = "negative"
+        reason = "Bearish structure with downside confirmation"
+    else:
+        verdict = "WAIT"
+        action = "Wait for better setup"
+        status = "warning"
+        reason = "No clean setup"
+
+    position_size_pct = safe_num(cfg.get("bt_pos_size"), 0.0) * 100.0
+    if verdict in {"WAIT", "AVOID"}:
+        allocation = 0.0
+    elif confidence < 60:
+        allocation = min(position_size_pct, 3.0)
+    elif confidence < 75:
+        allocation = min(position_size_pct, 5.0)
+    else:
+        allocation = position_size_pct
+
+    stop_loss_pct = safe_num(cfg.get("stop_loss_pct"), 0.0) * 100.0
+    take_profit_pct = safe_num(cfg.get("take_profit_pct"), 0.0) * 100.0
+    is_long = verdict in {"BUY", "STRONG BUY"}
+    is_short = verdict in {"SELL", "STRONG SELL"}
+    has_price = close > 0
+
+    if has_price and (is_long or is_short):
+        entry = close
+        if is_long:
+            stop = entry * (1 - stop_loss_pct / 100.0)
+            target = entry * (1 + take_profit_pct / 100.0)
+        else:
+            stop = entry * (1 + stop_loss_pct / 100.0)
+            target = entry * (1 - take_profit_pct / 100.0)
+        entry_text = fmt_price(entry, symbol)
+        stop_text = fmt_price(stop, symbol)
+        target_text = fmt_price(target, symbol)
+        rr_text = f"1:{safe_num(cfg.get('risk_reward'), 0.0):.1f}"
+    else:
+        entry_text = "-"
+        stop_text = "-"
+        target_text = "-"
+        rr_text = "-"
+
+    allocation_text = f"{allocation:.0f}%" if allocation == round(allocation) else f"{allocation:.1f}%"
+    return {
+        "symbol": symbol,
+        "verdict": verdict,
+        "confidence": f"{confidence}%",
+        "action": action,
+        "entry": entry_text,
+        "stop": stop_text,
+        "target": target_text,
+        "risk_reward": rr_text,
+        "allocation": allocation_text,
+        "reason": reason,
+        "status": status,
+    }
+
+
+def render_trade_decision_card(decision: dict) -> None:
+    if not isinstance(decision, dict):
+        return
+
+    def metric(label: str, value: str, primary: bool = False) -> str:
+        class_name = "trade-decision-metric is-primary" if primary else "trade-decision-metric"
+        return (
+            f"<div class='{class_name}'>"
+            f"<span>{html.escape(str(label))}</span>"
+            f"<strong>{html.escape(str(value))}</strong>"
+            "</div>"
+        )
+
+    status = html.escape(str(decision.get("status", "warning")))
+    symbol = html.escape(str(decision.get("symbol", "")))
+    verdict = html.escape(str(decision.get("verdict", "WAIT")))
+    action = html.escape(str(decision.get("action", "Wait for better setup")))
+    reason = html.escape(str(decision.get("reason", "No clean setup")))
+
+    st.markdown(
+        f"""
+        <div class="trade-decision-card status-{status}">
+          <div class="trade-decision-core">
+            <div class="trade-decision-symbol">{symbol}</div>
+            <div class="trade-decision-verdict">{verdict}</div>
+            <div class="trade-decision-action">{action}</div>
+          </div>
+          <div class="trade-decision-metrics">
+            {metric("Confidence", decision.get("confidence", "0%"), True)}
+            {metric("Entry Zone", decision.get("entry", "-"))}
+            {metric("Stop Loss", decision.get("stop", "-"))}
+            {metric("Take Profit", decision.get("target", "-"))}
+            {metric("Risk / Reward", decision.get("risk_reward", "-"))}
+            {metric("Allocation", decision.get("allocation", "0%"), True)}
+          </div>
+          <div class="trade-decision-reason">
+            <span>Reason</span>
+            <strong>{reason}</strong>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 # ── PERF: Session state & lazy loading ─────────────────────────────────────
 if "rendered_tabs" not in st.session_state:
@@ -5979,6 +6273,10 @@ def main():
     # ── Tabs ────────────────────────────────────────────────────────────────
 
     render_app_header(cfg["theme"])
+    fg_value = fg.get("value", 50) if isinstance(fg, dict) else 50
+    header_signal_result = generate_signal(ind, 0.0, advanced=adv, fg_value=fg_value)
+    trade_decision = compute_trade_verdict(symbol, ind, adv, header_signal_result, cfg)
+    render_trade_decision_card(trade_decision)
     active_tab = render_persistent_tabs()
     render_tab_density_css(active_tab)
 
