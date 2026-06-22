@@ -1513,6 +1513,107 @@ def get_theme_css(theme_name: str) -> str:
       overflow: hidden;
       text-overflow: ellipsis;
     }}
+    .info-label {{
+      display: inline-flex !important;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      vertical-align: middle;
+    }}
+    .info-label > span {{
+      display: inline-flex !important;
+      align-items: center;
+    }}
+    .info-icon {{
+      position: relative;
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      flex: 0 0 14px;
+      border: 1px solid color-mix(in srgb, var(--muted) 55%, transparent);
+      border-radius: 50%;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--panel-bg) 72%, transparent);
+      font-size: 9px;
+      font-weight: 900;
+      line-height: 1;
+      cursor: help;
+      text-transform: none;
+      overflow: visible;
+    }}
+    .info-icon:hover, .info-icon:focus {{
+      color: var(--text);
+      border-color: color-mix(in srgb, var(--accent) 58%, var(--card-border));
+      background: color-mix(in srgb, var(--accent) 16%, var(--panel-bg));
+      outline: none;
+    }}
+    .info-icon::after {{
+      content: attr(data-tooltip);
+      position: absolute;
+      z-index: 50;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      width: max-content;
+      max-width: 230px;
+      transform: translateX(-50%) translateY(3px);
+      padding: 8px 10px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--panel-bg) 96%, black);
+      box-shadow: 0 12px 26px rgba(0,0,0,0.34);
+      color: var(--text);
+      font-size: 0.68rem;
+      font-weight: 650;
+      line-height: 1.28;
+      text-transform: none;
+      white-space: normal;
+      text-align: left;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 120ms ease, transform 120ms ease, visibility 120ms ease;
+    }}
+    .info-icon::before {{
+      content: "";
+      position: absolute;
+      z-index: 51;
+      left: 50%;
+      bottom: calc(100% + 3px);
+      width: 9px;
+      height: 9px;
+      border-right: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+      background: color-mix(in srgb, var(--panel-bg) 96%, black);
+      transform: translateX(-50%) rotate(45deg);
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 120ms ease, visibility 120ms ease;
+    }}
+    .info-icon:hover::after, .info-icon:hover::before,
+    .info-icon:focus::after, .info-icon:focus::before {{
+      opacity: 1;
+      visibility: visible;
+    }}
+    .info-icon:hover::after, .info-icon:focus::after {{
+      transform: translateX(-50%) translateY(0);
+    }}
+    .trade-decision-metric:has(.info-icon),
+    .market-intel-chip:has(.info-icon),
+    .market-intel-core:has(.info-icon),
+    .direction-gauge:has(.info-icon),
+    .mtf-core:has(.info-icon),
+    .mtf-chip:has(.info-icon),
+    .mtf-action-item:has(.info-icon),
+    .ai-chip:has(.info-icon),
+    .ai-action-item:has(.info-icon),
+    .bt-chip:has(.info-icon),
+    .dashboard-card:has(.info-icon),
+    .dashboard-tile:has(.info-icon) {{
+      overflow: visible;
+    }}
 
     @keyframes pulse {{
       0%, 100% {{ opacity: 0.72; }}
@@ -1613,6 +1714,47 @@ def pct_str(v: float) -> str:
     arrow = "▲" if v >= 0 else "▼"
     color = "#00E08A" if v >= 0 else "#FF5C73"
     return f"<span style='color:{color}'>{arrow} {abs(v):.2f}%</span>"
+
+INFO_TOOLTIPS = {
+    "Market Direction": "Shows whether the current market bias is bullish, bearish, or neutral based on the active signal model.",
+    "Market Regime": "Summarizes the current market environment such as bullish, bearish, neutral, or choppy.",
+    "Market Breadth": "Shows how many tracked assets are trading above the EMA200. Higher breadth means stronger market participation.",
+    "Momentum Score": "Measures the strength and direction of recent price movement.",
+    "AI Conviction": "Shows how strongly the model agrees with the current trading bias.",
+    "Fear & Greed": "Reflects overall crypto market sentiment. Low values indicate fear; high values indicate greed.",
+    "Top Strength": "Shows the strongest tracked assets ranked by AI score and signal quality.",
+    "Risk / Reward": "Compares potential reward against risk using the selected stop-loss and take-profit settings.",
+    "Confidence": "Shows how much conviction the current model output has in the displayed bias.",
+    "Entry Zone": "Suggested price area for considering entry based on the current setup.",
+    "Stop Loss": "Suggested invalidation level based on the selected stop-loss setting.",
+    "Take Profit": "Suggested target based on the selected take-profit setting.",
+    "Allocation": "Suggested position allocation based on user risk settings and signal confidence.",
+    "Suggested Allocation": "Suggested position allocation based on user risk settings and signal confidence.",
+    "Market regime": "Summarizes the current market environment such as bullish, bearish, neutral, or choppy.",
+    "MTF Bias": "Summarizes directional bias across multiple timeframes.",
+    "Weighted Score": "Combines timeframe signals with higher timeframes carrying more weight.",
+    "Trend Alignment": "Shows whether trend direction agrees across the selected timeframes.",
+    "Momentum Alignment": "Shows whether momentum conditions agree across the selected timeframes.",
+    "Signal Agreement": "Measures how much the weighted timeframe signals agree with each other.",
+    "Risk Level": "Summarizes setup risk from confidence, disagreement, and conflicting signals.",
+    "Preferred Direction": "Shows the favored directional play based on the current setup.",
+    "Entry Context": "Explains where to look for a trigger relative to the current setup.",
+    "Confirmation Needed": "Shows the next condition that would strengthen the setup.",
+    "Invalidation": "Shows what would weaken or cancel the current setup idea.",
+}
+
+def render_info_label(label: str, tooltip: str | None = None) -> str:
+    safe_label = html.escape(str(label))
+    text = tooltip if tooltip is not None else INFO_TOOLTIPS.get(str(label), "")
+    if not text:
+        return safe_label
+    safe_tooltip = html.escape(str(text), quote=True)
+    return (
+        "<span class='info-label'>"
+        f"<span>{safe_label}</span>"
+        f"<span class='info-icon' tabindex='0' role='img' aria-label='{safe_tooltip}' title='{safe_tooltip}' data-tooltip='{safe_tooltip}'>i</span>"
+        "</span>"
+    )
 
 def base_symbol(symbol: str) -> str:
     return str(symbol).split("/")[0].replace("USDT", "").upper()
@@ -1764,9 +1906,10 @@ def render_dashboard_card(
         status = status_from_color(accent or "") if accent else None
     card_class = card_status_class(status=status, value=value, label=title, signal=signal, trend=trend)
     accent_color = accent or status_color(status=status, signal=signal, trend=trend)
+    title_html = render_info_label(title)
     return (
         f"<div class='dashboard-card {card_class}'>"
-        f"<div class='metric-label'>{title}</div>"
+        f"<div class='metric-label'>{title_html}</div>"
         f"<div class='metric-val' style='font-size:var(--metric-value-size);color:{accent_color};line-height:1.08;margin-top:4px'>{value}</div>"
         f"<div class='metric-subtitle'>{subtitle}</div>"
         f"</div>"
@@ -1775,9 +1918,10 @@ def render_dashboard_card(
 def render_metric_tile(title: str, value: str, detail: str = "", badge: str = "") -> str:
     badge_html = f"<span class='metric-pill {badge}'>{badge.replace('-', ' ').title()}</span>" if badge else ""
     status = badge or None
+    title_html = render_info_label(title)
     return (
         f"<div class='dashboard-tile {card_status_class(status=status, value=value, label=title)}'>"
-        f"<h4>{title}{badge_html}</h4>"
+        f"<h4>{title_html}{badge_html}</h4>"
         f"<div class='metric-val' style='font-size:var(--metric-tile-value-size);line-height:1.08;margin-top:4px;color:{status_color(status=status)}'>{value}</div>"
         f"<p>{detail}</p>"
         f"</div>"
@@ -2192,7 +2336,7 @@ def render_trade_decision_card(decision: dict) -> None:
         class_name = "trade-decision-metric is-primary" if primary else "trade-decision-metric"
         return (
             f"<div class='{class_name}'>"
-            f"<span>{html.escape(str(label))}</span>"
+            f"<span>{render_info_label(str(label))}</span>"
             f"<strong>{html.escape(str(value))}</strong>"
             "</div>"
         )
@@ -3114,7 +3258,7 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
         ("Top Strength", top_text, "Ranked by AI Score"),
     ]
     chips_html = "".join(
-        f"<div class='market-intel-chip'><span>{html.escape(label)}</span>"
+        f"<div class='market-intel-chip'><span>{render_info_label(label)}</span>"
         f"<strong>{html.escape(str(value))}</strong><em>{html.escape(str(detail))}</em></div>"
         for label, value, detail in market_chips
     )
@@ -3123,7 +3267,7 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
         "<div class='market-intel-head'><div class='market-intel-title'>Market Intelligence</div>"
         f"<div class='market-intel-meta'>{html.escape(market_summary)}</div></div>"
         f"<div class='direction-gauge {card_status_class(status=direction_status)}'>"
-        "<div class='direction-gauge-top'><div><div class='direction-gauge-label'>Market Direction</div>"
+        f"<div class='direction-gauge-top'><div><div class='direction-gauge-label'>{render_info_label('Market Direction')}</div>"
         f"<div class='direction-gauge-value'>{html.escape(direction_state)}</div></div>"
         f"<div class='market-intel-meta'>Confidence {confidence}%</div></div>"
         "<div class='direction-track'>"
@@ -3132,7 +3276,7 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
         "</div>"
         "<div class='market-intel-body'>"
         f"<div class='market-intel-core {card_status_class(status=regime_status)}'>"
-        "<div class='market-intel-label'>Market Regime</div>"
+        f"<div class='market-intel-label'>{render_info_label('Market Regime')}</div>"
         f"<div class='market-intel-value'>{html.escape(regime)}</div>"
         f"<div class='market-intel-sub'>Confidence {confidence}% · Risk {risk_level}</div>"
         "</div>"
@@ -4823,7 +4967,7 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
         cls = status or status_from_bias(value)
         return (
             f"<div class='mtf-chip status-{cls}'>"
-            f"<span>{html.escape(str(label))}</span>"
+            f"<span>{render_info_label(str(label))}</span>"
             f"<strong>{html.escape(str(value))}</strong>"
             f"<em>{html.escape(str(sub))}</em>"
             "</div>"
@@ -4839,7 +4983,7 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
     st.markdown(
         "<div class='mtf-command-card'><div class='mtf-command-grid'>"
         f"<div class='mtf-core status-{bias_status}'>"
-        "<div class='mtf-label'>MTF Bias</div>"
+        f"<div class='mtf-label'>{render_info_label('MTF Bias')}</div>"
         f"<div class='mtf-value'>{html.escape(mtf_bias)}</div>"
         f"<div class='mtf-sub'>Weighted score {weighted_score}/100 · Confidence {confidence}%</div>"
         "<div class='mtf-gauge'><div class='mtf-gauge-track'>"
@@ -4909,7 +5053,7 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
         cls = status or status_from_bias(value)
         return (
             f"<div class='mtf-action-item status-{cls}'>"
-            f"<span>{html.escape(str(label))}</span>"
+            f"<span>{render_info_label(str(label))}</span>"
             f"<strong>{html.escape(str(value))}</strong>"
             f"<em>{html.escape(str(sub))}</em>"
             "</div>"
@@ -5131,7 +5275,7 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
         cls = status or status_from_text(value)
         return (
             f"<div class='ai-chip status-{cls}'>"
-            f"<span>{html.escape(str(label))}</span>"
+            f"<span>{render_info_label(str(label))}</span>"
             f"<strong>{html.escape(str(value))}</strong>"
             f"<em>{html.escape(str(sub))}</em>"
             "</div>"
@@ -5224,7 +5368,7 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
         cls = status or status_from_text(value)
         return (
             f"<div class='ai-action-item status-{cls}'>"
-            f"<span>{html.escape(str(label))}</span>"
+            f"<span>{render_info_label(str(label))}</span>"
             f"<strong>{html.escape(str(value))}</strong>"
             f"<em>{html.escape(str(sub))}</em>"
             "</div>"
@@ -5573,7 +5717,7 @@ def render_backtest(df, cfg, symbol):
     def bt_card(label, value, sub, status="warning", klass="bt-chip"):
         return (
             f"<div class='{klass} status-{status}'>"
-            f"<span>{html.escape(str(label))}</span>"
+            f"<span>{render_info_label(str(label))}</span>"
             f"<strong>{html.escape(str(value))}</strong>"
             f"<em>{html.escape(str(sub))}</em>"
             "</div>"
