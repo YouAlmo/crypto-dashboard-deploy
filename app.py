@@ -3,7 +3,11 @@ import sys
 import os
 import hashlib
 import html
+import re
 import time
+import urllib.request
+import xml.etree.ElementTree as ET
+from email.utils import parsedate_to_datetime
 sys.path.insert(0, os.path.dirname(__file__))
 
 import streamlit as st
@@ -13,7 +17,7 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
-from datetime import datetime
+from datetime import datetime, timezone
 from timezone_fix import setup_timezone, now_local, now_str
 
 setup_timezone()
@@ -1384,6 +1388,184 @@ def get_theme_css(theme_name: str) -> str:
     }}
     button:focus-visible, input:focus-visible, [role="button"]:focus-visible, [role="slider"]:focus-visible {{ outline: 2px solid var(--cg-green) !important; outline-offset: 2px !important; }}
     .stAlert {{ border-radius: var(--radius-md) !important; border: 1px solid var(--card-border) !important; }}
+    .news-category-bar {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 0.08rem 0 0.72rem;
+    }}
+    .news-category-pill {{
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 6px 11px;
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--panel-bg) 76%, transparent);
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 780;
+      line-height: 1;
+    }}
+    .news-hero {{
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(220px, 0.7fr);
+      gap: 14px;
+      padding: 18px;
+      margin: 0 0 0.85rem;
+      border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--card-border));
+      border-radius: var(--radius-lg);
+      background:
+        radial-gradient(circle at 5% 10%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 28%),
+        linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--panel-bg) 86%, transparent));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }}
+    .news-eyebrow, .news-meta, .news-card-meta {{
+      color: var(--subtle);
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1.18;
+    }}
+    .news-hero h2 {{
+      margin: 0.32rem 0 0.4rem !important;
+      color: var(--text) !important;
+      font-size: clamp(1.45rem, 2.3vw, 2.2rem) !important;
+      line-height: 1.06 !important;
+      font-weight: 950 !important;
+    }}
+    .news-summary, .news-intel, .news-card-summary {{
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.42;
+    }}
+    .news-badge-row, .news-tag-row {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }}
+    .news-badge, .news-tag {{
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      border: 1px solid var(--card-border);
+      background: color-mix(in srgb, var(--panel-bg) 72%, transparent);
+      padding: 4px 8px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 820;
+      line-height: 1;
+    }}
+    .news-badge.bullish {{ color: var(--cg-green); border-color: color-mix(in srgb, var(--cg-green) 38%, var(--card-border)); background: var(--cg-pos-weak); }}
+    .news-badge.bearish {{ color: var(--cg-red); border-color: color-mix(in srgb, var(--cg-red) 38%, var(--card-border)); background: var(--cg-neg-weak); }}
+    .news-badge.neutral {{ color: var(--warning); border-color: color-mix(in srgb, var(--warning) 36%, var(--card-border)); background: var(--cg-warn-weak); }}
+    .news-badge.high {{ color: var(--cg-red); }}
+    .news-badge.medium {{ color: var(--warning); }}
+    .news-badge.low {{ color: var(--muted); }}
+    .news-link {{
+      color: var(--accent) !important;
+      font-weight: 850;
+      text-decoration: none !important;
+    }}
+    .news-link:hover {{ text-decoration: underline !important; }}
+    .news-hero-side {{
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      background: color-mix(in srgb, var(--panel-bg) 74%, transparent);
+      padding: 13px;
+      align-self: stretch;
+    }}
+    .news-page-grid {{
+      display: grid;
+      grid-template-columns: minmax(0, 1.75fr) minmax(280px, 0.75fr);
+      gap: 14px;
+      align-items: start;
+    }}
+    .news-feed, .news-sidebar {{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }}
+    .news-section-title {{
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 950;
+      line-height: 1.08;
+      margin: 0.12rem 0 0.18rem;
+    }}
+    .news-card, .news-widget {{
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, var(--card-bg), color-mix(in srgb, var(--panel-bg) 86%, transparent));
+      box-shadow: var(--shadow);
+      padding: 13px 14px;
+      overflow: hidden;
+    }}
+    .news-card h3 {{
+      color: var(--text) !important;
+      font-size: 1rem !important;
+      line-height: 1.18 !important;
+      margin: 0.22rem 0 0.28rem !important;
+      font-weight: 930 !important;
+    }}
+    .news-widget-title {{
+      color: var(--text);
+      font-size: 0.86rem;
+      font-weight: 920;
+      margin-bottom: 8px;
+    }}
+    .news-stat-grid {{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 7px;
+    }}
+    .news-stat {{
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 9px;
+      background: color-mix(in srgb, var(--input-bg) 76%, transparent);
+    }}
+    .news-stat span {{
+      display: block;
+      color: var(--subtle);
+      font-size: 0.66rem;
+      font-weight: 850;
+      text-transform: uppercase;
+    }}
+    .news-stat strong {{
+      display: block;
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 950;
+      margin-top: 4px;
+    }}
+    .news-list {{
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin: 0;
+      padding: 0;
+    }}
+    .news-list-item {{
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid color-mix(in srgb, var(--card-border) 70%, transparent);
+      padding: 7px 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.25;
+    }}
+    .news-list-item:last-child {{ border-bottom: 0; }}
+    .news-list-item strong {{ color: var(--text); }}
+    @media (max-width: 980px) {{
+      .news-hero, .news-page-grid {{ grid-template-columns: 1fr; }}
+      .news-stat-grid {{ grid-template-columns: 1fr; }}
+    }}
     .trade-decision-card {{
       --decision-accent: var(--warning);
       position: relative;
@@ -2529,6 +2711,303 @@ def render_empty_state(message: str = "Data unavailable.", icon: str = "⚠️")
         unsafe_allow_html=True,
     )
 
+
+NEWS_CATEGORIES = ["Crypto", "Bitcoin", "Ethereum", "Altcoins", "Macro", "Regulation", "ETFs", "Exchanges", "DeFi", "AI & Tech"]
+NEWS_FEEDS = [
+    ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
+    ("Cointelegraph", "https://cointelegraph.com/rss"),
+    ("Decrypt", "https://decrypt.co/feed"),
+    ("CryptoSlate", "https://cryptoslate.com/feed/"),
+]
+NEWS_ASSETS = {
+    "BTC": ("BTC", "Bitcoin"),
+    "ETH": ("ETH", "Ethereum"),
+    "SOL": ("SOL", "Solana"),
+    "BNB": ("BNB",),
+    "XRP": ("XRP",),
+    "AR": ("AR", "Arweave"),
+    "FIL": ("FIL", "Filecoin"),
+    "DOGE": ("DOGE", "Dogecoin"),
+    "ADA": ("ADA", "Cardano"),
+    "AVAX": ("AVAX", "Avalanche"),
+    "LINK": ("LINK", "Chainlink"),
+    "TON": ("TON",),
+    "USDT": ("USDT", "Tether"),
+    "USDC": ("USDC",),
+}
+NEWS_BULLISH_KEYWORDS = {"approval", "inflow", "adoption", "partnership", "upgrade", "rally", "breakout", "accumulation", "institutional", "demand", "launch", "recovery", "record", "surge"}
+NEWS_BEARISH_KEYWORDS = {"hack", "exploit", "lawsuit", "ban", "outflow", "liquidation", "selloff", "decline", "crash", "recession", "rate hike", "investigation", "probe", "fraud", "breach"}
+NEWS_HIGH_IMPACT_KEYWORDS = {"etf", "sec", "fed", "cpi", "rate decision", "hack", "binance", "coinbase", "blackrock", "liquidation", "regulation", "lawsuit"}
+NEWS_MEDIUM_IMPACT_KEYWORDS = {"btc", "bitcoin", "eth", "ethereum", "sol", "bnb", "xrp", "macro", "etf"}
+
+
+def strip_html(text: str) -> str:
+    clean = re.sub(r"<[^>]+>", " ", str(text or ""))
+    clean = re.sub(r"\s+", " ", clean).strip()
+    return html.unescape(clean)
+
+
+def news_time_ago(published: datetime | None) -> str:
+    if not published:
+        return "Recently"
+    now = datetime.now(timezone.utc)
+    if published.tzinfo is None:
+        published = published.replace(tzinfo=timezone.utc)
+    seconds = max(0, int((now - published.astimezone(timezone.utc)).total_seconds()))
+    if seconds < 3600:
+        return f"{max(1, seconds // 60)}m ago"
+    if seconds < 86400:
+        return f"{seconds // 3600}h ago"
+    return f"{seconds // 86400}d ago"
+
+
+def parse_news_date(value: str) -> datetime | None:
+    try:
+        parsed = parsedate_to_datetime(str(value or ""))
+        return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+    except (TypeError, ValueError, IndexError):
+        return None
+
+
+def detect_affected_assets(text: str) -> list[str]:
+    found = []
+    haystack = f" {str(text or '').lower()} "
+    for symbol, terms in NEWS_ASSETS.items():
+        for term in terms:
+            if re.search(rf"(?<![a-z0-9]){re.escape(term.lower())}(?![a-z0-9])", haystack):
+                found.append(symbol)
+                break
+    return found[:5] or ["Crypto"]
+
+
+def classify_news_sentiment(text: str) -> str:
+    lowered = str(text or "").lower()
+    bullish = sum(1 for word in NEWS_BULLISH_KEYWORDS if word in lowered)
+    bearish = sum(1 for word in NEWS_BEARISH_KEYWORDS if word in lowered)
+    if bullish > bearish:
+        return "Bullish"
+    if bearish > bullish:
+        return "Bearish"
+    return "Neutral"
+
+
+def estimate_news_impact(text: str) -> str:
+    lowered = str(text or "").lower()
+    if any(word in lowered for word in NEWS_HIGH_IMPACT_KEYWORDS):
+        return "High"
+    if any(word in lowered for word in NEWS_MEDIUM_IMPACT_KEYWORDS):
+        return "Medium"
+    return "Low"
+
+
+def normalize_news_item(item: dict) -> dict:
+    title = strip_html(item.get("title", "Market update"))
+    summary = strip_html(item.get("summary", ""))[:260]
+    published = item.get("published")
+    if isinstance(published, str):
+        published = parse_news_date(published)
+    text = f"{title} {summary}"
+    normalized = {
+        "title": title,
+        "source": strip_html(item.get("source", "Public RSS")),
+        "summary": summary or "No summary available.",
+        "link": str(item.get("link", "#") or "#"),
+        "published": published,
+        "assets": detect_affected_assets(text),
+        "sentiment": classify_news_sentiment(text),
+        "impact": estimate_news_impact(text),
+    }
+    normalized["time"] = news_time_ago(published)
+    return normalized
+
+
+def fallback_news_items() -> list[dict]:
+    now = datetime.now(timezone.utc)
+    samples = [
+        ("Bitcoin traders watch ETF flows as market searches for direction", "ETF demand and liquidity conditions remain the key short-term focus for BTC positioning.", "CoinDesk", "https://www.coindesk.com/"),
+        ("Ethereum upgrade discussion keeps staking and L2 activity in focus", "Developers and investors continue to track network upgrades, scaling activity, and fee trends.", "Cointelegraph", "https://cointelegraph.com/"),
+        ("Regulation headlines keep exchange tokens and stablecoins on watch", "Policy risk can quickly affect liquidity, exchange activity, and market confidence.", "Decrypt", "https://decrypt.co/"),
+        ("Solana ecosystem activity supports broader altcoin watchlist", "Altcoin momentum remains selective as traders compare liquidity and user activity across chains.", "CryptoSlate", "https://cryptoslate.com/"),
+    ]
+    return [normalize_news_item({"title": title, "summary": summary, "source": source, "link": link, "published": now}) for title, summary, source, link in samples]
+
+
+def parse_news_items(source: str, payload: bytes) -> list[dict]:
+    root = ET.fromstring(payload)
+    parsed = []
+    for node in root.findall(".//item")[:8]:
+        def child_text(name: str) -> str:
+            child = node.find(name)
+            return child.text if child is not None and child.text else ""
+
+        parsed.append(normalize_news_item({
+            "title": child_text("title"),
+            "source": source,
+            "summary": child_text("description"),
+            "link": child_text("link"),
+            "published": child_text("pubDate"),
+        }))
+    if parsed:
+        return parsed
+    ns = "{http://www.w3.org/2005/Atom}"
+    for node in root.findall(f".//{ns}entry")[:8]:
+        title = node.find(f"{ns}title")
+        summary = node.find(f"{ns}summary")
+        updated = node.find(f"{ns}updated")
+        link = node.find(f"{ns}link")
+        parsed.append(normalize_news_item({
+            "title": title.text if title is not None and title.text else "",
+            "source": source,
+            "summary": summary.text if summary is not None and summary.text else "",
+            "link": link.attrib.get("href", "#") if link is not None else "#",
+            "published": updated.text if updated is not None and updated.text else "",
+        }))
+    return parsed
+
+
+@st.cache_data(ttl=900, show_spinner=False)
+def fetch_news_feed(refresh_key: int = 0) -> tuple[list[dict], bool]:
+    del refresh_key
+    items = []
+    for source, url in NEWS_FEEDS:
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "SuperSignal/1.0"})
+            with urllib.request.urlopen(req, timeout=4) as response:
+                items.extend(parse_news_items(source, response.read()))
+        except Exception:
+            continue
+    deduped = []
+    seen = set()
+    for item in sorted(items, key=lambda x: x.get("published") or datetime.min.replace(tzinfo=timezone.utc), reverse=True):
+        key = item.get("title", "").lower()
+        if key and key not in seen:
+            seen.add(key)
+            deduped.append(item)
+    if deduped:
+        return deduped[:12], True
+    return fallback_news_items(), False
+
+
+def news_reason(item: dict) -> tuple[str, str]:
+    assets = ", ".join(item.get("assets", ["Crypto"]))
+    impact = str(item.get("impact", "Low")).lower()
+    sentiment = str(item.get("sentiment", "Neutral")).lower()
+    return (
+        f"{assets} is in focus and the story has {impact} market relevance.",
+        f"Likely {sentiment} read-through unless price action rejects the headline.",
+    )
+
+
+def render_news_badges(item: dict) -> str:
+    sentiment = str(item.get("sentiment", "Neutral"))
+    impact = str(item.get("impact", "Low"))
+    tags = "".join(f"<span class='news-tag'>{html.escape(asset)}</span>" for asset in item.get("assets", ["Crypto"]))
+    return (
+        "<div class='news-badge-row'>"
+        f"<span class='news-badge {sentiment.lower()}'>{html.escape(sentiment)}</span>"
+        f"<span class='news-badge {impact.lower()}'>{html.escape(impact)} impact</span>{tags}</div>"
+    )
+
+
+def render_news_card(item: dict) -> str:
+    why, likely = news_reason(item)
+    link = html.escape(item.get("link", "#"), quote=True)
+    return (
+        "<article class='news-card'>"
+        f"<div class='news-card-meta'>{html.escape(item.get('source', 'RSS'))} · {html.escape(item.get('time', 'Recently'))}</div>"
+        f"<h3>{html.escape(item.get('title', 'Market update'))}</h3>"
+        f"<div class='news-card-summary'>{html.escape(item.get('summary', 'No summary available.'))}</div>"
+        f"{render_news_badges(item)}"
+        f"<div class='news-intel'><strong>Why it matters:</strong> {html.escape(why)}<br><strong>Likely market impact:</strong> {html.escape(likely)}</div>"
+        f"<div style='margin-top:9px'><a class='news-link' href='{link}' target='_blank' rel='noopener noreferrer'>Read original</a></div>"
+        "</article>"
+    )
+
+
+def render_news_hero(item: dict) -> str:
+    why, likely = news_reason(item)
+    assets = ", ".join(item.get("assets", ["Crypto"]))
+    link = html.escape(item.get("link", "#"), quote=True)
+    return (
+        "<section class='news-hero'><div>"
+        f"<div class='news-eyebrow'>Top market story · {html.escape(item.get('source', 'RSS'))} · {html.escape(item.get('time', 'Recently'))}</div>"
+        f"<h2>{html.escape(item.get('title', 'Market update'))}</h2>"
+        f"<div class='news-summary'>{html.escape(item.get('summary', 'No summary available.'))}</div>"
+        f"{render_news_badges(item)}"
+        f"<div style='margin-top:12px'><a class='news-link' href='{link}' target='_blank' rel='noopener noreferrer'>Read original</a></div>"
+        "</div><aside class='news-hero-side'>"
+        "<div class='news-widget-title'>News Intelligence</div>"
+        f"<div class='news-intel'><strong>Why it matters:</strong> {html.escape(why)}</div>"
+        f"<div class='news-intel' style='margin-top:8px'><strong>Likely market impact:</strong> {html.escape(likely)}</div>"
+        f"<div class='news-tag-row'><span class='news-badge'>Affected: {html.escape(assets)}</span></div>"
+        "</aside></section>"
+    )
+
+
+def render_news_sidebar(items: list[dict]) -> str:
+    asset_counts = {}
+    sentiment_counts = {"Bullish": 0, "Bearish": 0, "Neutral": 0}
+    high_impact = []
+    for item in items:
+        sentiment = item.get("sentiment", "Neutral")
+        sentiment_counts[sentiment] = sentiment_counts.get(sentiment, 0) + 1
+        if item.get("impact") == "High":
+            high_impact.append(item)
+        for asset in item.get("assets", []):
+            asset_counts[asset] = asset_counts.get(asset, 0) + 1
+    mentioned = sorted(asset_counts.items(), key=lambda kv: kv[1], reverse=True)[:5]
+    mentioned_html = "".join(f"<div class='news-list-item'><strong>{html.escape(asset)}</strong><span>{count} mentions</span></div>" for asset, count in mentioned) or "<div class='news-list-item'>No asset mentions yet</div>"
+    high_html = "".join(f"<div class='news-list-item'><strong>{html.escape(item['title'][:54])}</strong><span>{html.escape(item['source'])}</span></div>" for item in high_impact[:4]) or "<div class='news-list-item'>No high-impact headlines in the current feed</div>"
+    return (
+        "<aside class='news-sidebar'>"
+        "<div class='news-widget'><div class='news-widget-title'>Crypto Market Pulse</div><div class='news-stat-grid'>"
+        f"<div class='news-stat'><span>Stories</span><strong>{len(items)}</strong></div>"
+        f"<div class='news-stat'><span>High Impact</span><strong>{len(high_impact)}</strong></div>"
+        f"<div class='news-stat'><span>Bullish</span><strong>{sentiment_counts.get('Bullish', 0)}</strong></div>"
+        f"<div class='news-stat'><span>Bearish</span><strong>{sentiment_counts.get('Bearish', 0)}</strong></div>"
+        "</div></div>"
+        f"<div class='news-widget'><div class='news-widget-title'>Most Mentioned Assets</div><div class='news-list'>{mentioned_html}</div></div>"
+        f"<div class='news-widget'><div class='news-widget-title'>High Impact Watchlist</div><div class='news-list'>{high_html}</div></div>"
+        "<div class='news-widget'><div class='news-widget-title'>Upcoming Macro / Calendar</div><div class='news-list'>"
+        "<div class='news-list-item'><strong>CPI / inflation prints</strong><span>Monitor USD liquidity</span></div>"
+        "<div class='news-list-item'><strong>Fed rate guidance</strong><span>Macro risk driver</span></div>"
+        "<div class='news-list-item'><strong>ETF flow updates</strong><span>BTC demand gauge</span></div>"
+        "</div></div></aside>"
+    )
+
+
+def render_news_tab(symbol: str) -> None:
+    st.markdown(render_section_header("News", "Crypto market headlines, sentiment, and event risk"), unsafe_allow_html=True)
+    if st.button("Refresh News", key="refresh_news_btn"):
+        st.session_state.news_refresh_key = int(st.session_state.get("news_refresh_key", 0)) + 1
+        fetch_news_feed.clear()
+        st.rerun()
+
+    categories_html = "".join(f"<span class='news-category-pill'>{html.escape(category)}</span>" for category in NEWS_CATEGORIES)
+    st.markdown(f"<div class='news-category-bar'>{categories_html}</div>", unsafe_allow_html=True)
+
+    items, live_ok = fetch_news_feed(int(st.session_state.get("news_refresh_key", 0)))
+    if not live_ok:
+        render_notice_badge("Live news feed is temporarily unavailable. Showing fallback market headlines.", kind="warning")
+
+    selected_symbol = symbol.split("/")[0] if "/" in symbol else symbol
+    ranked = sorted(
+        items,
+        key=lambda item: (
+            {"High": 3, "Medium": 2, "Low": 1}.get(item.get("impact"), 0),
+            1 if selected_symbol in item.get("assets", []) else 0,
+            item.get("published") or datetime.min.replace(tzinfo=timezone.utc),
+        ),
+        reverse=True,
+    )
+    hero = ranked[0] if ranked else fallback_news_items()[0]
+    feed_items = [item for item in items if item.get("title") != hero.get("title")][:9]
+    feed_html = "<section class='news-feed'><div class='news-section-title'>Latest News Feed</div>" + "".join(render_news_card(item) for item in feed_items) + "</section>"
+
+    st.markdown(render_news_hero(hero), unsafe_allow_html=True)
+    st.markdown(f"<div class='news-page-grid'>{feed_html}{render_news_sidebar(items)}</div>", unsafe_allow_html=True)
+
+
 def dataframe_theme_styles(df: pd.DataFrame):
     return (
         df.style
@@ -2630,6 +3109,7 @@ TAB_OPTIONS = [
     ("order_book", "Order Book"),
     ("multi_tf", "Multi-TF"),
     ("ai_signals", "AI Signals"),
+    ("news", "News"),
     ("backtest", "Backtest"),
     ("portfolio", "Portfolio"),
 ]
@@ -7062,6 +7542,11 @@ def main():
         st.session_state["signal_result"] = signal_result
         render_ai_signals(ind, adv, smc_used, mtf_used, ob_used, sentiment, fg,
                   signal_result, ml_result, risk, symbol, cfg)
+
+    elif active_tab == "news":
+        if not is_tab_rendered("news"):
+            mark_tab_rendered("news")
+        render_news_tab(symbol)
 
     elif active_tab == "backtest":
         if not is_tab_rendered("backtest"):
