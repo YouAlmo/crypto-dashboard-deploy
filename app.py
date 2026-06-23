@@ -1400,7 +1400,7 @@ def get_theme_css(theme_name: str) -> str:
         linear-gradient(135deg, color-mix(in srgb, var(--decision-accent) 10%, transparent), transparent 36%),
         linear-gradient(180deg, color-mix(in srgb, var(--card-bg) 96%, var(--panel-bg)), var(--card-bg));
       box-shadow: 0 14px 32px rgba(2,6,23,0.22), 0 0 0 1px rgba(255,255,255,0.02) inset;
-      overflow: hidden;
+      overflow: visible;
     }}
     .trade-decision-card.status-positive {{ --decision-accent: var(--cg-green); }}
     .trade-decision-card.status-negative {{ --decision-accent: var(--cg-red); }}
@@ -1455,6 +1455,7 @@ def get_theme_css(theme_name: str) -> str:
       grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 7px;
       align-items: stretch;
+      overflow: visible;
     }}
     .trade-decision-metric {{
       border: 1px solid color-mix(in srgb, var(--decision-accent) 20%, var(--card-border));
@@ -1462,7 +1463,7 @@ def get_theme_css(theme_name: str) -> str:
       background: color-mix(in srgb, var(--panel-bg) 58%, transparent);
       padding: 7px 8px;
       min-height: 58px;
-      overflow: hidden;
+      overflow: visible;
     }}
     .trade-decision-metric span {{
       display: block;
@@ -1513,106 +1514,551 @@ def get_theme_css(theme_name: str) -> str:
       overflow: hidden;
       text-overflow: ellipsis;
     }}
-    .info-label {{
+    .metric-label-with-info {{
       display: inline-flex !important;
       align-items: center;
-      gap: 5px;
       min-width: 0;
-      vertical-align: middle;
+      max-width: 100%;
+      vertical-align: baseline;
+      overflow: visible !important;
+      gap: 0;
     }}
-    .info-label > span {{
+    .metric-label-text {{
       display: inline-flex !important;
       align-items: center;
+      min-width: 0;
+      overflow: visible !important;
     }}
-    .info-icon {{
+    .metric-info-wrap {{
       position: relative;
       display: inline-flex !important;
       align-items: center;
       justify-content: center;
-      width: 14px;
-      height: 14px;
-      flex: 0 0 14px;
-      border: 1px solid color-mix(in srgb, var(--muted) 55%, transparent);
-      border-radius: 50%;
-      color: var(--muted);
-      background: color-mix(in srgb, var(--panel-bg) 72%, transparent);
-      font-size: 9px;
-      font-weight: 900;
-      line-height: 1;
-      cursor: help;
-      text-transform: none;
-      overflow: visible;
-    }}
-    .info-icon:hover, .info-icon:focus {{
-      color: var(--text);
-      border-color: color-mix(in srgb, var(--accent) 58%, var(--card-border));
-      background: color-mix(in srgb, var(--accent) 16%, var(--panel-bg));
+      width: 11px !important;
+      height: 11px !important;
+      min-width: 11px !important;
+      max-width: 11px !important;
+      min-height: 11px !important;
+      max-height: 11px !important;
+      flex: 0 0 11px !important;
+      margin: 0 0 0 4px !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      color: inherit !important;
+      font-size: 0 !important;
+      font-weight: 400 !important;
+      line-height: 1 !important;
+      text-transform: none !important;
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      vertical-align: text-top;
       outline: none;
     }}
-    .info-icon::after {{
-      content: attr(data-tooltip);
-      position: absolute;
-      z-index: 50;
-      left: 50%;
-      bottom: calc(100% + 8px);
-      width: max-content;
-      max-width: 230px;
-      transform: translateX(-50%) translateY(3px);
-      padding: 8px 10px;
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-sm);
-      background: color-mix(in srgb, var(--panel-bg) 96%, black);
-      box-shadow: 0 12px 26px rgba(0,0,0,0.34);
-      color: var(--text);
-      font-size: 0.68rem;
-      font-weight: 650;
-      line-height: 1.28;
-      text-transform: none;
-      white-space: normal;
-      text-align: left;
-      pointer-events: none;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 120ms ease, transform 120ms ease, visibility 120ms ease;
+    .metric-info-icon {{
+      box-sizing: border-box !important;
+      width: 11px !important;
+      height: 11px !important;
+      min-width: 11px !important;
+      max-width: 11px !important;
+      min-height: 11px !important;
+      max-height: 11px !important;
+      flex: 0 0 11px !important;
+      border-radius: 50% !important;
+      border: 1px solid var(--muted) !important;
+      color: var(--muted) !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      font-size: 8px !important;
+      font-weight: 700 !important;
+      line-height: 11px !important;
+      text-align: center !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      opacity: 0.58 !important;
+      cursor: help !important;
+      text-transform: none !important;
+      letter-spacing: 0 !important;
+      box-shadow: none !important;
+      text-decoration: none !important;
+      overflow: hidden !important;
+      text-overflow: clip !important;
+      transform: none !important;
     }}
-    .info-icon::before {{
+    .metric-info-wrap:hover .metric-info-icon,
+    .metric-info-wrap:focus .metric-info-icon,
+    .metric-info-wrap:focus-within .metric-info-icon {{
+      opacity: 1 !important;
+      color: var(--text) !important;
+      border-color: var(--text) !important;
+      background: transparent !important;
+    }}
+    .metric-label-with-info .metric-tooltip-content {{
+      position: absolute !important;
+      z-index: 9999999 !important;
+      left: 50% !important;
+      bottom: calc(100% + 10px) !important;
+      top: auto !important;
+      display: block !important;
+      width: 250px !important;
+      max-width: min(260px, 80vw) !important;
+      min-width: 0 !important;
+      height: auto !important;
+      max-height: none !important;
+      transform: translateX(-50%) translateY(3px) !important;
+      margin: 0 !important;
+      padding: 11px 13px !important;
+      border: 1px solid var(--card-border) !important;
+      border-radius: 11px !important;
+      background: var(--panel-bg) !important;
+      box-shadow: 0 16px 40px rgba(0,0,0,.35) !important;
+      color: var(--muted) !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      line-height: 1.45 !important;
+      text-transform: none !important;
+      white-space: normal !important;
+      text-align: left !important;
+      pointer-events: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      text-overflow: clip !important;
+      transition: opacity 90ms ease, transform 90ms ease, visibility 90ms ease !important;
+    }}
+    .trade-decision-metric span:has(.metric-info-wrap),
+    .market-status-label:has(.metric-info-wrap),
+    .market-intel-label:has(.metric-info-wrap),
+    .market-intel-chip span:has(.metric-info-wrap),
+    .direction-gauge-label:has(.metric-info-wrap),
+    .intel-metric span:has(.metric-info-wrap),
+    .metric-label:has(.metric-info-wrap),
+    .tech-label:has(.metric-info-wrap),
+    .tech-mini-label:has(.metric-info-wrap),
+    .tech-health-chip span:has(.metric-info-wrap),
+    .tech-action-item span:has(.metric-info-wrap),
+    .tech-score-card span:has(.metric-info-wrap),
+    .smc-label:has(.metric-info-wrap),
+    .smc-health-chip span:has(.metric-info-wrap),
+    .smc-setup-item span:has(.metric-info-wrap),
+    .smc-summary-card span:has(.metric-info-wrap),
+    .order-label:has(.metric-info-wrap),
+    .order-chip span:has(.metric-info-wrap),
+    .order-action-item span:has(.metric-info-wrap),
+    .mtf-label:has(.metric-info-wrap),
+    .mtf-chip span:has(.metric-info-wrap),
+    .mtf-action-item span:has(.metric-info-wrap),
+    .mtf-summary-card span:has(.metric-info-wrap),
+    .ai-label:has(.metric-info-wrap),
+    .ai-chip span:has(.metric-info-wrap),
+    .ai-action-item span:has(.metric-info-wrap),
+    .ai-consensus-card span:has(.metric-info-wrap),
+    .ai-breakdown-card span:has(.metric-info-wrap),
+    .bt-label:has(.metric-info-wrap),
+    .bt-chip span:has(.metric-info-wrap),
+    .bt-kpi span:has(.metric-info-wrap),
+    .bt-analytics-card span:has(.metric-info-wrap),
+    .pf-label:has(.metric-info-wrap),
+    .pf-chip span:has(.metric-info-wrap),
+    .pf-kpi span:has(.metric-info-wrap),
+    .pf-analytics-card span:has(.metric-info-wrap),
+    .dashboard-card h4:has(.metric-info-wrap),
+    .dashboard-tile h4:has(.metric-info-wrap) {{
+      overflow: visible !important;
+      text-overflow: clip !important;
+    }}
+    .metric-info-wrap::after {{
+      display: none !important;
+    }}
+    .metric-info-wrap::before {{
       content: "";
       position: absolute;
-      z-index: 51;
+      z-index: 10000000;
       left: 50%;
-      bottom: calc(100% + 3px);
+      bottom: calc(100% + 5px);
+      top: auto;
       width: 9px;
       height: 9px;
       border-right: 1px solid var(--card-border);
       border-bottom: 1px solid var(--card-border);
-      background: color-mix(in srgb, var(--panel-bg) 96%, black);
+      background: var(--panel-bg);
       transform: translateX(-50%) rotate(45deg);
       pointer-events: none;
       opacity: 0;
       visibility: hidden;
       transition: opacity 120ms ease, visibility 120ms ease;
     }}
-    .info-icon:hover::after, .info-icon:hover::before,
-    .info-icon:focus::after, .info-icon:focus::before {{
-      opacity: 1;
-      visibility: visible;
+    .metric-info-wrap.tooltip-below .metric-tooltip-content {{
+      top: calc(100% + 10px) !important;
+      bottom: auto !important;
+      transform: translateX(-50%) translateY(-4px) !important;
     }}
-    .info-icon:hover::after, .info-icon:focus::after {{
-      transform: translateX(-50%) translateY(0);
+    .metric-info-wrap.tooltip-below::before {{
+      top: calc(100% + 5px) !important;
+      bottom: auto !important;
+      border-right: 0 !important;
+      border-bottom: 0 !important;
+      border-left: 1px solid var(--card-border) !important;
+      border-top: 1px solid var(--card-border) !important;
+      transform: translateX(-50%) rotate(45deg) !important;
     }}
-    .trade-decision-metric:has(.info-icon),
-    .market-intel-chip:has(.info-icon),
-    .market-intel-core:has(.info-icon),
-    .direction-gauge:has(.info-icon),
-    .mtf-core:has(.info-icon),
-    .mtf-chip:has(.info-icon),
-    .mtf-action-item:has(.info-icon),
-    .ai-chip:has(.info-icon),
-    .ai-action-item:has(.info-icon),
-    .bt-chip:has(.info-icon),
-    .dashboard-card:has(.info-icon),
-    .dashboard-tile:has(.info-icon) {{
+    .metric-info-wrap.tooltip-left .metric-tooltip-content {{
+      left: auto !important;
+      right: calc(100% + 10px) !important;
+      top: 50% !important;
+      bottom: auto !important;
+      transform: translateY(-50%) translateX(4px) !important;
+    }}
+    .metric-info-wrap.tooltip-right .metric-tooltip-content {{
+      left: calc(100% + 10px) !important;
+      top: 50% !important;
+      bottom: auto !important;
+      transform: translateY(-50%) translateX(-4px) !important;
+    }}
+    .trade-decision-card {{
+      z-index: 20;
+    }}
+    .trade-decision-card,
+    .trade-decision-card .trade-decision-core,
+    .trade-decision-card .trade-decision-metrics,
+    .trade-decision-card .trade-decision-metric,
+    .trade-decision-card .metric-label-with-info,
+    .trade-decision-card .metric-info-wrap {{
+      overflow: visible !important;
+    }}
+    .metric-info-wrap:hover .metric-tooltip-content,
+    .metric-info-wrap:focus .metric-tooltip-content,
+    .metric-info-wrap:focus-within .metric-tooltip-content {{
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: translateX(-50%) translateY(0) !important;
+    }}
+    .trade-decision-card .metric-info-wrap:hover .metric-tooltip-content,
+    .trade-decision-card .metric-info-wrap:focus .metric-tooltip-content,
+    .trade-decision-card .metric-info-wrap:focus-within .metric-tooltip-content,
+    .metric-info-wrap.tooltip-below:hover .metric-tooltip-content,
+    .metric-info-wrap.tooltip-below:focus .metric-tooltip-content,
+    .metric-info-wrap.tooltip-below:focus-within .metric-tooltip-content {{
+      transform: translateX(-50%) translateY(0) !important;
+    }}
+    .metric-info-wrap.tooltip-left:hover .metric-tooltip-content,
+    .metric-info-wrap.tooltip-left:focus .metric-tooltip-content,
+    .metric-info-wrap.tooltip-left:focus-within .metric-tooltip-content {{
+      transform: translateY(-50%) translateX(0) !important;
+    }}
+    .metric-info-wrap.tooltip-right:hover .metric-tooltip-content,
+    .metric-info-wrap.tooltip-right:focus .metric-tooltip-content,
+    .metric-info-wrap.tooltip-right:focus-within .metric-tooltip-content {{
+      transform: translateY(-50%) translateX(0) !important;
+    }}
+    .metric-info-wrap:hover::before,
+    .metric-info-wrap:focus::before,
+    .metric-info-wrap:focus-within::before {{
+      opacity: 1 !important;
+      visibility: visible !important;
+    }}
+    .dashboard-grid,
+    .paper-trade-signal-grid,
+    .indicator-grid,
+    .indicator-group,
+    .terminal-card,
+    .market-intel-card,
+    .market-intel-body,
+    .market-intel-chips,
+    .tech-summary-card,
+    .tech-summary-grid,
+    .tech-detail-grid,
+    .tech-health-grid,
+    .tech-action-grid,
+    .tech-score-grid,
+    .tech-metric-grid,
+    .smc-command-card,
+    .smc-command-grid,
+    .smc-health-grid,
+    .smc-setup-grid,
+    .smc-summary-grid,
+    .order-command-card,
+    .order-command-grid,
+    .order-health-grid,
+    .order-action-grid,
+    .order-pressure-panel,
+    .mtf-command-card,
+    .mtf-command-grid,
+    .mtf-health-grid,
+    .mtf-action-grid,
+    .mtf-summary-grid,
+    .ai-command-card,
+    .ai-command-grid,
+    .ai-health-grid,
+    .ai-action-grid,
+    .ai-consensus-grid,
+    .ai-breakdown-grid,
+    .bt-command-card,
+    .bt-command-grid,
+    .bt-health-grid,
+    .bt-kpi-grid,
+    .bt-analytics-grid,
+    .pf-command-card,
+    .pf-command-grid,
+    .pf-health-grid,
+    .pf-kpi-grid,
+    .pf-analytics-grid {{
+      overflow: visible !important;
+    }}
+    .trade-decision-metric:has(.metric-info-wrap),
+    .market-status-item:has(.metric-info-wrap),
+    .market-intel-chip:has(.metric-info-wrap),
+    .market-intel-core:has(.metric-info-wrap),
+    .intel-metric:has(.metric-info-wrap),
+    .direction-gauge:has(.metric-info-wrap),
+    .smc-core:has(.metric-info-wrap),
+    .tech-bias-core:has(.metric-info-wrap),
+    .order-core:has(.metric-info-wrap),
+    .mtf-core:has(.metric-info-wrap),
+    .mtf-chip:has(.metric-info-wrap),
+    .mtf-action-item:has(.metric-info-wrap),
+    .mtf-summary-card:has(.metric-info-wrap),
+    .ai-core:has(.metric-info-wrap),
+    .tech-health-chip:has(.metric-info-wrap),
+    .tech-action-item:has(.metric-info-wrap),
+    .tech-score-card:has(.metric-info-wrap),
+    .tech-mini-metric:has(.metric-info-wrap),
+    .smc-health-chip:has(.metric-info-wrap),
+    .smc-setup-item:has(.metric-info-wrap),
+    .smc-summary-card:has(.metric-info-wrap),
+    .order-chip:has(.metric-info-wrap),
+    .order-action-item:has(.metric-info-wrap),
+    .ai-chip:has(.metric-info-wrap),
+    .ai-action-item:has(.metric-info-wrap),
+    .ai-consensus-card:has(.metric-info-wrap),
+    .ai-breakdown-card:has(.metric-info-wrap),
+    .bt-core:has(.metric-info-wrap),
+    .bt-chip:has(.metric-info-wrap),
+    .bt-kpi:has(.metric-info-wrap),
+    .bt-analytics-card:has(.metric-info-wrap),
+    .pf-core:has(.metric-info-wrap),
+    .pf-chip:has(.metric-info-wrap),
+    .pf-kpi:has(.metric-info-wrap),
+    .pf-analytics-card:has(.metric-info-wrap),
+    .dashboard-card:has(.metric-info-wrap),
+    .dashboard-tile:has(.metric-info-wrap),
+    .terminal-card:has(.metric-info-wrap) {{
       overflow: visible;
+    }}
+    .paper-trade-signal-grid,
+    .paper-trade-signal-grid .dashboard-card,
+    .paper-trade-signal-grid .metric-label,
+    .paper-trade-signal-grid .metric-label-with-info,
+    .paper-trade-signal-grid .metric-info-wrap {{
+      overflow: visible !important;
+    }}
+    .paper-trade-signal-grid .metric-tooltip-content {{
+      top: auto !important;
+      bottom: calc(100% + 10px) !important;
+      transform: translateX(-50%) translateY(3px) !important;
+    }}
+    .paper-trade-signal-grid .metric-info-wrap::before {{
+      top: auto !important;
+      bottom: calc(100% + 5px) !important;
+      border-left: 0 !important;
+      border-top: 0 !important;
+      border-right: 1px solid var(--card-border) !important;
+      border-bottom: 1px solid var(--card-border) !important;
+      transform: translateX(-50%) rotate(45deg) !important;
+    }}
+    .paper-trade-signal-grid .dashboard-card:has(.metric-info-wrap:hover),
+    .paper-trade-signal-grid .dashboard-card:has(.metric-info-wrap:focus-within) {{
+      position: relative;
+      z-index: 1000000;
+    }}
+    .mtf-timeframe-grid,
+    .mtf-timeframe-grid .dashboard-card,
+    .mtf-timeframe-grid .metric-label,
+    .mtf-timeframe-grid .metric-label-with-info,
+    .mtf-timeframe-grid .metric-info-wrap {{
+      overflow: visible !important;
+    }}
+    .mtf-timeframe-grid .metric-tooltip-content {{
+      top: auto !important;
+      bottom: calc(100% + 16px) !important;
+      transform: translateX(-50%) translateY(4px) !important;
+    }}
+    .mtf-timeframe-grid .metric-info-wrap::before {{
+      top: auto !important;
+      bottom: calc(100% + 11px) !important;
+      border-left: 0 !important;
+      border-top: 0 !important;
+      border-right: 1px solid var(--card-border) !important;
+      border-bottom: 1px solid var(--card-border) !important;
+      transform: translateX(-50%) rotate(45deg) !important;
+    }}
+    .mtf-timeframe-grid .dashboard-card:has(.metric-info-wrap:hover),
+    .mtf-timeframe-grid .dashboard-card:has(.metric-info-wrap:focus-within) {{
+      position: relative;
+      z-index: 1000000;
+    }}
+    .mtf-summary-dashboard-grid,
+    .mtf-summary-dashboard-grid .dashboard-card,
+    .mtf-summary-dashboard-grid .metric-label,
+    .mtf-summary-dashboard-grid .metric-label-with-info,
+    .mtf-summary-dashboard-grid .metric-info-wrap {{
+      overflow: visible !important;
+    }}
+    .mtf-summary-dashboard-grid .metric-tooltip-content {{
+      top: auto !important;
+      bottom: calc(100% + 16px) !important;
+      transform: translateX(-50%) translateY(4px) !important;
+    }}
+    .mtf-summary-dashboard-grid .metric-info-wrap::before {{
+      top: auto !important;
+      bottom: calc(100% + 11px) !important;
+      border-left: 0 !important;
+      border-top: 0 !important;
+      border-right: 1px solid var(--card-border) !important;
+      border-bottom: 1px solid var(--card-border) !important;
+      transform: translateX(-50%) rotate(45deg) !important;
+    }}
+    .mtf-summary-dashboard-grid .dashboard-card:has(.metric-info-wrap:hover),
+    .mtf-summary-dashboard-grid .dashboard-card:has(.metric-info-wrap:focus-within) {{
+      position: relative;
+      z-index: 1000000;
+    }}
+    .order-book-tile-grid,
+    .order-book-tile-grid .dashboard-tile,
+    .order-book-tile-grid .dashboard-tile h4,
+    .order-book-tile-grid .metric-label-with-info,
+    .order-book-tile-grid .metric-info-wrap {{
+      overflow: visible !important;
+    }}
+    .order-book-tile-grid .metric-tooltip-content {{
+      top: auto !important;
+      bottom: calc(100% + 16px) !important;
+      transform: translateX(-50%) translateY(4px) !important;
+    }}
+    .order-book-tile-grid .metric-info-wrap::before {{
+      top: auto !important;
+      bottom: calc(100% + 11px) !important;
+      border-left: 0 !important;
+      border-top: 0 !important;
+      border-right: 1px solid var(--card-border) !important;
+      border-bottom: 1px solid var(--card-border) !important;
+      transform: translateX(-50%) rotate(45deg) !important;
+    }}
+    .order-book-tile-grid .dashboard-tile:has(.metric-info-wrap:hover),
+    .order-book-tile-grid .dashboard-tile:has(.metric-info-wrap:focus-within) {{
+      position: relative;
+      z-index: 1000000;
+    }}
+    .order-pressure-panel,
+    .order-pressure-panel .order-chip,
+    .order-pressure-panel .dashboard-card,
+    .order-pressure-panel span,
+    .order-pressure-panel .metric-label,
+    .order-pressure-panel .metric-label-with-info,
+    .order-pressure-panel .metric-info-wrap {{
+      overflow: visible !important;
+    }}
+    .order-pressure-panel .metric-tooltip-content {{
+      top: auto !important;
+      bottom: calc(100% + 16px) !important;
+      transform: translateX(-50%) translateY(4px) !important;
+    }}
+    .order-pressure-panel .metric-info-wrap::before {{
+      top: auto !important;
+      bottom: calc(100% + 11px) !important;
+      border-left: 0 !important;
+      border-top: 0 !important;
+      border-right: 1px solid var(--card-border) !important;
+      border-bottom: 1px solid var(--card-border) !important;
+      transform: translateX(-50%) rotate(45deg) !important;
+    }}
+    .order-pressure-panel .order-chip:has(.metric-info-wrap:hover),
+    .order-pressure-panel .order-chip:has(.metric-info-wrap:focus-within),
+    .order-pressure-panel .dashboard-card:has(.metric-info-wrap:hover),
+    .order-pressure-panel .dashboard-card:has(.metric-info-wrap:focus-within) {{
+      position: relative;
+      z-index: 1000000;
+    }}
+    .trade-decision-metric:has(.metric-info-wrap:hover),
+    .trade-decision-metric:has(.metric-info-wrap:focus-within),
+    .market-status-item:has(.metric-info-wrap:hover),
+    .market-status-item:has(.metric-info-wrap:focus-within),
+    .market-intel-chip:has(.metric-info-wrap:hover),
+    .market-intel-chip:has(.metric-info-wrap:focus-within),
+    .market-intel-core:has(.metric-info-wrap:hover),
+    .market-intel-core:has(.metric-info-wrap:focus-within),
+    .intel-metric:has(.metric-info-wrap:hover),
+    .intel-metric:has(.metric-info-wrap:focus-within),
+    .direction-gauge:has(.metric-info-wrap:hover),
+    .direction-gauge:has(.metric-info-wrap:focus-within),
+    .smc-core:has(.metric-info-wrap:hover),
+    .smc-core:has(.metric-info-wrap:focus-within),
+    .tech-bias-core:has(.metric-info-wrap:hover),
+    .tech-bias-core:has(.metric-info-wrap:focus-within),
+    .order-core:has(.metric-info-wrap:hover),
+    .order-core:has(.metric-info-wrap:focus-within),
+    .mtf-core:has(.metric-info-wrap:hover),
+    .mtf-core:has(.metric-info-wrap:focus-within),
+    .mtf-chip:has(.metric-info-wrap:hover),
+    .mtf-chip:has(.metric-info-wrap:focus-within),
+    .mtf-action-item:has(.metric-info-wrap:hover),
+    .mtf-action-item:has(.metric-info-wrap:focus-within),
+    .mtf-summary-card:has(.metric-info-wrap:hover),
+    .mtf-summary-card:has(.metric-info-wrap:focus-within),
+    .ai-core:has(.metric-info-wrap:hover),
+    .ai-core:has(.metric-info-wrap:focus-within),
+    .tech-health-chip:has(.metric-info-wrap:hover),
+    .tech-health-chip:has(.metric-info-wrap:focus-within),
+    .tech-action-item:has(.metric-info-wrap:hover),
+    .tech-action-item:has(.metric-info-wrap:focus-within),
+    .tech-score-card:has(.metric-info-wrap:hover),
+    .tech-score-card:has(.metric-info-wrap:focus-within),
+    .tech-mini-metric:has(.metric-info-wrap:hover),
+    .tech-mini-metric:has(.metric-info-wrap:focus-within),
+    .smc-health-chip:has(.metric-info-wrap:hover),
+    .smc-health-chip:has(.metric-info-wrap:focus-within),
+    .smc-setup-item:has(.metric-info-wrap:hover),
+    .smc-setup-item:has(.metric-info-wrap:focus-within),
+    .smc-summary-card:has(.metric-info-wrap:hover),
+    .smc-summary-card:has(.metric-info-wrap:focus-within),
+    .order-chip:has(.metric-info-wrap:hover),
+    .order-chip:has(.metric-info-wrap:focus-within),
+    .order-action-item:has(.metric-info-wrap:hover),
+    .order-action-item:has(.metric-info-wrap:focus-within),
+    .ai-chip:has(.metric-info-wrap:hover),
+    .ai-chip:has(.metric-info-wrap:focus-within),
+    .ai-action-item:has(.metric-info-wrap:hover),
+    .ai-action-item:has(.metric-info-wrap:focus-within),
+    .ai-consensus-card:has(.metric-info-wrap:hover),
+    .ai-consensus-card:has(.metric-info-wrap:focus-within),
+    .ai-breakdown-card:has(.metric-info-wrap:hover),
+    .ai-breakdown-card:has(.metric-info-wrap:focus-within),
+    .bt-core:has(.metric-info-wrap:hover),
+    .bt-core:has(.metric-info-wrap:focus-within),
+    .bt-chip:has(.metric-info-wrap:hover),
+    .bt-chip:has(.metric-info-wrap:focus-within),
+    .bt-kpi:has(.metric-info-wrap:hover),
+    .bt-kpi:has(.metric-info-wrap:focus-within),
+    .bt-analytics-card:has(.metric-info-wrap:hover),
+    .bt-analytics-card:has(.metric-info-wrap:focus-within),
+    .pf-core:has(.metric-info-wrap:hover),
+    .pf-core:has(.metric-info-wrap:focus-within),
+    .pf-chip:has(.metric-info-wrap:hover),
+    .pf-chip:has(.metric-info-wrap:focus-within),
+    .pf-kpi:has(.metric-info-wrap:hover),
+    .pf-kpi:has(.metric-info-wrap:focus-within),
+    .pf-analytics-card:has(.metric-info-wrap:hover),
+    .pf-analytics-card:has(.metric-info-wrap:focus-within),
+    .dashboard-card:has(.metric-info-wrap:hover),
+    .dashboard-card:has(.metric-info-wrap:focus-within),
+    .dashboard-tile:has(.metric-info-wrap:hover),
+    .dashboard-tile:has(.metric-info-wrap:focus-within),
+    .terminal-card:has(.metric-info-wrap:hover),
+    .terminal-card:has(.metric-info-wrap:focus-within) {{
+      position: relative;
+      z-index: 999998;
     }}
 
     @keyframes pulse {{
@@ -1715,7 +2161,7 @@ def pct_str(v: float) -> str:
     color = "#00E08A" if v >= 0 else "#FF5C73"
     return f"<span style='color:{color}'>{arrow} {abs(v):.2f}%</span>"
 
-INFO_TOOLTIPS = {
+METRIC_TOOLTIPS = {
     "Market Direction": "Shows whether the current market bias is bullish, bearish, or neutral based on the active signal model.",
     "Market Regime": "Summarizes the current market environment such as bullish, bearish, neutral, or choppy.",
     "Market Breadth": "Shows how many tracked assets are trading above the EMA200. Higher breadth means stronger market participation.",
@@ -1737,22 +2183,149 @@ INFO_TOOLTIPS = {
     "Momentum Alignment": "Shows whether momentum conditions agree across the selected timeframes.",
     "Signal Agreement": "Measures how much the weighted timeframe signals agree with each other.",
     "Risk Level": "Summarizes setup risk from confidence, disagreement, and conflicting signals.",
+    "MTF Consensus": "Summarizes the combined signal across all tracked timeframes.",
+    "Bullish Timeframes": "Counts how many tracked timeframes currently lean bullish.",
+    "Bearish Timeframes": "Counts how many tracked timeframes currently lean bearish.",
+    "Neutral / Hold": "Counts timeframes without a clear bullish or bearish signal.",
+    "Technical Bias": "Summarizes the technical read from trend, momentum, volatility, and volume indicators.",
+    "Institutional Bias": "Summarizes smart-money structure from liquidity, sweeps, gaps, and premium or discount zones.",
+    "Order Flow Bias": "Summarizes order-book pressure from depth, spread, imbalance, and liquidity walls.",
+    "AI Bias": "Summarizes the combined model view from AI signal components.",
+    "Strategy Verdict": "Summarizes how the backtest view rates the current strategy conditions.",
+    "Portfolio Verdict": "Summarizes current paper portfolio exposure, risk, and performance.",
+    "Portfolio Health": "Shows the overall account condition from portfolio score, exposure, and risk.",
+    "Portfolio Score": "Composite account quality score based on return, exposure, risk, and concentration.",
+    "Portfolio Risk": "Summarizes the current account risk from exposure, concentration, and drawdown.",
+    "Exposure Level": "Shows how much capital is currently deployed in open paper positions.",
+    "Capital Utilization": "Shows the percentage of configured capital currently allocated to positions.",
+    "Active Positions": "Counts the open paper positions currently tracked in the portfolio.",
+    "Unrealized PnL": "Shows open profit or loss from active positions marked to current price.",
+    "Realized PnL": "Shows profit or loss already recorded from closed paper trades.",
+    "Total Capital": "Shows the configured paper account capital used for sizing and reporting.",
+    "Available Cash": "Shows capital that is not currently allocated to open positions.",
+    "Used Margin": "Shows capital currently tied up in open paper positions.",
+    "Portfolio Value": "Combines available cash, deployed capital, and current PnL.",
+    "Total Return %": "Shows combined open and realized return as a percentage of capital.",
+    "Daily Return %": "Shows return from positions logged over the last day.",
+    "Weekly Return %": "Shows return from positions logged over the last seven days.",
+    "Monthly Return %": "Shows return from positions logged over the last thirty days.",
+    "Portfolio Risk Score": "Scores account risk after exposure, concentration, and drawdown are considered.",
+    "Current Exposure": "Shows the current deployed capital as a percentage of account capital.",
+    "Maximum Exposure": "Shows the reference exposure ceiling used in the risk view.",
+    "Risk Utilization": "Compares current exposure with the displayed maximum exposure level.",
+    "Position Concentration": "Shows how much open exposure is concentrated in the largest position.",
+    "Largest Position": "Shows the biggest open paper allocation by value.",
+    "Portfolio Drawdown": "Shows the current negative account return from the configured capital.",
+    "Open Positions": "Counts open paper trades currently being tracked.",
+    "Winning Positions": "Counts open positions with positive unrealized PnL.",
+    "Losing Positions": "Counts open positions with negative unrealized PnL.",
+    "ML Consensus": "Shows the combined machine-learning signal across the active model inputs.",
+    "Trend Status": "Shows whether the short, medium, and long trend indicators are aligned.",
+    "Momentum Status": "Shows whether recent momentum supports or conflicts with the current bias.",
+    "Volatility Status": "Shows whether price action is quiet, stretched, or unstable.",
+    "Volume Flow": "Shows whether volume pressure is leaning toward inflow or outflow.",
+    "Liquidity Pressure": "Shows whether nearby liquidity is more likely to pressure price up or down.",
+    "FVG Bias": "Summarizes whether fair-value gaps lean bullish, bearish, or mixed.",
+    "Structure Bias": "Shows whether recent market structure favors continuation or reversal.",
+    "Sweep Risk": "Highlights the chance of a liquidity sweep around nearby levels.",
+    "Price Zone": "Shows whether price is trading in premium, discount, or equilibrium context.",
+    "Bias": "Shows the preferred directional lean for this section.",
+    "Risk": "Summarizes whether this setup looks low, moderate, or high risk.",
     "Preferred Direction": "Shows the favored directional play based on the current setup.",
+    "Preferred Setup": "Shows the setup type that best fits current conditions.",
     "Entry Context": "Explains where to look for a trigger relative to the current setup.",
     "Confirmation Needed": "Shows the next condition that would strengthen the setup.",
     "Invalidation": "Shows what would weaken or cancel the current setup idea.",
+    "AI Score": "Scores the current setup using the active signal model inputs.",
+    "Signal": "Shows the current model signal for the selected market.",
+    "24h Change": "Shows recent percentage price movement over the last day.",
+    "Volume": "Shows recent traded volume used to judge market participation.",
+    "Price": "Shows the latest available market price for this view.",
+    "Spread": "Shows the gap between best bid and best ask. Lower is usually cleaner.",
+    "Depth": "Shows available order book liquidity around the current price.",
+    "Bid Wall": "Shows stronger visible buy-side liquidity in the order book.",
+    "Ask Wall": "Shows stronger visible sell-side liquidity in the order book.",
+    "Imbalance": "Shows whether order book liquidity leans toward bids or asks.",
+    "Buy Pressure": "Shows the share of visible order-book liquidity on the bid side.",
+    "Sell Pressure": "Shows the share of visible order-book liquidity on the ask side.",
+    "Interpretation": "Summarizes whether buyers, sellers, or neither side controls short-term flow.",
+    "Cumulative Delta": "Tracks net buying versus selling pressure from recent order-flow changes.",
+    "Flow Pressure": "Summarizes whether order flow currently favors buyers or sellers.",
+    "Liquidity Bias": "Shows whether nearby liquidity conditions favor upside or downside pressure.",
+    "Execution Quality": "Summarizes spread and depth conditions for cleaner entries.",
+    "Slippage Risk": "Estimates how likely execution may move away from the expected price.",
+    "Timeframe": "Shows the chart interval used for this signal or metric.",
+    "Direction": "Shows the directional lean for this specific model or timeframe.",
+    "Strength": "Shows how strong the current signal or condition appears.",
+    "Agreement": "Shows whether multiple inputs are pointing in the same direction.",
+    "Model Vote": "Shows the direction favored by this model component.",
+    "Model Confidence": "Shows how strongly this model component supports its vote.",
+    "Consensus": "Shows whether the active model components agree with each other.",
+    "Feature Impact": "Shows which inputs are contributing most to the model output.",
+    "Strategy Score": "Scores the backtest quality using performance and risk metrics.",
+    "Profitability": "Summarizes whether the backtest has positive expectancy.",
+    "Robustness": "Shows whether the backtest has enough trades and stable behavior.",
+    "Trade Quality": "Summarizes average trade quality and win/loss balance.",
+    "Net Profit": "Shows total backtest profit or loss in account currency.",
+    "Final Capital": "Shows ending capital after applying the backtest results.",
+    "Win Rate": "Shows the percentage of closed trades that were profitable.",
+    "Profit Factor": "Compares gross profit with gross loss. Above 1 is better.",
+    "Sharpe Ratio": "Shows risk-adjusted return. Higher values imply smoother performance.",
+    "Max Drawdown": "Shows the largest peak-to-trough decline in the backtest.",
+    "Recovery Factor": "Compares net profit with drawdown to judge recovery strength.",
+    "Average Trade": "Shows the average profit or loss per closed trade.",
+    "Best Trade": "Shows the largest winning trade in the sample.",
+    "Worst Trade": "Shows the largest losing trade in the sample.",
+    "Total Trades": "Shows how many trades are included in the result.",
+    "Current Drawdown": "Shows the current decline from the latest equity high.",
+    "Avg Winner": "Shows the average profit from winning trades.",
+    "Avg Loser": "Shows the average loss from losing trades.",
+    "Win/Loss Ratio": "Compares average winning trade size with average losing trade size.",
+    "Profit Consistency": "Shows whether returns are steady or concentrated in few trades.",
+    "Capital Preservation": "Shows how well the strategy avoids damaging drawdowns.",
+    "Position Risk": "Shows risk created by the selected backtest position size.",
+    "Risk Verdict": "Summarizes the backtest risk profile in one label.",
+    "Open Risk": "Shows estimated risk currently carried by open paper positions.",
+    "Risk Grade": "Classifies position risk using current allocation size.",
+    "Position Value": "Shows the notional value of the paper position.",
+    "Active Signal": "Shows the current trade signal used by the paper trading panel.",
+    "Capital": "Shows the paper trading balance used for sizing.",
+    "PnL": "Shows profit or loss for the selected trade or period.",
+    "PnL %": "Shows profit or loss as a percentage.",
+    "Sizing Capital": "Shows capital used for position sizing calculations.",
+    "Position Size": "Shows the suggested or configured position size.",
+    "Stop Distance": "Shows distance from entry to the stop level.",
+    "Target Distance": "Shows distance from entry to the take-profit target.",
+    "Units": "Shows the estimated number of units for the position size.",
 }
 
-def render_info_label(label: str, tooltip: str | None = None) -> str:
-    safe_label = html.escape(str(label))
-    text = tooltip if tooltip is not None else INFO_TOOLTIPS.get(str(label), "")
+def render_info_label(label: str, tooltip: str | None = None, placement: str = "above") -> str:
+    label_text = str(label)
+    normalized_label = " ".join(label_text.split())
+    tooltip_lookup = (
+        METRIC_TOOLTIPS.get(normalized_label)
+        or METRIC_TOOLTIPS.get(normalized_label.title())
+        or METRIC_TOOLTIPS.get(normalized_label.upper())
+        or METRIC_TOOLTIPS.get(normalized_label.lower())
+    )
+    text = str(tooltip).strip() if tooltip is not None else ""
     if not text:
-        return safe_label
+        text = str(tooltip_lookup or "").strip()
+    if not text:
+        text = "Explains this metric and how to interpret it."
+    safe_label = html.escape(label_text)
+    safe_label_attr = html.escape(label_text, quote=True)
     safe_tooltip = html.escape(str(text), quote=True)
+    safe_placement = str(placement).strip().lower()
+    if safe_placement not in {"above", "below", "left", "right"}:
+        safe_placement = "above"
     return (
-        "<span class='info-label'>"
-        f"<span>{safe_label}</span>"
-        f"<span class='info-icon' tabindex='0' role='img' aria-label='{safe_tooltip}' title='{safe_tooltip}' data-tooltip='{safe_tooltip}'>i</span>"
+        "<span class='metric-label-with-info'>"
+        f"<span class='metric-label-text'>{safe_label}</span>"
+        f"<span class='metric-info-wrap tooltip-{safe_placement}' tabindex='0' aria-label='More information: {safe_label_attr}' data-tooltip='{safe_tooltip}'>"
+        "<span class='metric-info-icon'>i</span>"
+        f"<span class='metric-tooltip-content'>{safe_tooltip}</span>"
+        "</span>"
         "</span>"
     )
 
@@ -2979,7 +3552,7 @@ def render_market_status_item(title: str, value: str, detail: str = "", status: 
     card_class = card_status_class(status=status, value=value, label=title)
     return (
         f"<div class='market-status-item {card_class}'>"
-        f"<div class='market-status-label'>{html.escape(str(title))}</div>"
+        f"<div class='market-status-label'>{render_info_label(str(title))}</div>"
         f"<div class='market-status-value'>{html.escape(str(value))}</div>"
         f"<div class='market-status-detail'>{html.escape(str(detail))}</div>"
         f"</div>"
@@ -3352,7 +3925,7 @@ def render_overview(tickers, cg_data, watchlist_symbols, ind_map, signal_map, fg
             ("MACD Status", macd_status(selected_row)),
         ]
         metrics_html = "".join(
-            f"<div class='intel-metric'><span>{html.escape(label)}</span><strong>{html.escape(value)}</strong></div>"
+            f"<div class='intel-metric'><span>{render_info_label(label)}</span><strong>{html.escape(value)}</strong></div>"
             for label, value in metric_items
         )
         badge_items = [
@@ -3533,7 +4106,7 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
     def ind_card(label, val_str, sub="", color="#ccc"):
         return (
             f"<div class='dashboard-card {card_status_class(status=status_from_color(color), label=sub, value=val_str)}' style='text-align:center'>"
-            f"<div class='metric-label'>{label}</div>"
+            f"<div class='metric-label'>{render_info_label(str(label))}</div>"
             f"<div class='metric-val' style='color:{color};font-size:var(--metric-tile-value-size);line-height:1.08'>{val_str}</div>"
             f"<div class='metric-subtitle'>{sub}</div>"
             f"</div>"
@@ -3544,7 +4117,7 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         safe_value = html.escape(str(value))
         return (
             "<div class='tech-mini-metric'>"
-            f"<div class='tech-mini-label'>{safe_label}</div>"
+            f"<div class='tech-mini-label'>{render_info_label(str(label))}</div>"
             f"<div class='tech-mini-value'>{safe_value}</div>"
             "</div>"
         )
@@ -3677,7 +4250,7 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         "<div class='tech-summary-card'>"
         "<div class='tech-summary-grid'>"
         f"<div class='tech-bias-core {card_status_class(status=bias_status)}'>"
-        "<div class='tech-label'>Technical Bias</div>"
+        f"<div class='tech-label'>{render_info_label('Technical Bias')}</div>"
         f"<div class='tech-bias-value'>{technical_bias}</div>"
         f"<div class='tech-bias-sub'>Confidence {confidence}% · {direction_state}</div>"
         "<div class='tech-gauge'><div class='tech-gauge-track'>"
@@ -3685,10 +4258,10 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         "<div class='tech-gauge-scale'><span>Strong Bearish</span><span>Neutral</span><span>Strong Bullish</span></div></div>"
         "</div>"
         "<div class='tech-health-grid'>"
-        f"<div class='tech-health-chip'><span>Trend Status</span><strong>{html.escape(trend_status)}</strong><em>EMA 9/21/200</em></div>"
-        f"<div class='tech-health-chip'><span>Momentum Status</span><strong>{html.escape(momentum_status)}</strong><em>RSI {rsi:.1f} · ROC {roc:.2f}%</em></div>"
-        f"<div class='tech-health-chip'><span>Volatility Status</span><strong>{html.escape(volatility_status)}</strong><em>BB %B {bb_pct:.1f}%</em></div>"
-        f"<div class='tech-health-chip'><span>Volume Flow</span><strong>{html.escape(volume_flow)}</strong><em>CMF {cmf:.3f}</em></div>"
+        f"<div class='tech-health-chip'><span>{render_info_label('Trend Status')}</span><strong>{html.escape(trend_status)}</strong><em>EMA 9/21/200</em></div>"
+        f"<div class='tech-health-chip'><span>{render_info_label('Momentum Status')}</span><strong>{html.escape(momentum_status)}</strong><em>RSI {rsi:.1f} · ROC {roc:.2f}%</em></div>"
+        f"<div class='tech-health-chip'><span>{render_info_label('Volatility Status')}</span><strong>{html.escape(volatility_status)}</strong><em>BB %B {bb_pct:.1f}%</em></div>"
+        f"<div class='tech-health-chip'><span>{render_info_label('Volume Flow')}</span><strong>{html.escape(volume_flow)}</strong><em>CMF {cmf:.3f}</em></div>"
         "</div></div></div>",
         unsafe_allow_html=True,
     )
@@ -3697,15 +4270,15 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         "<div class='compact-section-head'><div class='compact-section-title'>Technical Action Plan</div>"
         "<div class='compact-section-meta'>Decision context from price, S/R, EMA, MACD, RSI, ADX, Supertrend</div></div>"
         "<div class='tech-action-grid'>"
-        f"<div class='tech-action-item {card_status_class(status=bias_status)}'><span>Bias</span><strong>{technical_bias}</strong><em>{direction_state}</em></div>"
+        f"<div class='tech-action-item {card_status_class(status=bias_status)}'><span>{render_info_label('Bias')}</span><strong>{technical_bias}</strong><em>{direction_state}</em></div>"
         f"<div class='tech-action-item {card_status_class(status='positive' if preferred_setup.startswith('Long') or preferred_setup == 'Pullback entry' else 'negative' if preferred_setup.startswith('Short') else 'warning')}'>"
-        f"<span>Preferred Setup</span><strong>{html.escape(preferred_setup)}</strong><em>ADX {adx:.1f}</em></div>"
+        f"<span>{render_info_label('Preferred Setup')}</span><strong>{html.escape(preferred_setup)}</strong><em>ADX {adx:.1f}</em></div>"
         f"<div class='tech-action-item {card_status_class(status='positive' if entry_context in {'Above support', 'Breakout zone'} else 'negative' if entry_context == 'Near resistance' else 'warning')}'>"
-        f"<span>Entry Context</span><strong>{html.escape(entry_context)}</strong><em>{nearest_distance:.2f}% to {nearest_label}</em></div>"
+        f"<span>{render_info_label('Entry Context')}</span><strong>{html.escape(entry_context)}</strong><em>{nearest_distance:.2f}% to {nearest_label}</em></div>"
         f"<div class='tech-action-item {card_status_class(status='warning')}'>"
-        f"<span>Invalidation</span><strong>{html.escape(invalidation)}</strong><em>Nearest level</em></div>"
+        f"<span>{render_info_label('Invalidation')}</span><strong>{html.escape(invalidation)}</strong><em>Nearest level</em></div>"
         f"<div class='tech-action-item {card_status_class(status='negative' if risk_level == 'High' else 'positive' if risk_level == 'Low' else 'warning')}'>"
-        f"<span>Risk</span><strong>{risk_level}</strong><em>RSI {rsi:.1f} / BB {bb_pct:.1f}%</em></div>"
+        f"<span>{render_info_label('Risk')}</span><strong>{risk_level}</strong><em>RSI {rsi:.1f} / BB {bb_pct:.1f}%</em></div>"
         "</div>",
         unsafe_allow_html=True,
     )
@@ -3787,7 +4360,7 @@ def render_technical(df: pd.DataFrame, ind: dict, adv: dict,
         ("Volatility Risk", volatility_risk_score, volatility_status, score_status(volatility_risk_score, inverse=True)),
     ]
     score_html = "".join(
-        f"<div class='tech-score-card {card_status_class(status=status)}'><span>{html.escape(label)}</span><strong>{value}/100</strong><em>{html.escape(detail)}</em></div>"
+        f"<div class='tech-score-card {card_status_class(status=status)}'><span>{render_info_label(label)}</span><strong>{value}/100</strong><em>{html.escape(detail)}</em></div>"
         for label, value, detail, status in score_cards
     )
     st.markdown(
@@ -4133,14 +4706,14 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
     def summary_card(label: str, value: str, detail: str = "", status: str = "warning") -> str:
         return (
             f"<div class='smc-summary-card {card_status_class(status=status)}'>"
-            f"<span>{html.escape(str(label))}</span><strong>{html.escape(str(value))}</strong>"
+            f"<span>{render_info_label(str(label))}</span><strong>{html.escape(str(value))}</strong>"
             f"<em>{html.escape(str(detail))}</em></div>"
         )
 
     def setup_item(label: str, value: str, detail: str = "", status: str = "warning") -> str:
         return (
             f"<div class='smc-setup-item {card_status_class(status=status)}'>"
-            f"<span>{html.escape(str(label))}</span><strong>{html.escape(str(value))}</strong>"
+            f"<span>{render_info_label(str(label))}</span><strong>{html.escape(str(value))}</strong>"
             f"<em>{html.escape(str(detail))}</em></div>"
         )
 
@@ -4238,7 +4811,7 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
     st.markdown(
         "<div class='smc-command-card'><div class='smc-command-grid'>"
         f"<div class='smc-core {card_status_class(status=bias_status)}'>"
-        "<div class='smc-label'>Institutional Bias</div>"
+        f"<div class='smc-label'>{render_info_label('Institutional Bias')}</div>"
         f"<div class='smc-value'>{html.escape(institutional_bias)}</div>"
         f"<div class='smc-sub'>SMC Score {smc_score}/100</div>"
         "<div class='smc-gauge'><div class='smc-gauge-track'>"
@@ -4246,11 +4819,11 @@ def render_smart_money(df: pd.DataFrame, smc: dict, symbol: str):
         "<div class='smc-gauge-scale'><span>Distribution</span><span>Sell-side</span><span>Neutral</span><span>Buy-side</span><span>Accumulation</span></div></div>"
         "</div>"
         "<div class='smc-health-grid'>"
-        f"<div class='smc-health-chip {card_status_class(status=smc_state_status(liquidity_pressure))}'><span>Liquidity Pressure</span><strong>{html.escape(liquidity_pressure)}</strong><em>EQH {len(eq_highs)} / EQL {len(eq_lows)}</em></div>"
-        f"<div class='smc-health-chip {card_status_class(status=smc_state_status(fvg_bias))}'><span>FVG Bias</span><strong>{html.escape(fvg_bias)}</strong><em>{len(bull_fvg)} bull / {len(bear_fvg)} bear</em></div>"
-        f"<div class='smc-health-chip {card_status_class(status=smc_state_status(structure_bias))}'><span>Structure Bias</span><strong>{html.escape(structure_bias)}</strong><em>BOS/CHoCH {structure_bull}:{structure_bear}</em></div>"
-        f"<div class='smc-health-chip {card_status_class(status='negative' if sweep_risk == 'High' else 'warning' if sweep_risk == 'Moderate' else 'positive')}'><span>Sweep Risk</span><strong>{html.escape(sweep_risk)}</strong><em>{html.escape(sweep.get('type', 'None'))}</em></div>"
-        f"<div class='smc-health-chip {card_status_class(status=zone_status if (zone_status := ('positive' if zone == 'Discount' else 'negative' if zone == 'Premium' else 'warning')) else 'warning')}'><span>Price Zone</span><strong>{html.escape(str(zone))}</strong><em>Premium / discount</em></div>"
+        f"<div class='smc-health-chip {card_status_class(status=smc_state_status(liquidity_pressure))}'><span>{render_info_label('Liquidity Pressure')}</span><strong>{html.escape(liquidity_pressure)}</strong><em>EQH {len(eq_highs)} / EQL {len(eq_lows)}</em></div>"
+        f"<div class='smc-health-chip {card_status_class(status=smc_state_status(fvg_bias))}'><span>{render_info_label('FVG Bias')}</span><strong>{html.escape(fvg_bias)}</strong><em>{len(bull_fvg)} bull / {len(bear_fvg)} bear</em></div>"
+        f"<div class='smc-health-chip {card_status_class(status=smc_state_status(structure_bias))}'><span>{render_info_label('Structure Bias')}</span><strong>{html.escape(structure_bias)}</strong><em>BOS/CHoCH {structure_bull}:{structure_bear}</em></div>"
+        f"<div class='smc-health-chip {card_status_class(status='negative' if sweep_risk == 'High' else 'warning' if sweep_risk == 'Moderate' else 'positive')}'><span>{render_info_label('Sweep Risk')}</span><strong>{html.escape(sweep_risk)}</strong><em>{html.escape(sweep.get('type', 'None'))}</em></div>"
+        f"<div class='smc-health-chip {card_status_class(status=zone_status if (zone_status := ('positive' if zone == 'Discount' else 'negative' if zone == 'Premium' else 'warning')) else 'warning')}'><span>{render_info_label('Price Zone')}</span><strong>{html.escape(str(zone))}</strong><em>Premium / discount</em></div>"
         "</div></div></div>",
         unsafe_allow_html=True,
     )
@@ -4560,14 +5133,14 @@ def render_orderbook(ob: dict, symbol: str):
     def flow_card(label: str, value: str, detail: str, status: str = "warning") -> str:
         return (
             f"<div class='order-chip {card_status_class(status=status)}'>"
-            f"<span>{html.escape(str(label))}</span><strong>{html.escape(str(value))}</strong>"
+            f"<span>{render_info_label(str(label))}</span><strong>{html.escape(str(value))}</strong>"
             f"<em>{html.escape(str(detail))}</em></div>"
         )
 
     def action_card(label: str, value: str, detail: str, status: str = "warning") -> str:
         return (
             f"<div class='order-action-item {card_status_class(status=status)}'>"
-            f"<span>{html.escape(str(label))}</span><strong>{html.escape(str(value))}</strong>"
+            f"<span>{render_info_label(str(label))}</span><strong>{html.escape(str(value))}</strong>"
             f"<em>{html.escape(str(detail))}</em></div>"
         )
 
@@ -4630,7 +5203,7 @@ def render_orderbook(ob: dict, symbol: str):
     st.markdown(
         "<div class='order-command-card'><div class='order-command-grid'>"
         f"<div class='order-core {card_status_class(status=bias_status)}'>"
-        "<div class='order-label'>Order Flow Bias</div>"
+        f"<div class='order-label'>{render_info_label('Order Flow Bias')}</div>"
         f"<div class='order-value'>{html.escape(order_flow_bias)}</div>"
         f"<div class='order-sub'>Score {flow_score}/100 / Confidence {confidence}%</div>"
         "<div class='order-gauge'><div class='order-gauge-track'>"
@@ -4674,7 +5247,7 @@ def render_orderbook(ob: dict, symbol: str):
     sell_pct = f"{sell_pressure:.1f}%"
     imbalance = f"{imb:+.3f}"
     st.markdown(
-        "<div class='dashboard-grid'>"
+        "<div class='dashboard-grid order-book-tile-grid'>"
         + render_metric_tile('Best Bid', fmt_price(ob['best_bid'], symbol), 'Near-term support', 'buy')
         + render_metric_tile('Best Ask', fmt_price(ob['best_ask'], symbol), 'Immediate resistance', 'sell')
         + render_metric_tile('Spread', fmt_price(spread, symbol), spread_note, 'hold')
@@ -4784,7 +5357,7 @@ def render_orderbook(ob: dict, symbol: str):
     st.plotly_chart(fig2, width="stretch")
 
     st.markdown(
-        "<div class='dashboard-grid'>"
+        "<div class='dashboard-grid order-pressure-panel'>"
         + render_dashboard_card(
             "Cumulative Delta",
             f"{cum_delta:+,.4f}",
@@ -5078,7 +5651,7 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
     avg = safe_float(overall.get("avg_score"), 0.0)
     conf = int(safe_float(overall.get("confidence"), 0.0) * 100)
     st.markdown(
-        "<div class='dashboard-grid'>"
+        "<div class='dashboard-grid mtf-summary-dashboard-grid'>"
         + render_dashboard_card("MTF Consensus", ov, f"Avg score {avg:+.2f} · {conf}% confidence", ov_c, signal=overall.get("signal"), status=ov, trend=overall.get("alignment"),)
         + render_dashboard_card("Bullish Timeframes", str(overall.get("bullish", 0)), "Raw timeframe count", theme["success"], status="positive")
         + render_dashboard_card("Bearish Timeframes", str(overall.get("bearish", 0)), "Raw timeframe count", theme["danger"], status="negative")
@@ -5104,7 +5677,7 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
         cards_html += (
             f"<div class='dashboard-card {tf_status_class} {emphasis_class}' style='padding:18px;'>"
             f"<div style='display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px'>"
-            f"<div class='metric-label'>{html.escape(MTF_LABELS.get(tf, tf))}</div>"
+            f"<div class='metric-label'>{render_info_label(MTF_LABELS.get(tf, tf))}</div>"
             f"<span class='mtf-weight-badge'>{weight_label} · {html.escape(importance)}</span>"
             "</div>"
             f"<div style='font-size:1.4rem;font-weight:800;color:{tf_color};margin-bottom:4px'>{html.escape(str(d.get('verdict', 'N/A')))}</div>"
@@ -5117,7 +5690,7 @@ def render_mtf(mtf: dict, symbol: str, theme_name: str = "Default"):
             f"</div>"
             "</div>"
         )
-    st.markdown(f"<div class='dashboard-grid'>{cards_html}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='dashboard-grid mtf-timeframe-grid'>{cards_html}</div>", unsafe_allow_html=True)
 
     ltf_noise = "Yes" if ltf_conflict_weight else "No"
     htf_bias_label = "Bullish" if htf_direction > 0 else "Bearish" if htf_direction < 0 else "Neutral"
@@ -5291,7 +5864,7 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
     st.markdown(
         "<div class='ai-command-card'><div class='ai-command-grid'>"
         f"<div class='ai-core status-{bias_status}'>"
-        "<div class='ai-label'>AI Bias</div>"
+        f"<div class='ai-label'>{render_info_label('AI Bias')}</div>"
         f"<div class='ai-value'>{html.escape(ai_bias)}</div>"
         f"<div class='ai-sub'>Confidence {confidence_pct}% · Score {ai_direction_score}/100</div>"
         "<div class='ai-gauge'><div class='ai-gauge-track'>"
@@ -5400,7 +5973,7 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
         cls = status or status_from_text(value)
         return (
             f"<div class='ai-consensus-card status-{cls}'>"
-            f"<span>{html.escape(str(label))}</span>"
+            f"<span>{render_info_label(str(label))}</span>"
             f"<strong>{html.escape(str(value))}</strong>"
             f"<em>{html.escape(str(sub))}</em>"
             "</div>"
@@ -5515,7 +6088,7 @@ def render_ai_signals(ind, adv, smc, mtf, ob, sentiment, fg, signal_result, ml_r
         mc1, mc2, mc3, mc4 = st.columns(4)
         mc1.markdown(
             f"<div class='terminal-card {card_status_class(signal=direction)}' style='text-align:center'>"
-            f"<div class='metric-label'>ML Consensus</div>"
+            f"<div class='metric-label'>{render_info_label('ML Consensus')}</div>"
             f"<div style='font-size:1.8em;color:{dir_c};font-weight:700'>"
             f"{('UP' if direction=='UP' else 'DOWN')} {direction}</div></div>",
             unsafe_allow_html=True)
@@ -5733,7 +6306,7 @@ def render_backtest(df, cfg, symbol):
     st.markdown(
         "<div class='bt-command-card'><div class='bt-command-grid'>"
         f"<div class='bt-core status-{status_from_score(strategy_score)}'>"
-        "<div class='bt-label'>Strategy Verdict</div>"
+        f"<div class='bt-label'>{render_info_label('Strategy Verdict')}</div>"
         f"<div class='bt-value'>{html.escape(verdict)}</div>"
         f"<div class='bt-sub'>Strategy score {strategy_score}/100 · Confidence {confidence}%</div>"
         "<div class='bt-gauge'><div class='bt-gauge-track'>"
@@ -5955,7 +6528,7 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
     def pf_card(label, value, sub, status="warning", klass="pf-chip"):
         return (
             f"<div class='{klass} status-{status}'>"
-            f"<span>{html.escape(str(label))}</span>"
+            f"<span>{render_info_label(str(label))}</span>"
             f"<strong>{html.escape(str(value))}</strong>"
             f"<em>{html.escape(str(sub))}</em>"
             "</div>"
@@ -6022,7 +6595,7 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
     st.markdown(
         "<div class='pf-command-card'><div class='pf-command-grid'>"
         f"<div class='pf-core status-{status_from_score(portfolio_score)}'>"
-        "<div class='pf-label'>Portfolio Verdict</div>"
+        f"<div class='pf-label'>{render_info_label('Portfolio Verdict')}</div>"
         f"<div class='pf-value'>{html.escape(verdict)}</div>"
         f"<div class='pf-sub'>Score {portfolio_score}/100 · Risk {risk_label}</div>"
         "<div class='pf-gauge'><div class='pf-gauge-track'>"
@@ -6207,7 +6780,7 @@ def render_portfolio(signal_result, ind, risk, symbol, capital):
     st.markdown("<div class='pf-reasons'>" + "".join(f"<span class='pf-reason-chip'>{html.escape(x)}</span>" for x in diagnostics) + "</div>", unsafe_allow_html=True)
 
     st.markdown(
-        "<div class='dashboard-grid'>"
+        "<div class='dashboard-grid paper-trade-signal-grid'>"
         + render_dashboard_card("Active Signal", sig, f"Price @ {fmt_price(close, symbol)}", status=sig.lower())
         + render_dashboard_card("Capital", f"${capital:,.2f}", "Paper trading balance", status="muted")
         + render_dashboard_card("Position Size", f"${pos['position_value']:,.2f}", f"{pos['units']:.6f} units", status="positive" if sig == SIGNAL_BUY else "negative" if sig == SIGNAL_SELL else "neutral")
